@@ -1,8 +1,8 @@
 # Script for combining the results (csv data) from  the R package ++++++++++
 # detectCilia                                                     ++++++++++
 # Author: Kai Budde
-# Created: 20210/06/24
-# Last changed: 2021/06/24
+# Created: 2021/06/24
+# Last changed: 2021/11/09
 
 
 # Delete everything in the environment
@@ -14,11 +14,14 @@ graphics.off()
 # Please adapt the following parameters ####################################
 
 # Directory containing the outputs
-input_dir <- "E:/PhD/Daten/Cilia/allImages"
+#input_dir <- "E:/PhD/Daten/Cilia/allImages"
+input_dir <- "Y:/Manuelle Aufnahmen + Markierung/20210301_Manuelle Bildauswertungen Cilien/output"
 
 
 # Filter results directories ###############################################
-output_dirs <- list.dirs(input_dir)
+output_dirs <- list.dirs(input_dir, recursive = TRUE)
+# Remove input dir from list
+output_dirs <- output_dirs[!(output_dirs == input_dir)]
 output_dirs <- output_dirs[grepl(pattern = "output$", x = output_dirs, ignore.case = TRUE)]
 
 # Read csv files and combine them into one data frame ######################
