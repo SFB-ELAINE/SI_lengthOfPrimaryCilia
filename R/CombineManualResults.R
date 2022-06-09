@@ -1,7 +1,7 @@
 # Script for combining all results from manual detection +++++++++++++++++++
 # Author: Kai Budde
 # Created: 2022/03/30
-# Last changed: 2022/06/06
+# Last changed: 2022/06/09
 
 # Delete everything in the environment
 rm(list = ls())
@@ -81,8 +81,8 @@ for(i in 1:length(input_files)){
     df_dummy <- cbind(Image_name_short = image_name_short, df_dummy)
     df_dummy <- cbind(Image_name = image_name, df_dummy)
     
-    df_dummy$horizontal_scaling <- df_metadata$scaling_x[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, ignore.case = TRUE)]
-    df_dummy$vertical_scaling   <- df_metadata$scaling_z[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, ignore.case = TRUE)]
+    df_dummy$horizontal_scaling_in_um <- df_metadata$scaling_x_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, ignore.case = TRUE)]
+    df_dummy$vertical_scaling_in_um   <- df_metadata$scaling_z_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, ignore.case = TRUE)]
     
     # Rename cilium_number column (Depending whether Clemens' or Kai's
     # enumeration is used)
@@ -161,13 +161,13 @@ df_detection_results <- dplyr::relocate(.data = df_detection_results, Image_name
 fill_these_cells <- is.na(df_detection_results$Horizontal_length_in_um)
 df_detection_results$Horizontal_length_in_um[fill_these_cells] <- 
   df_detection_results$Horizontal_length_in_pixels[fill_these_cells] *
-  df_detection_results$horizontal_scaling[fill_these_cells] * 1e6
+  df_detection_results$horizontal_scaling_in_um[fill_these_cells]
 
 # Horizontal length in pixels
 fill_these_cells <- is.na(df_detection_results$Horizontal_length_in_pixels)
 df_detection_results$Horizontal_length_in_pixels[fill_these_cells] <- 
   df_detection_results$Horizontal_length_in_um[fill_these_cells] /
-  df_detection_results$horizontal_scaling[fill_these_cells] / 1e6
+  df_detection_results$horizontal_scaling_in_um[fill_these_cells]
 
 # Number of zstack layers
 fill_these_cells <- is.na(df_detection_results$zstack_layers)
@@ -180,7 +180,7 @@ df_detection_results$zstack_layers[fill_these_cells] <-
 # Add vertical length in um
 df_detection_results$Vertical_length_in_um <- 
   df_detection_results$zstack_layers *
-  df_detection_results$vertical_scaling * 1e6
+  df_detection_results$vertical_scaling_in_um
 
 # Add total length in um (using the Pythagorean theorem)
 df_detection_results$Total_length_in_um <- 
