@@ -26,8 +26,9 @@ language <- "en"
 
 # Convert xlsx to csv files ################################################
 input_files <- list.files(path = dir_with_xlsx_files, pattern = "xlsx", full.names = TRUE)
-output_files <- gsub(pattern = "originalFiles/", replacement = "", x = input_files, ignore.case = TRUE)
+output_files <- gsub(pattern = "originalFiles/", replacement = "originalFiles_csv/", x = input_files, ignore.case = TRUE)
 
+dir.create(path = gsub(pattern = "originalFiles", replacement = "originalFiles_csv", x = dir_with_xlsx_files, ignore.case = TRUE), showWarnings = FALSE)
 
 for(i in 1:length(input_files)){
   
