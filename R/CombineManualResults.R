@@ -77,12 +77,12 @@ for(i in 1:length(input_files)){
   
   if(dim(df_dummy)[1] > 0){
     researcher <- gsub(pattern = "(.+)_results.+", replacement = "\\1", x = basename(path = input_files[i]), ignore.case = TRUE)
-    df_dummy <- cbind(Researcher = researcher, df_dummy)
+    df_dummy <- cbind(researcher = researcher, df_dummy)
     
     image_name <- gsub(pattern = ".+([0-9]{6,8}.+)\\.csv", replacement = "\\1", x = basename(path = input_files[i]), ignore.case = TRUE)
     image_name_short <- gsub(pattern = ".+_([0-9]{1,2}$)", replacement = "\\1", x = image_name, ignore.case = TRUE)
-    df_dummy <- cbind(Image_name_short = image_name_short, df_dummy)
-    df_dummy <- cbind(Image_name = image_name, df_dummy)
+    df_dummy <- cbind(image_name_short = image_name_short, df_dummy)
+    df_dummy <- cbind(image_name = image_name, df_dummy)
     
     df_dummy$horizontal_scaling_in_um <- df_metadata$scaling_x_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, fixed = TRUE)]
     df_dummy$vertical_scaling_in_um   <- df_metadata$scaling_z_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, fixed = TRUE)]
@@ -95,7 +95,7 @@ for(i in 1:length(input_files)){
       researcher = "clemens"
     }
     
-    names(df_dummy)[names(df_dummy) == "Cilium_number"] <- paste("Cilium_number_",
+    names(df_dummy)[names(df_dummy) == "cilium_number"] <- paste("cilium_number_",
                                                                  researcher, sep="")
     
 
@@ -113,8 +113,8 @@ rm(df_dummy)
 
 # Relocate column
 df_detection_results <- dplyr::relocate(.data = df_detection_results,
-                                        Cilium_number_kai,
-                                        .after = Cilium_number_clemens)
+                                        cilium_number_kai,
+                                        .after = cilium_number_clemens)
 # Read mapping file
 df_cilia_mapping <- readr::read_csv(file = paste(dir_with_csv_files, cilia_mapping_file, sep = "/"),
                                     name_repair = "universal")
@@ -122,25 +122,25 @@ df_cilia_mapping <- readr::read_csv(file = paste(dir_with_csv_files, cilia_mappi
 # Join result and cilia mapping data frames
 # kai_NAs <- !is.na(df_detection_results$Cilium_number_clemens) & is.na(df_detection_results$Cilium_number_kai)
 df_detection_results_clemens <- df_detection_results[df_detection_results$Researcher == "clemens", ]
-df_detection_results_clemens <- rquery::natural_join(a = df_detection_results_clemens, b = df_cilia_mapping, by = c("Image_name", "Cilium_number_clemens"), jointype= "FULL")
+df_detection_results_clemens <- rquery::natural_join(a = df_detection_results_clemens, b = df_cilia_mapping, by = c("image_name", "cilium_number_clemens"), jointype= "FULL")
 # df_detection_results_clemens$Cilium_number_nadja <- df_detection_results_clemens$Cilium_number_kai
 
 # clemens_NAs <- is.na(df_detection_results$Cilium_number_clemens)
 df_detection_results_kai <- df_detection_results[df_detection_results$Researcher == "kai", ]
 # df_detection_results_kai$Cilium_number_nadja <- df_detection_results_kai$Cilium_number_kai
-df_detection_results_kai <- rquery::natural_join(a = df_detection_results_kai, b = df_cilia_mapping, by = c("Image_name", "Cilium_number_kai"))
+df_detection_results_kai <- rquery::natural_join(a = df_detection_results_kai, b = df_cilia_mapping, by = c("image_name", "cilium_number_kai"))
 
 df_detection_results_nadja <- df_detection_results[df_detection_results$Researcher == "nadja", ]
 # df_detection_results_nadja$Cilium_number_kai <- df_detection_results_nadja$Cilium_number_nadja
-df_detection_results_nadja <- rquery::natural_join(a = df_detection_results_nadja, b = df_cilia_mapping, by = c("Image_name", "Cilium_number_kai"))
+df_detection_results_nadja <- rquery::natural_join(a = df_detection_results_nadja, b = df_cilia_mapping, by = c("image_name", "cilium_number_kai"))
 
 df_detection_results <- rbind(df_detection_results_clemens, df_detection_results_kai, df_detection_results_nadja)
 
 rm(list = c("df_detection_results_clemens", "df_detection_results_kai", "df_detection_results_nadja"))
 
 # Relocate column
-df_detection_results <- dplyr::relocate(.data = df_detection_results, Image_name_short,
-                                        .after = Image_name)
+df_detection_results <- dplyr::relocate(.data = df_detection_results, image_name_short,
+                                        .after = image_name)
 
 # Recalculate horizontal lengths of Clemens' ###############################
 # There was a mistake when looking at the horizontal length (scaling
@@ -161,15 +161,15 @@ df_detection_results <- dplyr::relocate(.data = df_detection_results, Image_name
 # Fill empty cells of "df_detection_results" ###############################
 
 # Horizontal length in um
-fill_these_cells <- is.na(df_detection_results$Horizontal_length_in_um)
-df_detection_results$Horizontal_length_in_um[fill_these_cells] <- 
-  df_detection_results$Horizontal_length_in_pixels[fill_these_cells] *
+fill_these_cells <- is.na(df_detection_results$horizontal_length_in_um)
+df_detection_results$horizontal_length_in_um[fill_these_cells] <- 
+  df_detection_results$horizontal_length_in_pixels[fill_these_cells] *
   df_detection_results$horizontal_scaling_in_um[fill_these_cells]
 
 # Horizontal length in pixels
-fill_these_cells <- is.na(df_detection_results$Horizontal_length_in_pixels)
-df_detection_results$Horizontal_length_in_pixels[fill_these_cells] <- 
-  df_detection_results$Horizontal_length_in_um[fill_these_cells] /
+fill_these_cells <- is.na(df_detection_results$horizontal_length_in_pixels)
+df_detection_results$horizontal_length_in_pixels[fill_these_cells] <- 
+  df_detection_results$horizontal_length_in_um[fill_these_cells] /
   df_detection_results$horizontal_scaling_in_um[fill_these_cells]
 
 # Number of zstack layers
@@ -181,14 +181,14 @@ df_detection_results$zstack_layers[fill_these_cells] <-
 # Add some columns #########################################################
 
 # Add vertical length in um
-df_detection_results$Vertical_length_in_um <- 
+df_detection_results$vertical_length_in_um <- 
   df_detection_results$zstack_layers *
   df_detection_results$vertical_scaling_in_um
 
 # Add total length in um (using the Pythagorean theorem)
-df_detection_results$Total_length_in_um <- 
-  sqrt(df_detection_results$Vertical_length_in_um^2 +
-         df_detection_results$Horizontal_length_in_um^2)
+df_detection_results$total_length_in_um <- 
+  sqrt(df_detection_results$vertical_length_in_um^2 +
+         df_detection_results$horizontal_length_in_um^2)
 
 # Delete all rows that contain cilia at image borders ######################
 df_detection_results <- df_detection_results %>%
