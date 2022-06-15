@@ -128,7 +128,7 @@ for(i in image_numbers){
     # geom_boxplot(alpha = 1, position = position_dodge2(width = 0.9, preserve = "single"), outlier.shape = 1) +
     # #geom_jitter(color="black", size=0.5, alpha=0.9) +
     geom_point(size=3, alpha=0.7, shape=19) +
-    ylim(0,30) +
+    ylim(0,25) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(), 
@@ -154,7 +154,7 @@ for(i in image_numbers){
     geom_point()+
     geom_errorbar(aes(ymin=mean_length-sd_length, ymax=mean_length+sd_length), width=.2,
                   position=position_dodge(0.05)) +
-    ylim(0,30) +
+    ylim(0,25) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(), 

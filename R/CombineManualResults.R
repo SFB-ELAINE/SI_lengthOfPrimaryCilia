@@ -49,8 +49,9 @@ input_files <- input_files[
   grepl(pattern = paste(manual_result_files, collapse = "|"), x = input_files, ignore.case = TRUE)]
 
 
-# Load meta data ###########################################################
+# Load data ###############################################################
 
+# Meta data
 df_metadata <- readr::read_csv(file = metadata_file,
   name_repair = "universal")
 
@@ -58,6 +59,10 @@ name_of_files <- gsub(pattern = ".+results_(.+zstack).+", replacement = "\\1", x
 
 # Keep only relevant rows
 df_metadata <- df_metadata[grepl(pattern = name_of_files, x = df_metadata$fileName, fixed = TRUE),]
+
+# Read mapping file
+df_cilia_mapping <- readr::read_csv(file = paste(dir_with_csv_files, cilia_mapping_file, sep = "/"),
+                                    name_repair = "universal")
 
 # Aggregate all needed information of manual detection #####################
 
@@ -115,22 +120,19 @@ rm(df_dummy)
 df_detection_results <- dplyr::relocate(.data = df_detection_results,
                                         cilium_number_kai,
                                         .after = cilium_number_clemens)
-# Read mapping file
-df_cilia_mapping <- readr::read_csv(file = paste(dir_with_csv_files, cilia_mapping_file, sep = "/"),
-                                    name_repair = "universal")
 
 # Join result and cilia mapping data frames
 # kai_NAs <- !is.na(df_detection_results$Cilium_number_clemens) & is.na(df_detection_results$Cilium_number_kai)
-df_detection_results_clemens <- df_detection_results[df_detection_results$Researcher == "clemens", ]
+df_detection_results_clemens <- df_detection_results[df_detection_results$researcher == "clemens", ]
 df_detection_results_clemens <- rquery::natural_join(a = df_detection_results_clemens, b = df_cilia_mapping, by = c("image_name", "cilium_number_clemens"), jointype= "FULL")
 # df_detection_results_clemens$Cilium_number_nadja <- df_detection_results_clemens$Cilium_number_kai
 
 # clemens_NAs <- is.na(df_detection_results$Cilium_number_clemens)
-df_detection_results_kai <- df_detection_results[df_detection_results$Researcher == "kai", ]
+df_detection_results_kai <- df_detection_results[df_detection_results$researcher == "kai", ]
 # df_detection_results_kai$Cilium_number_nadja <- df_detection_results_kai$Cilium_number_kai
 df_detection_results_kai <- rquery::natural_join(a = df_detection_results_kai, b = df_cilia_mapping, by = c("image_name", "cilium_number_kai"))
 
-df_detection_results_nadja <- df_detection_results[df_detection_results$Researcher == "nadja", ]
+df_detection_results_nadja <- df_detection_results[df_detection_results$researcher == "nadja", ]
 # df_detection_results_nadja$Cilium_number_kai <- df_detection_results_nadja$Cilium_number_nadja
 df_detection_results_nadja <- rquery::natural_join(a = df_detection_results_nadja, b = df_cilia_mapping, by = c("image_name", "cilium_number_kai"))
 
