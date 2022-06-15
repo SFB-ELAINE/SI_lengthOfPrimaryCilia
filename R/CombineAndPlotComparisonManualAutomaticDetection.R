@@ -1,7 +1,7 @@
 # Script for combining manual and automatic results and plot them ++++++++++
 # Author: Kai Budde
 # Created: 2022/04/12
-# Last changed: 2022/04/12
+# Last changed: 2022/04/14
 
 # Delete everything in the environment
 rm(list = ls())
@@ -14,7 +14,7 @@ groundhog.day <- "2022-03-01"
 
 # Load packages
 library(groundhog)
-pkgs <- c("tidyverse", "ggplot2")
+pkgs <- c("tidyverse", "ggplot2", "rquery")
 groundhog.library(pkgs, groundhog.day)
 
 
@@ -28,6 +28,7 @@ groundhog.library(pkgs, groundhog.day)
 
 # Results from manual and automatic detection of 190815_AscDexa data
 manual_detection_file <- "data/manualDetection/190815_AscDexa/output/df_manual_results_en.csv"
+cilia_automatic_mapping_file <- "data/manualDetection/190815_AscDexa/cilia_numbers_clemens_automatic.csv"
 automatic_detection_file <- "data/automaticDetection/coating/summary_cilia.csv"
 parameters_automatic_detection <- "data/automaticDetection/coating/summary_parameters.csv"
 
@@ -43,6 +44,9 @@ df_manual_detection <- readr::read_csv(file = manual_detection_file,
 df_automatic_detection <- readr::read_csv(file = automatic_detection_file,
                                           name_repair = "universal")
 
+df_mapping <- readr::read_csv(file = cilia_automatic_mapping_file,
+                                        name_repair = "universal")
+
 df_parameters_automatic_detection <- readr::read_csv(file = parameters_automatic_detection,
                                                      name_repair = "universal")
 
@@ -52,7 +56,7 @@ image_names <- df_manual_detection$Image_name
 image_names <- gsub(pattern = "_[0-9]+$", replacement = "", x = image_names)
 image_names <- image_names[!duplicated(image_names)]
 
-df_test <- df_automatic_detection[
+df_automatic_detection <- df_automatic_detection[
   grepl(pattern = image_names, x = df_automatic_detection$fileName,
         ignore.case = TRUE),]
 
@@ -65,7 +69,7 @@ df_automatic_detection <- dplyr::left_join(x = df_automatic_detection, y = df_pa
 # Plot threshold_find values of automatic detection
 plot_thresholds <- ggplot2::ggplot(data = df_automatic_detection,
                                    aes(x=threshold_find)) +
-  geom_histogram() +
+  geom_histogram(binwidth = 0.001) +
   xlim(c(0,0.1)) +
   labs(title = "Histogram of thresholds of automatic detection") +
   theme_bw()
@@ -93,6 +97,11 @@ df_automatic_detection <- df_automatic_detection %>%
                 "Horizontal_length_in_um" = "horizontal_length",
                 "Total_length_in_um" = "total_length")
 
+# Keep specific columns that also occur in df_manual_detection
+df_automatic_detection <- df_automatic_detection %>% 
+  dplyr::select(c(names(df_automatic_detection)[names(df_automatic_detection)  %in% names(df_manual_detection)],
+                  "Cilium_number_automatic"))
+
 # Add columns
 df_automatic_detection$Image_name_short <- as.numeric(
   gsub(pattern = ".+_([0-9]{1,2}$)", replacement = "\\1",
@@ -100,13 +109,75 @@ df_automatic_detection$Image_name_short <- as.numeric(
 
 df_automatic_detection$Researcher <- "automatic"
 
-# Keep specific columns that also occur in df_manual_detection
-df_automatic_detection <- df_automatic_detection %>% 
-  dplyr::select(names(df_automatic_detection)[names(df_automatic_detection)  %in% names(df_manual_detection)])
+# Add cilia mapping for automatic cilia detection ##########################
+
+# df_mapping <- df_mapping %>%
+# select(-comments)
+
+df_mapping$Cilium_number_automatic[
+  df_mapping$Cilium_number_automatic == "NA"] <- NA
+
+df_mapping$Cilium_number_automatic <- suppressWarnings(
+  as.numeric(df_mapping$Cilium_number_automatic))
+
+# Checking for mapping mistakes
+# (It is not a mistake if in one image, there are two cilia detected
+mapping_mistakes <-
+  df_mapping[duplicated(paste(df_mapping$Image_name, df_mapping$Cilium_number_automatic, sep=" ")) &
+               !is.na(df_mapping$Cilium_number_automatic),]
+
+if(nrow(mapping_mistakes) > 0){
+  print(paste("There might be a mapping mistake with the automatic data.",
+              "The following cilium number(s) occurs more than once.", sep=" "))
+  print(mapping_mistakes)
+}
+
+mapping_mistakes <-
+  df_mapping[duplicated(paste(df_mapping$Image_name, df_mapping$Cilium_number_clemens, sep=" ")) &
+               !is.na(df_mapping$Cilium_number_clemens),]
+
+if(nrow(mapping_mistakes) > 0){
+  print(paste("There might be a mapping mistake with the manual data.",
+              "The following cilium number(s) occurs more than once.", sep=" "))
+  print(mapping_mistakes)
+}
+
+df_automatic_detection <- rquery::natural_join(a = df_automatic_detection,
+                                               b = df_mapping,
+                                               by = c("Image_name", "Cilium_number_automatic"))
 
 # Add data from automatic detection to manual det. tibble ##################
 
+# Add missing columns
+df_automatic_detection$Cilium_number_kai <- NA
+df_automatic_detection$horizontal_scaling <- df_parameters_automatic_detection$pixel_size[1]*1e-6
+df_automatic_detection$vertical_scaling <- df_parameters_automatic_detection$slice_distance[1]*1e-6
+df_automatic_detection$z_lower <- NA
+df_automatic_detection$z_upper <- NA
+df_manual_detection$Cilium_number_automatic <- NA
+
 df_combined <- dplyr::add_row(df_manual_detection, df_automatic_detection)
+
+# Plots ####################################################################
+
+images <- unique(df_combined$Image_name)
+
+for(i in 1:length(images)){
+  current_image <- images[i]
+  
+  df_dummy <- df_combined[df_combined$Image_name == current_image,]
+  df_dummy$Cilium_number_clemens <- as.factor(df_dummy$Cilium_number_clemens)
+  
+  plot_horizontal <- ggplot(df_dummy, aes(x=Cilium_number_clemens, y=Horizontal_length_in_pixels, fill=Researcher)) +
+    geom_bar(stat="identity", color="black", position=position_dodge())
+  
+  plot_vertical <- ggplot(df_dummy, aes(x=Cilium_number_clemens, y=zstack_layers, fill=Researcher)) +
+    geom_bar(stat="identity", color="black", position=position_dodge())
+
+  #TODO from here
+  # Durchsichtig, wenn keine automatic cilium?!
+  # horizontal tendentiell zu wenig, vertical tendentiell zu viel
+}
 
 # Save final tibble ########################################################
 

@@ -1,7 +1,7 @@
 # Script for combining all results from manual detection +++++++++++++++++++
 # Author: Kai Budde
 # Created: 2022/03/30
-# Last changed: 2022/06/09
+# Last changed: 2022/06/14
 
 # Delete everything in the environment
 rm(list = ls())
@@ -27,13 +27,13 @@ groundhog.library(pkgs, groundhog.day)
 # Please adapt the following parameters ####################################
 
 # Directory with results
-dir_with_csv_files <- "data/manualDetection/190815_AscDexa/originalFiles_csv"
+dir_with_csv_files <- "data/manualDetection/cultivation/originalFiles_csv"
 
 # Output directory
-dir_output <- "data/manualDetection/190815_AscDexa/"
+dir_output <- "data/manualDetection/cultivation/"
 
 # File name of metadata from the execution of readCzi
-metadata_file <- "df_metadata_en.csv"
+metadata_file <- "data/automaticDetection/cultivation/summary_metadata.csv"
 
 # Mapping of cilia numbers
 cilia_mapping_file <- "cilia_numbers_clemens_kai.csv"
@@ -43,20 +43,23 @@ manual_result_files <- c("kai_results", "clemens_results", "nadja_results")
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# Load meta data ###########################################################
-
-df_metadata <- readr::read_csv(file = paste(
-  gsub(pattern = "/originalFiles_csv", replacement = "",
-       x = dir_with_csv_files, ignore.case = TRUE),
-  metadata_file, sep = "/"),
-  name_repair = "universal")
-
-# Aggregate all needed information of manual detection #####################
-
+# Get results (csv files)
 input_files <- list.files(path = dir_with_csv_files, pattern = "csv", full.names = TRUE)
 input_files <- input_files[
   grepl(pattern = paste(manual_result_files, collapse = "|"), x = input_files, ignore.case = TRUE)]
 
+
+# Load meta data ###########################################################
+
+df_metadata <- readr::read_csv(file = metadata_file,
+  name_repair = "universal")
+
+name_of_files <- gsub(pattern = ".+results_(.+zstack).+", replacement = "\\1", x = input_files[1])
+
+# Keep only relevant rows
+df_metadata <- df_metadata[grepl(pattern = name_of_files, x = df_metadata$fileName, fixed = TRUE),]
+
+# Aggregate all needed information of manual detection #####################
 
 # Go through every result and build a large tibble with all of them
 for(i in 1:length(input_files)){
@@ -81,8 +84,8 @@ for(i in 1:length(input_files)){
     df_dummy <- cbind(Image_name_short = image_name_short, df_dummy)
     df_dummy <- cbind(Image_name = image_name, df_dummy)
     
-    df_dummy$horizontal_scaling_in_um <- df_metadata$scaling_x_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, ignore.case = TRUE)]
-    df_dummy$vertical_scaling_in_um   <- df_metadata$scaling_z_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, ignore.case = TRUE)]
+    df_dummy$horizontal_scaling_in_um <- df_metadata$scaling_x_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, fixed = TRUE)]
+    df_dummy$vertical_scaling_in_um   <- df_metadata$scaling_z_in_um[grepl(pattern = paste(image_name, ".czi", sep=""), x = df_metadata$fileName, fixed = TRUE)]
     
     # Rename cilium_number column (Depending whether Clemens' or Kai's
     # enumeration is used)
@@ -195,7 +198,5 @@ df_detection_results <- df_detection_results %>%
 # Save resulting data frame ################################################
 
 dir.create(dir_output, showWarnings = FALSE)
-write.csv2(x = df_detection_results, file = paste(dir_output, "/df_manual_results_de.csv", sep=""),
-           row.names=FALSE)
-write.csv(x = df_detection_results, file = paste(dir_output, "/df_manual_results_en.csv", sep=""),
-          row.names=FALSE)
+readr::write_csv(x = df_detection_results, file = paste(dir_output, "/df_manual_results.csv", sep=""))
+readr::write_csv2(x = df_detection_results, file = paste(dir_output, "/df_manual_results_de.csv", sep=""))

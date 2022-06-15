@@ -2,22 +2,30 @@
 # the R package detectCilia as well as manual detection results     ++++++++
 # Author: Kai Budde
 # Created: 2021/11/11
-# Last changed: 2021/11/1
-
+# Last changed: 2022/06/14
 
 # Delete everything in the environment
 rm(list = ls())
 # close all open plots in RStudio
 graphics.off()
 
-library(ggplot2)
+# Set groundhog day for reproducibility (see https://groundhogr.com)
+groundhog.day <- "2022-03-01"
+
+# install.packages("groundhog")
+
+# Load packages
+library(groundhog)
+pkgs <- c("tidyverse")
+groundhog.library(pkgs, groundhog.day)
+
 
 # Please adapt the following parameters ####################################
 
 # File containing the edited results of detectCilia (including which cilia
 # are to be removed)
-input_file_automatic <- "data/automaticDetection/resolution/summary_cilia_de_edited.csv"
-input_file_manual <- "data/manualDetection/resolution/additional_images_manual_detection_de.csv"
+input_file_automatic <- "data/automaticDetection/resolution/summary_cilia_edited.csv"
+input_file_manual <- "data/manualDetection/210301_resolution/additional_images_manual_detection_de.csv"
 output_dir <- "plots"
 
 # Import and clean data ####################################################
@@ -75,23 +83,30 @@ keep_the_columns <- c("fileName", "total_length", "location", "resolution", "mag
 df_results <- rbind(df_results_auto[,keep_the_columns],
                     df_results_man[,keep_the_columns])
 df_results$image <- paste("loc", df_results$location, "\n", "magn", df_results$magnification, "\n", "res", df_results$resolution, sep = "")
-
 rownames(df_results) <- NULL
+
+# Add missing rows such that the plot is equally designed for every
+# x-value even if a detectionMethod is missing
+
+#df_results <- tibble::add_row(.data = df_results, total_length = 0, image = "loc1\nmagn63x\nres2048", detectionMethod = "manual")
+
 
 # Plot results #############################################################
 
 # Total lengths of cilia
 plot_total_length <- ggplot(df_results, aes(x=image, y=total_length, color=detectionMethod)) +
-  geom_boxplot(alpha = 0.9) +
+  stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
+  geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1) +
   #geom_jitter(color="black", size=0.5, alpha=0.9) +
   geom_point(position = position_jitterdodge(), size=1, alpha=0.9) +
   #ylim(0,20) +
   theme_bw(base_size = 18) +
   theme(#axis.title.y=element_text(size=12),
-    #axis.text.x = element_blank(),
+    #axis.text.x = element_blank(), 
     axis.ticks.x = element_blank()) +
-  ylab( "Total cilium length in \u03BCm") +
-  xlab("Location")
+  ylab("Total cilium length in \u03BCm") +
+  xlab("Location, Magnification, Resolution") +
+  scale_color_discrete(name="Cilia\ndetection\nmethod")
 
 print(plot_total_length)
 

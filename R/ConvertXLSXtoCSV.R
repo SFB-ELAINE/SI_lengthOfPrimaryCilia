@@ -19,7 +19,7 @@ groundhog.library(pkgs, groundhog.day)
 # Please adapt the following parameters ####################################
 
 # Directory with xlsx files
-dir_with_xlsx_files <- "data/manualDetection/190815_AscDexa/originalFiles"
+dir_with_xlsx_files <- "data/manualDetection/cultivation/originalFiles"
 language <- "en"
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

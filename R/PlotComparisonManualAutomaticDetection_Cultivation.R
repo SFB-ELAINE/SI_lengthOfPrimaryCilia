@@ -1,8 +1,8 @@
-# Script for working with and plotting results (from csv data) from ++++++++
-# the R package detectCilia                                         ++++++++
+# Script for plotting results from manual and automatic detection   ++++++++
+# of cilia in seven test images                                     ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2022/05/09
+# Last changed: 2022/06/14
 
 
 # Delete everything in the environment
@@ -26,15 +26,34 @@ groundhog.library(pkgs, groundhog.day)
 
 # Please adapt the following parameters ####################################
 
-# File containing the edited results of detectCilia (including which cilia
+# File containing the results of detectCilia (including which cilia
 # are to be removed)
-input_file <- "data/automaticDetection/cultivation/summary_cilia_de_edited.csv"
+input_file_automatic <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
+input_file_manual <- "data/manualDetection/cultivation/df_manual_results.csv"
 output_dir <- "plots"
+name_of_test_images <- "190815_EV38_2_Collagen_ITSwithAsc+Dexa_63x_zstack"
 
 # Import and clean data ####################################################
-df_results <- readr::read_csv2(file = input_file)
+df_results_automatic <- readr::read_csv(file = input_file_automatic, name_repair = "universal")
+df_results_manual <- readr::read_csv(file = input_file_manual, name_repair = "universal")
 
-df_results <- df_results[df_results$to_be_removed == "no", ]
+
+# Keep only results of seven test images
+df_results_automatic <- df_results_automatic[grepl(
+  pattern = "190815_EV38_2_Collagen_ITSwithAsc\\+Dexa_63x_zstack",
+  x = df_results_automatic$fileName, ignore.case = TRUE), ]
+
+print(paste("We are deleting ", sum(df_results_automatic$to_be_removed != "no"),
+            " cilium(a) from the automatic cilia detection because we have manually ",
+            "marked it being a non-cilium structure.", sep=""))
+
+df_results_automatic <- df_results_automatic[df_results_automatic$to_be_removed == "no",]
+
+
+df_results_manual <- df_results_manual[grepl(
+  pattern = "190815_EV38_2_Collagen_ITSwithAsc\\+Dexa_63x_zstack",
+  x = df_results_manual$Image_name, ignore.case = TRUE), ]
+
 
 # Add information of cultivation
 
@@ -54,6 +73,9 @@ df_results$cultivation[grepl(pattern = "Glas mit WF", x = df_results$fileName, i
 # df_test <- df_results[df_results$cultivation == "TBA",]
 
 # Plot results #############################################################
+
+#TODO: Reihenfolge der Daten:
+# ITS with Asc, ITS with Asc + Dexa, ITS with Asc + Dexa and IGF + TGF, FBS with Asc 
 
 # Total lengths of cilia
 plot_total_length <- ggplot(df_results, aes(x=cultivation, y=total_length)) +
