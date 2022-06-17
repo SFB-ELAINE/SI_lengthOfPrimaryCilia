@@ -2,7 +2,7 @@
 # of cilia in seven test images                                     ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2022/06/15
+# Last changed: 2022/06/17
 
 
 # Delete everything in the environment
@@ -29,35 +29,10 @@ groundhog.library(pkgs, groundhog.day)
 # File containing the results of detectCilia (including which cilia
 # are to be removed)
 input_file_automatic <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
-input_file_manual <- "data/manualDetection/cultivation/df_manual_results.csv"
 output_dir <- "plots"
 
 # Import and clean data ####################################################
 df_results_automatic <- readr::read_csv(file = input_file_automatic, name_repair = "universal")
-df_results_manual <- readr::read_csv(file = input_file_manual, name_repair = "universal")
-
-
-# Keep only results of seven test images
-name_of_test_images <- gsub(pattern = "(.+)_[0-9]{1,2}$", replacement = "\\1", x = df_results_manual$Image_name)
-name_of_test_images <- unique(name_of_test_images)
-if(length(name_of_test_images) > 1){
-  print("Something went wrong. We have more than one test image name.")
-}
-
-df_results_automatic <- df_results_automatic[grepl(
-  pattern = name_of_test_images,
-  x = df_results_automatic$fileName, fixed = TRUE), ]
-
-print(paste("We are deleting ", sum(df_results_automatic$to_be_removed != "no"),
-            " cilium(a) from the automatic cilia detection because we have manually ",
-            "marked it being a non-cilium structure.", sep=""))
-
-df_results_automatic <- df_results_automatic[df_results_automatic$to_be_removed == "no",]
-
-
-df_results_manual <- df_results_manual[grepl(
-  pattern = name_of_test_images,
-  x = df_results_manual$Image_name, fixed = TRUE), ]
 
 
 # Add information of cultivation
@@ -66,26 +41,27 @@ df_results_manual <- df_results_manual[grepl(
 # cultivations <- gsub(pattern = "(.+)_zstack.+", replacement = "\\1", x = cultivations)
 # cultivations <- unique(cultivations)
 
-df_results_automatic$cultivation <- "TBA"
+df_results_automatic$cultivation <- NA
 
-ITS with Asc, ITS with Asc + Dexa, ITS with Asc + Dexa and IGF + TGF, FBS with Asc 
+names_of_experiments <- c("ITS w/ Asc", "ITS w/ Asc + Dexa",
+                          "ITS w/ Asc + Dexa and IGF + TGF",
+                          "FBS w/ Asc")
 
-df_results_automatic$cultivation[grepl(pattern = "Kollagen mit WF", x = df_results$fileName, ignore.case = TRUE)] <- "Coll. w/ GF"
-df_results_automatic$cultivation[grepl(pattern = "Kollagen mit FKS", x = df_results$fileName, ignore.case = TRUE)] <- "Coll. w/ FCS"
-df_results_automatic$cultivation[grepl(pattern = "Kollagen nur Asc", x = df_results$fileName, ignore.case = TRUE)] <- "Coll. w/ Asc"
-df_results_automatic$cultivation[grepl(pattern = "Kollagen mit Asc\\+Dexa", x = df_results$fileName, ignore.case = TRUE)] <- "Coll. w/ Asc & Dexa"
-df_results_automatic$cultivation[grepl(pattern = "Kollagen mit Asc u Dexa", x = df_results$fileName, ignore.case = TRUE)] <- "Coll. w/ Asc & Dexa"
-df_results_automatic$cultivation[grepl(pattern = "Glas mit WF", x = df_results$fileName, ignore.case = TRUE)] <- "Glass w/ GF"
+df_results_automatic$cultivation[grepl(pattern = "ITSwithAsc_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[1]
+df_results_automatic$cultivation[grepl(pattern = "ITSwithAsc+Dexa_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[2]
+df_results_automatic$cultivation[grepl(pattern = "ITSwithAsc+Dexa+IGF+TGF_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[3]
+df_results_automatic$cultivation[grepl(pattern = "FBSwithAsc_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[4]
 
-# df_test <- df_results[df_results$cultivation == "TBA",]
+if(sum(is.na(df_results_automatic$cultivation)) > 0){
+  print("Something went wrong with naming the cultivation conditiosn.")
+}
+
+df_results_automatic$cultivation <- factor(df_results_automatic$cultivation, levels = names_of_experiments)
 
 # Plot results #############################################################
 
-#TODO: Reihenfolge der Daten:
-# ITS with Asc, ITS with Asc + Dexa, ITS with Asc + Dexa and IGF + TGF, FBS with Asc 
-
 # Total lengths of cilia
-plot_total_length <- ggplot(df_results, aes(x=cultivation, y=total_length)) +
+plot_total_length <- ggplot(df_results_automatic, aes(x=cultivation, y=total_length_in_um)) +
   stat_boxplot(geom ='errorbar', width = 0.3) +
   geom_boxplot(alpha = 1) +
   geom_jitter(color="black", size=0.5, alpha=0.9) +
@@ -94,12 +70,79 @@ plot_total_length <- ggplot(df_results, aes(x=cultivation, y=total_length)) +
   theme(#axis.title.y=element_text(size=12),
     #axis.text.x = element_blank(),
     axis.ticks.x = element_blank()) +
+  ylab("Total cilium length in \u03BCm") +
+  xlab("Cultivation")
+
+ggsave(filename = paste(output_dir, "all_cilia_total_lengths.pdf", sep="/"),
+       width = 297, height = 210, units = "mm")
+ggsave(filename = paste(output_dir, "all_cilia_total_lengths.png", sep="/"),
+       width = 297, height = 210, units = "mm")
+
+
+plot_total_length_violin <- ggplot(df_results_automatic, aes(x=cultivation, y=total_length_in_um)) +
+  geom_violin() +
+  # stat_boxplot(geom ='errorbar', width = 0.3) +
+  geom_boxplot(width=0.1) +
+  # geom_jitter(color="black", size=0.5, alpha=0.9) +
+  #ylim(0,20) +
+  theme_bw(base_size = 18) +
+  theme(#axis.title.y=element_text(size=12),
+    #axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()) +
   ylab( "Total cilium length in \u03BCm") +
   xlab("Cultivation")
 
-#print(plot_total_length)
 
-ggsave(filename = paste(output_dir, "cilia_total_lengths.pdf", sep="/"),
+ggsave(filename = paste(output_dir, "all_cilia_total_lengths_violin_plot.pdf", sep="/"),
        width = 297, height = 210, units = "mm")
-ggsave(filename = paste(output_dir, "cilia_total_lengths.png", sep="/"),
+ggsave(filename = paste(output_dir, "all_cilia_total_lengths_violin_plot.png", sep="/"),
        width = 297, height = 210, units = "mm")
+
+
+
+# Plot data that shall not be removed
+#TODO: Go through every image and check for bad cilia
+
+df_results_automatic_filtered <- df_results_automatic[!grepl(pattern = "yes", x = df_results_automatic$to_be_removed, ignore.case = TRUE),]
+
+
+
+# Total lengths of cilia
+plot_total_length <- ggplot(df_results_automatic_filtered, aes(x=cultivation, y=total_length_in_um)) +
+  stat_boxplot(geom ='errorbar', width = 0.3) +
+  geom_boxplot(alpha = 1) +
+  geom_jitter(color="black", size=0.5, alpha=0.9) +
+  #ylim(0,20) +
+  theme_bw(base_size = 18) +
+  theme(#axis.title.y=element_text(size=12),
+    #axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()) +
+  ylab("Total cilium length in \u03BCm") +
+  xlab("Cultivation")
+
+ggsave(filename = paste(output_dir, "all_filtered_cilia_total_lengths.pdf", sep="/"),
+       width = 297, height = 210, units = "mm")
+ggsave(filename = paste(output_dir, "all_filtered_cilia_total_lengths.png", sep="/"),
+       width = 297, height = 210, units = "mm")
+
+
+plot_total_length_violin <- ggplot(df_results_automatic_filtered, aes(x=cultivation, y=total_length_in_um)) +
+  geom_violin() +
+  # stat_boxplot(geom ='errorbar', width = 0.3) +
+  geom_boxplot(width=0.1) +
+  # geom_jitter(color="black", size=0.5, alpha=0.9) +
+  #ylim(0,20) +
+  theme_bw(base_size = 18) +
+  theme(#axis.title.y=element_text(size=12),
+    #axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()) +
+  ylab( "Total cilium length in \u03BCm") +
+  xlab("Cultivation")
+
+
+ggsave(filename = paste(output_dir, "all_filtered_cilia_total_lengths_violin_plot.pdf", sep="/"),
+       width = 297, height = 210, units = "mm")
+ggsave(filename = paste(output_dir, "all_filtered_cilia_total_lengths_violin_plot.png", sep="/"),
+       width = 297, height = 210, units = "mm")
+
+

@@ -1,7 +1,7 @@
 # Script for automatic cilia detection using detectCilia +++++++++++++++++++
 # Author: Kai Budde
 # Created: 2022/05/04
-# Last changed: 2022/06/14
+# Last changed: 2022/06/16
 
 # Delete everything in the environment
 rm(list = ls())
@@ -67,6 +67,7 @@ require(detectCilia)
 file_names <- list.files(path = input_dir)
 file_names_czi <- file_names[grepl("czi", file_names)]
 file_names_czi <- paste(input_dir, file_names_czi, sep="/")
+
 number_of_czi_files <- length(file_names_czi)
 
 # Get and save metadata as csv
