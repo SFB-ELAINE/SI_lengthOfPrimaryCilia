@@ -2,7 +2,7 @@
 # of cilia in seven test images                                     ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2022/06/15
+# Last changed: 2022/06/17
 
 
 # Delete everything in the environment
@@ -331,7 +331,7 @@ df_dummy <- df_combined %>%
   dplyr::group_by(image_name_short, researcher) %>% 
   dplyr::summarise(mean_length = mean(total_length_in_um), sd_length = sd(total_length_in_um))
 
-plot_total_length_meand_sd <- ggplot(df_dummy, aes(x=image_name_short, y=mean_length, color=researcher)) + 
+plot_total_length_mean_sd <- ggplot(df_dummy, aes(x=image_name_short, y=mean_length, color=researcher)) + 
   geom_point(size=3, alpha=0.7, position=position_dodge(0.5))+
   geom_errorbar(aes(ymin=mean_length-sd_length, ymax=mean_length+sd_length), width=.2, size=1, alpha=0.7,
                 position=position_dodge(0.5)) +
@@ -345,7 +345,7 @@ plot_total_length_meand_sd <- ggplot(df_dummy, aes(x=image_name_short, y=mean_le
   xlab("Image number") +
   scale_color_discrete(name="Rater")
 
-# print(plot_total_length_meand_sd)
+# print(plot_total_length_mean_sd)
 
 ggsave(filename = paste(output_dir, "comparison_man_aut_length_mean_sd.pdf", sep="/"),
        width = 297, height = 210, units = "mm")
