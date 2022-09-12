@@ -7,13 +7,14 @@ Supporting information to "Influence of cultivation methods on the lengths of pr
 
 ## 1.1 Manual cilia detection
 
-Please read the manual ??? (TODO) for manually extracting the number of cilia in a microscopy image as well as 
+Please read the manual in the appendix for manually extracting the number of cilia in a microscopy image as well as determining their lengths.
+
 
 ## 1.2 Automatic cilia detection
 
 ### 1.2.1 Detect and measure all cilia automatically
 
-Detect all cilia in all czi files saved in a directy by calling the script "AutomaticCiliaDetection.R".
+Detect all cilia in all czi files saved in a directory by calling the script "AutomaticCiliaDetection.R".
 
 ### 1.2.2 Add results from automatic detecion to csv files
 
