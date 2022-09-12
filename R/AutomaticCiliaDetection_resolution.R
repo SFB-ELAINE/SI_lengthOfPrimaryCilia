@@ -113,7 +113,6 @@ if(analyzeCziImages){
     if(i == 1){
       df_cilium_summary <- readr::read_csv(file = paste0(input_directories[i], "/cilium_summary.csv"), name_repair = "universal")
       df_cilium_summary$to_be_removed <- "yes_or_no"
-      
       df_cilium_summary$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(input_directories[i]))
       df_cilium_summary <- df_cilium_summary %>% 
         dplyr::relocate(fileName)
@@ -130,6 +129,7 @@ if(analyzeCziImages){
         dplyr::relocate(fileName)
     }else{
       df_cilium_summary_dummy <- readr::read_csv(file = paste0(input_directories[i], "/cilium_summary.csv"), name_repair = "universal")
+      df_cilium_summary_dummy$to_be_removed <- "yes_or_no"
       df_cilium_summary_dummy$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(input_directories[i]))
       df_cilium_summary_dummy <- df_cilium_summary_dummy %>% 
         dplyr::relocate(fileName)
