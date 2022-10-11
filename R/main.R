@@ -23,6 +23,25 @@ automaticCiliaDetection(input_dir, output_dir)
 rm(list = c("input_dir", "output_dir"))
 
 
+# 2. Combine results of automatic detection from resolution images #########
+
+# Data input
+input_dir <- "E:/PhD/Daten/Cilia/resolutionImages"
+output_dir <- "data/automaticDetection/resolution"
+use_directory_filter <- "none"
+remove_directory_filter <- "none"
+
+# Calling the function
+source("R/combineDetectCiliaResults.R")
+automaticCiliaDetection(input_dir, output_dir, directory_filter, directory_remove_filter)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir", "directory_filter", "directory_remove_filter"))
+
+
+
+
+
 
 
 
@@ -38,3 +57,18 @@ automaticCiliaDetection(input_dir, output_dir)
 
 # Removing objects
 rm(list = c("input_dir", "output_dir"))
+
+# x + 1. Combine results of automatic detection from cultivation images ####
+
+# Data input
+input_dir <- "E:/PhD/Daten/Cilia/allImages"
+output_dir <- "data/automaticDetection/cultivation"
+use_directory_filter <- "none" #none #190815
+remove_directory_filter <- "none" #compare
+
+# Calling the function
+source("R/combineDetectCiliaResults.R")
+automaticCiliaDetection(input_dir, output_dir, directory_filter, directory_remove_filter)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir", "directory_filter", "directory_remove_filter"))
