@@ -1,15 +1,13 @@
 # Script for combining the results (csv data) from  the R package ++++++++++
-# detectCilia                                                     ++++++++++
+# detectCilia using the cultivation images                        ++++++++++
 # Author: Kai Budde
 # Created: 2021/06/24
 # Last changed: 2022/06/13
 
 
-# Delete everything in the environment
-rm(list = ls())
-# close all open plots in RStudio
-graphics.off()
-
+combineDetectCiliaResults <- function(input_dir, output_dir){
+  
+}
 # Load packages ############################################################
 
 # Set groundhog day for reproducibility (see https://groundhogr.com)
@@ -36,6 +34,7 @@ directory_filter <- "none" #none #190815
 directory_remove_filter <- "compare" #none
 
 # Filter results directories ###############################################
+
 output_dirs <- list.dirs(input_dir, recursive = TRUE)
 # Remove input dir from list
 output_dirs <- output_dirs[!(output_dirs == input_dir)]
@@ -48,6 +47,7 @@ if(directory_remove_filter != "none"){
 }
 
 # Read csv files and combine them into one data frame ######################
+
 for(i in 1:length(output_dirs)){
   
   if(i == 1){
