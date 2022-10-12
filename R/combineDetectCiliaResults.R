@@ -31,11 +31,11 @@ combineDetectCiliaResults <- function(input_dir, output_dir,
   # Check for real detectCilia output
   output_dirs <- output_dirs[grepl(pattern = "output$", x = output_dirs, ignore.case = TRUE)]
   
-  if(directory_filter != "none"){
-    output_dirs <- output_dirs[grepl(pattern = directory_filter, x = output_dirs)]
+  if(use_directory_filter != "none"){
+    output_dirs <- output_dirs[grepl(pattern = use_directory_filter, x = output_dirs)]
   }
-  if(directory_remove_filter != "none"){
-    output_dirs <- output_dirs[!grepl(pattern = directory_remove_filter, x = output_dirs)]
+  if(remove_directory_filter != "none"){
+    output_dirs <- output_dirs[!grepl(pattern = remove_directory_filter, x = output_dirs)]
   }
   
   # Read csv files and combine them into one data frame ####################
@@ -49,18 +49,23 @@ combineDetectCiliaResults <- function(input_dir, output_dir,
       df_cilia$to_be_removed <- "yes_or_no"
       df_cilia$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(output_dirs[i]))
       df_cilia <- df_cilia %>% 
-        select("fileName", "cilium", "vertical_length_in_um", "horizontal_length_in_um", "total_length_in_um", "to_be_removed")
+        dplyr::relocate(fileName)
+      # df_cilia <- df_cilia %>% 
+      #   select("fileName", "cilium", "vertical_length_in_um", "horizontal_length_in_um", "total_length_in_um", "to_be_removed")
       
       # Information of nuclei
       df_nuclei <- readr::read_csv(file.path(output_dirs[i],"nuclei_number.csv"), name_repair = "universal")
       df_nuclei$corrected_number <- NA
       df_nuclei$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(output_dirs[i]))
-      df_nuclei <- df_nuclei[,c(3,1,2)]
+      df_nuclei <- df_nuclei %>% 
+        dplyr::relocate(fileName)
+      # df_nuclei <- df_nuclei[,c(3,1,2)]
       
       # Information of parameter values
       df_parameters <- readr::read_csv(file.path(output_dirs[i],"parameter_list.csv"), name_repair = "universal")
       df_parameters$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(output_dirs[i]))
-      df_parameters <- df_parameters %>% dplyr::relocate(fileName)
+      df_parameters <- df_parameters %>% 
+        dplyr::relocate(fileName)
       
     }else{
       
@@ -69,24 +74,27 @@ combineDetectCiliaResults <- function(input_dir, output_dir,
       df_cilia_dummy$to_be_removed <- "yes_or_no"
       df_cilia_dummy$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(output_dirs[i]))
       df_cilia_dummy <- df_cilia_dummy %>% 
-        select("fileName", "cilium", "vertical_length_in_um", "horizontal_length_in_um", "total_length_in_um", "to_be_removed")
-      
-      df_cilia <- rbind(df_cilia, df_cilia_dummy)
+        dplyr::relocate(fileName)
+      # df_cilia_dummy <- df_cilia_dummy %>% 
+      #   select("fileName", "cilium", "vertical_length_in_um", "horizontal_length_in_um", "total_length_in_um", "to_be_removed")
       
       # Information of nuclei
       df_nuclei_dummy <- readr::read_csv(file.path(output_dirs[i],"nuclei_number.csv"), name_repair = "universal")
       df_nuclei_dummy$corrected_number <- NA
       df_nuclei_dummy$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(output_dirs[i]))
-      df_nuclei_dummy <- df_nuclei[,c(3,1,2)]
-      
-      df_nuclei <- rbind(df_nuclei, df_nuclei_dummy)
+      df_nuclei_dummy <- df_nuclei_dummy %>% 
+        dplyr::relocate(fileName)
       
       # Information of parameter values
       df_parameters_dummy <- readr::read_csv(file.path(output_dirs[i],"parameter_list.csv"), name_repair = "universal")
       df_parameters_dummy$fileName <- gsub(pattern = "_output", replacement = ".czi", x = basename(output_dirs[i]))
-      df_parameters_dummy <- df_parameters %>% dplyr::relocate(fileName)
+      df_parameters_dummy <- df_parameters_dummy %>%
+        dplyr::relocate(fileName)
       
-      df_parameters <- rbind(df_parameters, df_parameters_dummy)
+      df_cilia <- dplyr::bind_rows(df_cilia, df_cilia_dummy)
+      df_nuclei <- dplyr::bind_rows(df_nuclei, df_nuclei_dummy)
+      df_parameters <- dplyr::bind_rows(df_parameters, df_parameters_dummy)
+      
       rm(list = c("df_cilia_dummy", "df_nuclei_dummy",
                   "df_parameters_dummy"))
       
@@ -95,27 +103,22 @@ combineDetectCiliaResults <- function(input_dir, output_dir,
   }
 
   # Save resulting csv files #################################################
+  dir.create(output_dir, showWarnings = FALSE)
   
   readr::write_csv(x = df_cilia,
-                   file = paste(output_dir,"/","summary_cilia.csv", sep=""),
-                   row.names = FALSE)
+                   file = paste(output_dir,"/","summary_cilia.csv", sep=""))
   readr::write_csv2(x = df_cilia,
-                    file = paste(output_dir,"/","summary_cilia_de.csv", sep=""),
-                    row.names = FALSE)
+                    file = paste(output_dir,"/","summary_cilia_de.csv", sep=""))
   
   readr::write_csv(x = df_nuclei,
-                   file = paste(output_dir,"/","summary_nuclei.csv", sep=""),
-                   row.names = FALSE)
+                   file = paste(output_dir,"/","summary_nuclei.csv", sep=""))
   readr::write_csv2(x = df_nuclei,
-                    file = paste(output_dir,"/","summary_nuclei_de.csv", sep=""),
-                    row.names = FALSE)
+                    file = paste(output_dir,"/","summary_nuclei_de.csv", sep=""))
   
   readr::write_csv(x = df_parameters,
-                   file = paste(output_dir,"/","summary_parameters.csv", sep=""),
-                   row.names = FALSE)
+                   file = paste(output_dir,"/","summary_parameters.csv", sep=""))
   readr::write_csv2(x = df_parameters,
-                    file = paste(output_dir,"/","summary_parameters_de.csv", sep=""),
-                    row.names = FALSE)
+                    file = paste(output_dir,"/","summary_parameters_de.csv", sep=""))
   
   
 }

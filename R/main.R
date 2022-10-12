@@ -1,7 +1,7 @@
 # Main script for reproducing all results                +++++++++++++++++++
 # Author: Kai Budde
 # Created: 2022/10/11
-# Last changed: 2022/10/11
+# Last changed: 2022/10/12
 
 # Delete everything in the environment
 rm(list = ls())
@@ -13,7 +13,7 @@ graphics.off()
 
 # Data input
 input_dir <- "E:/PhD/Daten/Cilia/resolutionImages"
-output_dir <- "data/automaticDetection/resolution"
+output_dir <- "data/automaticDetection/resolution/test"
 
 # Calling the function
 source("R/automaticCiliaDetection.R")
@@ -33,10 +33,12 @@ remove_directory_filter <- "none"
 
 # Calling the function
 source("R/combineDetectCiliaResults.R")
-automaticCiliaDetection(input_dir, output_dir, directory_filter, directory_remove_filter)
+combineDetectCiliaResults(input_dir, output_dir,
+                          use_directory_filter, remove_directory_filter)
 
 # Removing objects
-rm(list = c("input_dir", "output_dir", "directory_filter", "directory_remove_filter"))
+rm(list = c("input_dir", "output_dir",
+            "use_directory_filter", "remove_directory_filter"))
 
 
 
@@ -68,7 +70,10 @@ remove_directory_filter <- "none" #compare
 
 # Calling the function
 source("R/combineDetectCiliaResults.R")
-automaticCiliaDetection(input_dir, output_dir, directory_filter, directory_remove_filter)
+combineDetectCiliaResults(input_dir, output_dir,
+                          use_directory_filter,
+                          remove_directory_filter)
 
 # Removing objects
-rm(list = c("input_dir", "output_dir", "directory_filter", "directory_remove_filter"))
+rm(list = c("input_dir", "output_dir",
+            "use_directory_filter", "remove_directory_filter"))
