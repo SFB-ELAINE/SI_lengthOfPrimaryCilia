@@ -63,9 +63,6 @@ output_dir <- "data/manualDetection/resolution"
 # File name of metadata from the execution of readCzi
 metadata_file <- "data/automaticDetection/resolution/summary_metadata.csv"
 
-# Results names
-researcher <- "kai"
-
 # Calling the function
 source("R/combineManualDetectionResults.R")
 combineManualDetectionResults(input_dir, output_dir, metadata_file)
@@ -132,13 +129,17 @@ output_dir <- "data/manualDetection/cultivation"
 # File name of metadata from the execution of readCzi
 metadata_file <- "data/automaticDetection/cultivation/summary_metadata.csv"
 
+# Mapping of cilia numbers
+cilia_mapping_file <- "cilia_numbers_clemens_kai.csv"
 # Results names
-researcher <- "kai"
+manual_result_files <- c("kai_results", "clemens_results", "nadja_results")
 
 # Calling the function
 source("R/combineManualDetectionResults.R")
-combineManualDetectionResults(input_dir, output_dir, metadata_file)
+combineManualDetectionResults(input_dir, output_dir, metadata_file,
+                              cilia_mapping_file, manual_result_files)
 
 # Removing objects
-rm(list = c("input_dir", "output_dir", "metadata_file"))
+rm(list = c("input_dir", "output_dir", "metadata_file",
+            "cilia_mapping_file", "manual_result_files"))
 
