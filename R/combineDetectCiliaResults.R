@@ -1,5 +1,5 @@
-# Script for combining the results (csv data) from  the R package ++++++++++
-# detectCilia using the cultivation images                        ++++++++++
+# Function for combining the results (csv data) from  the R package ++++++++
+# detectCilia using the cultivation images                          ++++++++
 # Author: Kai Budde
 # Created: 2021/06/24
 # Last changed: 2022/06/13
