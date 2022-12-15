@@ -9,8 +9,7 @@
 .Ruserdata
 *dump/
 data/manualDetection/resolution/originalFiles_csv/
-data/manualDetection/resolution/df_manual_results.csv
-data/manualDetection/resolution/df_manual_results_de.csv
+data/manualDetection/cultivation/originalFiles_csv/
 
 # Example code in package build process
 *-Ex.R
