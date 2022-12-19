@@ -1,0 +1,1 @@
+The original czi files are in "E:/PhD/Daten/Cilia/allImages".
