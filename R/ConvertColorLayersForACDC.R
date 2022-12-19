@@ -1,42 +1,44 @@
 # Script for converting color layers for use with ACDC detection        ++++
 # Author: Kai Budde
 # Created: 2022/07/22
-# Last changed: 2022/07/22
+# Last changed: 2022/12/15
 
+convertColorLayersForACDC <- function(input_dir, output_dir){
+  
+  # Load packages #############################################################
+  
+  # Set groundhog day for reproducibility (see https://groundhogr.com)
+  groundhog.day <- "2022-03-01"
+  if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
+    install.packages("groundhog")
+  }
+  
+  # Load packages
+  library(groundhog)
+  pkgs <- c("devtools")
+  groundhog.library(pkgs, groundhog.day)
+  
+  
+  # Install the R package for reading czi images
+  # TODO: Check the latest version
+  if(!("readCzi" %in% installed.packages()[,"Package"])){
+    # TODO: Add the latest version used
+    # devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.1.13")
+    devtools::install_github("SFB-ELAINE/readCzi")
+  }
+  require(readCzi)
+  
 
-# Delete everything in the environment
-rm(list = ls())
-# close all open plots in RStudio
-graphics.off()
-
-
-# Delete everything in the environment
-rm(list = ls())
-# close all open plots in RStudio
-graphics.off()
-
-# Please adapt the following parameters ####################################
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-directory_with_czi_files <- "ACDC" 
-
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-# Load packages #############################################################
-
-list.of.packages <- c("devtools")
-
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-
-require(devtools)
-
-# Install readCzi if not already installed (used version: 0.1.??)
-devtools::install_github(repo = "https://github.com/SFB-ELAINE/readCzi")#, ref = "v0.1.??")
-require(readCzi)
-
-# Please adapt the following parameters ####################################
-czi_files <- list.files(path = directory_with_czi_files, pattern = "czi", full.names = TRUE)
-for(i in 1:length(czi_files)){
-  input_file <- czi_files[i]
-  readCzi::convertCziToTif(input_file = input_file, change_layers = "red<->green", add_scale_bar = FALSE)
+  # Please adapt the following parameters ####################################
+  czi_files <- list.files(path = input_dir, pattern = "czi", full.names = TRUE)
+  dir.create(path = output_dir, showWarnings = FALSE)
+  
+  for(i in 1:length(czi_files)){
+    input_file <- czi_files[i]
+    readCzi::convertCziToTif(input_file = input_file, output_dir = output_dir,
+                             change_layers = "red<->green", add_scale_bar = FALSE)
+  }
+  
+  
+  
 }
