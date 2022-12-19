@@ -10,6 +10,7 @@
 *dump/
 data/manualDetection/resolution/originalFiles_csv/
 data/manualDetection/cultivation/originalFiles_csv/
+plots/
 
 # Example code in package build process
 *-Ex.R
