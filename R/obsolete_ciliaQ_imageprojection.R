@@ -3,6 +3,7 @@
 # Created: 2022/06/17
 # Last changed: 2022/06/17
 
+# Script to add cilia numbers from ciliaQ to images
 
 # Delete everything in the environment
 rm(list = ls())

@@ -4,7 +4,7 @@
 # cultivation methods on the lengths of primary cilia"         +++++++++++++
 # Author: Kai Budde
 # Created: 2022/10/11
-# Last changed: 2022/12/19
+# Last changed: 2022/12/20
 
 # Delete everything in the environment
 rm(list = ls())
@@ -257,4 +257,30 @@ rm(list = c("input_file_acdc", "input_file_metadata", "output_dir"))
 
 # 5 Detection of cilia with ciliaQ                                ##########
 
+# 5.1 Read results as txt file and convert to csv                 ##########
 
+# Directory with analysis results (CiliaQ files)
+input_dir <- "E:/PhD/Daten/Cilia/allImages/ACDC/histogram_equalized_converted_multistack"
+# Output directory
+output_dir <- "CiliaQ_horizontal"
+
+
+# Calling the function
+source("R/ciliaQ_getResults.R")
+ciliaQ_getResults(input_dir, output_dir)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir"))
+
+# 5.2 Plot detection results of ACDC                              ##########
+
+input_file_ciliaq <- file.path("CiliaQ_horizontal","ciliaq_data.csv")
+# input_file_metadata <- "data/automaticDetection/cultivation/summary_metadata.csv"
+output_dir <- "plots/ciliaQ"
+
+# Calling the function
+source("R/ciliaQ_plotAutomaticDetection.R")
+ciliaQ_plotAutomaticDetection(input_file_ciliaq, output_dir)
+
+# Removing objects
+rm(list = c("input_file_acdc", "input_file_metadata", "output_dir"))
