@@ -1,4 +1,4 @@
-Cilium.ID,Position,Total.Length.nm.,Outer.Length.nm.,Out.In.Ratio...,Analysis.Time.s.,Manual.Total.Length.nm.,Manual.Outer.Length.nm.,Manual.Out.In.Ratio...,Manual.Analysis.Time.s.,fileName
+Cilium.ID,Position,Total.Length.pixel.,Outer.Length.pixel.,Out.In.Ratio...,Analysis.Time.s.,Manual.Total.Length.pixel.,Manual.Outer.Length.pixel.,Manual.Out.In.Ratio...,Manual.Analysis.Time.s.,fileName
 1,"[253,1,18,9]",7.869886042961897,7.869886042961897,99.99872934971606,0.0128749,7.869886042961897,7.869886042961897,99.99872934971606,0,190730_EV38_1_Collagen_ITSwithAsc+Dexa+IGF+TGF_63x_zstack_1_zstack_histogram_equalized.tif
 2,"[272,30,24,21]",8.50217177405117,8.50217177405117,99.99882384376016,0.004911,8.50217177405117,8.50217177405117,99.99882384376016,0,190730_EV38_1_Collagen_ITSwithAsc+Dexa+IGF+TGF_63x_zstack_1_zstack_histogram_equalized.tif
 3,"[973,56,25,15]",12.32235080810348,3.723341354834031,30.215915752615462,0.0051997,12.32235080810348,3.723341354834031,30.215915752615462,0,190730_EV38_1_Collagen_ITSwithAsc+Dexa+IGF+TGF_63x_zstack_1_zstack_histogram_equalized.tif

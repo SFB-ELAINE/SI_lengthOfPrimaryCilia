@@ -29,6 +29,8 @@ ACDC_readXLSX <- function(input_file, output_dir){
   number_of_lines <- nrow(df_data)
   column_names <- tidy_names(as.character(df_data[4,]), syntactic = TRUE, quiet = TRUE)
   
+  column_names <- gsub(pattern = "\\.nm\\.", replacement = ".pixel.", x = column_names)
+  
   # Get all tables that are part of the big one.
   for(i in 1:number_of_images){
     if(i == 1){
