@@ -63,7 +63,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
   
   # Plot results #############################################################
   
-  # Total lengths of cilia
+  # Horizontal lengths of cilia
   plot_horizontal_length <- ggplot(df_results, aes(x=cultivation, y=total_length_in_um)) +
     stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(alpha = 1) +
@@ -74,7 +74,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab("Total horizontal cilium length in \u03BCm determined by ACDC") +
+    ylab("Horizontal horizontal cilium length in \u03BCm determined by ACDC") +
     xlab("Cultivation")
   
   ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.pdf"),
@@ -94,7 +94,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab( "Total cilium length in \u03BCm") +
+    ylab( "Horizontal cilium length in \u03BCm") +
     xlab("Cultivation")
   
   
@@ -115,7 +115,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
   
   df_results_filtered <- df_results[df_results$outlier != "yes",]
   
-  # Total lengths of cilia
+  # Horizontal lengths of cilia
   plot_horizontal_length <- ggplot(df_results_filtered, aes(x=cultivation, y=total_length_in_um)) +
     stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(alpha = 1) +
@@ -126,7 +126,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab("Total cilium length in \u03BCm") +
+    ylab("Horizontal cilium length in \u03BCm") +
     xlab("Cultivation")
   
   ggsave(filename = paste(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths.pdf", sep="/"),
@@ -146,7 +146,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab( "Total cilium length in \u03BCm") +
+    ylab("Horizontal cilium length in \u03BCm") +
     xlab("Cultivation")
   
   
@@ -205,6 +205,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
                                                      add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
       stat_pvalue_manual(pairwise_comparison, label = "p.adj", tip.length = 0.01, step.increase = 0.05) +
+      ylim(0,8) +
       labs(
         subtitle = get_test_label(res.aov, detailed = TRUE),
         caption = get_pwc_label(pairwise_comparison)
@@ -213,7 +214,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
       theme(#axis.title.y=element_text(size=12),
         #axis.text.x = element_blank(),
         axis.ticks.x = element_blank()) +
-      ylab( "Total cilium length in \u03BCm") +
+      ylab("Horizontal cilium length in \u03BCm") +
       xlab("Cultivation")
     
     ggsave(filename = paste(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths_violin_plot_t_test.pdf", sep="/"),
