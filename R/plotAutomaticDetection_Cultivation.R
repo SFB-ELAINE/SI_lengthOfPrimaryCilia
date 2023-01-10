@@ -39,9 +39,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   df_results_automatic$cultivation <- NA
   
-  names_of_experiments <- c("ITS w/ Asc", "ITS w/ Asc + Dexa",
-                            "ITS w/ Asc + Dexa and IGF + TGF",
-                            "FBS w/ Asc")
+  names_of_experiments <- c("ITS", "ITS w/ Dexa",
+                            "ITS w/ Dexa and IGF + TGF",
+                            "FBS")
   
   df_results_automatic$cultivation[grepl(pattern = "ITSwithAsc_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[1]
   df_results_automatic$cultivation[grepl(pattern = "ITSwithAsc+Dexa_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[2]

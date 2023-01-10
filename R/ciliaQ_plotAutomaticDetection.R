@@ -45,9 +45,9 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   
   df_results$cultivation <- NA
   
-  names_of_experiments <- c("ITS w/ Asc", "ITS w/ Asc + Dexa",
-                            "ITS w/ Asc + Dexa and IGF + TGF",
-                            "FBS w/ Asc")
+  names_of_experiments <- c("ITS", "ITS w/ Dexa",
+                            "ITS w/ Dexa and IGF + TGF",
+                            "FBS")
   
   df_results$cultivation[grepl(pattern = "ITSwithAsc_", x = df_results$Name, fixed = TRUE)] <- names_of_experiments[1]
   df_results$cultivation[grepl(pattern = "ITSwithAsc+Dexa_", x = df_results$Name, fixed = TRUE)] <- names_of_experiments[2]
