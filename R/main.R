@@ -284,3 +284,21 @@ ciliaQ_plotAutomaticDetection(input_file_ciliaq, output_dir)
 
 # Removing objects
 rm(list = c("input_file_acdc", "input_file_metadata", "output_dir"))
+
+
+
+
+
+
+
+# 6 Create test cilium images                                     ##########
+
+number_of_images <- 10
+output_dir <- "testImages"
+
+# Calling the function
+source("R/createTestCiliumImages.R")
+create2DTestCiliumImages(number_of_images, output_dir)
+
+# Removing objects
+rm(list = c("number_of_images", "output_dir"))
