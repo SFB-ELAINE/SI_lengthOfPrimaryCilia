@@ -40,7 +40,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   df_results_automatic$cultivation <- NA
   
   names_of_experiments <- c("ITS", "ITS w/ Dexa",
-                            "ITS w/ Dexa and IGF + TGF",
+                            "ITS w/ Dexa + IGF + TGF",
                             "FBS")
   
   df_results_automatic$cultivation[grepl(pattern = "ITSwithAsc_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[1]
@@ -55,6 +55,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   df_results_automatic$cultivation <- factor(df_results_automatic$cultivation, levels = names_of_experiments)
   
   # Plot results #############################################################
+  dir.create(output_dir, showWarnings = FALSE)
   
   # Total lengths of cilia
   plot_total_length <- ggplot(df_results_automatic, aes(x=cultivation, y=total_length_in_um)) +
@@ -258,6 +259,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   detection_results <- df_results_automatic_filtered %>%
     dplyr::group_by(cultivation) %>%
     rstatix::get_summary_stats(total_length_in_um, type = "mean_sd")
+  
+  print(paste("The results of the filiterd cilia lengths measurements are:"))
+  print(detection_results)
   
   res.aov <- df_results_automatic_filtered %>% anova_test(total_length_in_um ~ cultivation)
   

@@ -111,7 +111,19 @@ combineDetectCiliaResults(input_dir, output_dir,
 rm(list = c("input_dir", "output_dir",
             "use_directory_filter", "remove_directory_filter"))
 
-# 2.7 Convert original results from manual detection of cultivation ########
+# 2.7 Calculate the number of found nuclei #################################
+# Data input
+input_file <- "data/automaticDetection/cultivation/summary_nuclei.csv"
+
+# Calling the function
+source("R/numberOfNuclei.R")
+numberOfNuclei(input_file)
+
+# Removing objects
+rm(list = c("input_file"))
+
+
+# 2.8 Convert original results from manual detection of cultivation ########
 #     images to csv
 
 # Data input
@@ -127,7 +139,7 @@ convertXLSXtoCSV(input_dir, output_dir, language)
 rm(list = c("input_dir", "output_dir", "language"))
 
 
-# 2.8 Combine results of manual detection from cultivation images ##########
+# 2.9 Combine results of manual detection from cultivation images ##########
 
 # Data input
 input_dir <- "data/manualDetection/cultivation/originalFiles_csv"
@@ -152,13 +164,14 @@ rm(list = c("input_dir", "output_dir", "metadata_file",
 # 3 Plot results                                                  ##########
 
 # 3.1 Plot results of automatic measurement of cultivation images ##########
+#     and print a tibble with total lengths
 
 # Data input
 
 # File containing the results of detectCilia (including which cilia
 # are to be removed)
 input_file <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
-output_dir <- "plots"
+output_dir <- "plots/automaticDetectionCultivation"
 
 # Calling the function
 source("R/plotAutomaticDetection_Cultivation.R")
