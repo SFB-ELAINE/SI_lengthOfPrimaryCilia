@@ -2,7 +2,7 @@
 # of cilia in seven test images                                     ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2022/06/17
+# Last changed: 2023/01/15
 
 plotComparisonManualAutomaticDetection_Cultivation <- function(
   input_file_automatic,
@@ -77,8 +77,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # Rename columns
   df_results_automatic <- df_results_automatic %>% 
-    dplyr::rename("image_name" = "fileName",
-                  "cilium_number_automatic" = "cilium")
+    dplyr::rename("cilium_number_automatic" = "cilium")
   
   # Keep specific columns that also occur in df_results_manual
   df_results_automatic <- df_results_automatic %>% 
@@ -88,7 +87,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   # Add columns
   df_results_automatic$image_name_short <- as.numeric(
     gsub(pattern = ".+_([0-9]{1,2}).czi$", replacement = "\\1",
-         x = df_results_automatic$image_name, ignore.case = TRUE))
+         x = df_results_automatic$fileName, ignore.case = TRUE))
   
   df_results_automatic$researcher <- "automatic"
   
@@ -97,8 +96,11 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   # Checking for mapping mistakes
   # (It is not a mistake if in one image, there are two cilia detected
   mapping_mistakes <-
-    df_cilium_numbers_mapping[duplicated(paste(df_cilium_numbers_mapping$image_name, df_cilium_numbers_mapping$cilium_number_automatic, sep=" ")) &
-                                !is.na(df_cilium_numbers_mapping$cilium_number_automatic),]
+    df_cilium_numbers_mapping[
+      duplicated(paste(df_cilium_numbers_mapping$fileName,
+                       df_cilium_numbers_mapping$cilium_number_automatic,
+                       sep=" ")) &
+        !is.na(df_cilium_numbers_mapping$cilium_number_automatic),]
   
   if(nrow(mapping_mistakes) > 0){
     print(paste("There might be a mapping mistake with the automatic data.",
@@ -107,7 +109,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   }
   
   mapping_mistakes <-
-    df_cilium_numbers_mapping[duplicated(paste(df_cilium_numbers_mapping$image_name, df_cilium_numbers_mapping$cilium_number_clemens, sep=" ")) &
+    df_cilium_numbers_mapping[duplicated(paste(df_cilium_numbers_mapping$fileName, df_cilium_numbers_mapping$cilium_number_clemens, sep=" ")) &
                                 !is.na(df_cilium_numbers_mapping$cilium_number_clemens),]
   
   if(nrow(mapping_mistakes) > 0){
@@ -116,22 +118,29 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     print(mapping_mistakes)
   }
   
-  df_results_automatic$image_name <- gsub(pattern = "\\.czi",
-                                          replacement = "",
-                                          x = df_results_automatic$image_name,
-                                          ignore.case = TRUE)
+  # df_results_automatic$fileName <- gsub(pattern = "\\.czi",
+  #                                         replacement = "",
+  #                                         x = df_results_automatic$fileName,
+  #                                         ignore.case = TRUE)
   
   df_results_automatic <- rquery::natural_join(a = df_results_automatic,
                                                b = df_cilium_numbers_mapping,
-                                               by = c("image_name", "cilium_number_automatic"))
+                                               by = c("fileName", "cilium_number_automatic"))
   
-  # Filter the manual detection images #######################################
+  # Filter the manual detection images #####################################
+  
+  df_results_manual$image_name_short <- as.numeric(
+    gsub(pattern = ".+_([0-9]{1,2}).czi$", replacement = "\\1",
+         x = df_results_manual$fileName, ignore.case = TRUE))
+  
+  df_results_manual <- df_results_manual[is.na(df_results_manual$comments) |
+                                           !(df_results_manual$comments == "at border"),]
   
   df_results_manual <- df_results_manual[grepl(
     pattern = name_of_test_images,
-    x = df_results_manual$image_name, fixed = TRUE), ]
+    x = df_results_manual$fileName, fixed = TRUE), ]
   
-  # Add data from automatic detection to manual detection. tibble ############
+  # Add data from automatic detection to manual detection. tibble ##########
   
   # Add missing columns
   df_results_automatic$cilium_number_kai <- NA
@@ -145,7 +154,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   df_combined <- dplyr::add_row(df_results_manual, df_results_automatic)
   
   
-  # Save final tibble ########################################################
+  # Save final tibble ######################################################
   
   dir.create(output_dir, showWarnings = FALSE)
   
@@ -153,18 +162,16 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   readr::write_csv2(x = df_combined, file = paste(output_dir, "/combined_manual_automatic_results_de.csv", sep=""))
   
   
-  
-  
   # Plot results #############################################################
   
   
   # Plot threshold_find values of automatic detection
-  plot_thresholds <- ggplot2::ggplot(data = df_results_automatic,
-                                     aes(x=threshold_find)) +
+  plot_thresholds <- ggplot2::ggplot(data = df_parameters,
+                                     aes(x = threshold_find)) +
     geom_histogram(binwidth = 0.001) +
     xlim(c(0,0.1)) +
     labs(title = "Histogram of thresholds of automatic detection") +
-    ggtitle(paste("Threshold (find) of ", name_of_test_images, sep=""))+
+    ggtitle(paste("Thresholds (find) for ", name_of_test_images, sep=""))+
     theme_bw()
   
   ggsave(filename = paste(output_dir, "hist_threshold_automatic_detection.pdf", sep="/"),
@@ -175,12 +182,12 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # Plot results of every image
   
-  images <- unique(df_combined$image_name)
+  images <- unique(df_combined$fileName)
   
   for(i in 1:length(images)){
     current_image <- images[i]
     
-    df_dummy <- df_combined[df_combined$image_name == current_image,]
+    df_dummy <- df_combined[df_combined$fileName == current_image,]
     df_dummy$cilium_number_clemens <- as.factor(df_dummy$cilium_number_clemens)
     df_dummy$researcher <- as.factor(df_dummy$researcher)
     
@@ -210,7 +217,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
            width = 297, height = 210, units = "mm")
     
     
-    plot_height_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=zstack_layers, color=researcher)) +
+    plot_height_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=vertical_length_in_layers, color=researcher)) +
       # stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
       # geom_boxplot(alpha = 1, position = position_dodge2(width = 0.9, preserve = "single"), outlier.shape = 1) +
       #geom_jitter(color="black", size=0.5, alpha=0.9) +
@@ -265,7 +272,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   
   # Vertical lengths of cilia in z-stack layers
-  plot_height <- ggplot(df_combined, aes(x=image_name_short, y=zstack_layers, color=researcher)) +
+  plot_height <- ggplot(df_combined, aes(x=image_name_short, y=vertical_length_in_layers, color=researcher)) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
     geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1) +
     #geom_jitter(color="black", size=0.5, alpha=0.9) +

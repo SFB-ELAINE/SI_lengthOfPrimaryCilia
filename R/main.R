@@ -4,7 +4,7 @@
 # cultivation methods on the lengths of primary cilia"         +++++++++++++
 # Author: Kai Budde
 # Created: 2022/10/11
-# Last changed: 2022/12/20
+# Last changed: 2023/01/15
 
 # Delete everything in the environment
 rm(list = ls())
@@ -187,15 +187,18 @@ output_dir <- "plots/manualAutomaticComparison"
 
 # Calling the function
 source("R/plotComparisonManualAutomaticDetection_Cultivation.R")
-plotAutomaticDetection_Cultivation(input_file_automatic,
-                                   input_file_automatic_parameters,
-                                   input_file_metadata,
-                                   input_file_manual,
-                                   input_file_cilium_numbers,
-                                   output_dir)
+plotComparisonManualAutomaticDetection_Cultivation(
+  input_file_automatic,
+  input_file_automatic_parameters,
+  input_file_metadata,
+  input_file_manual,
+  input_file_cilium_numbers,
+  output_dir)
 
 # Removing objects
-rm(list = c("input_file", "output_dir"))
+rm(list = c("input_file_automatic", "input_file_automatic_parameters",
+            "input_file_metadata", "input_file_manual",
+            "input_file_cilium_numbers", "output_dir"))
 
 
 
