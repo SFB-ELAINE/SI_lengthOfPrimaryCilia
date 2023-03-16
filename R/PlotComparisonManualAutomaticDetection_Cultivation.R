@@ -2,7 +2,17 @@
 # of cilia in seven test images                                     ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2023/01/15
+# Last changed: 2023/03/16
+
+
+# Color schema
+#009E73 -> detectCilia (dc)
+#D55E00 -> ciliaQ
+#56B4E9 -> ACDC
+#F0E442 -> m1
+#CC79A7 -> m2
+#E69F00 -> m3
+
 
 plotComparisonManualAutomaticDetection_Cultivation <- function(
   input_file_automatic,
@@ -16,7 +26,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   # Load packages ##########################################################
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
-  groundhog.day <- "2022-03-01"
+  groundhog.day <- "2023-01-01"
   
   if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
     install.packages("groundhog")
@@ -24,7 +34,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rqdatatable", "rquery")
+  pkgs <- c("tidyverse", "rqdatatable", "rquery", "ggbeeswarm")
   groundhog.library(pkgs, groundhog.day)
   
   # Import data ############################################################
@@ -153,6 +163,16 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   df_combined <- dplyr::add_row(df_results_manual, df_results_automatic)
   
+  # Rename researchers
+  df_combined$researcher[df_combined$researcher == "clemens"] <- "m1"
+  df_combined$researcher[df_combined$researcher == "kai"] <- "m2"
+  df_combined$researcher[df_combined$researcher == "nadja"] <- "m3"
+  df_combined$researcher[df_combined$researcher == "automatic"] <- "dc"
+  legend_name <- "Rater"
+  
+  # Add column for higlighting
+  df_combined <- df_combined %>% 
+    dplyr::mutate(type=ifelse(researcher=="dc","Highlighted","Normal"))
   
   # Save final tibble ######################################################
   
@@ -181,7 +201,6 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   
   # Plot results of every image
-  
   images <- unique(df_combined$fileName)
   
   for(i in 1:length(images)){
@@ -191,14 +210,16 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     df_dummy$cilium_number_clemens <- as.factor(df_dummy$cilium_number_clemens)
     df_dummy$researcher <- as.factor(df_dummy$researcher)
     
-    legend_name <- "Rater"
     plot_horizontal_length_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=horizontal_length_in_pixels, color=researcher)) +
       # stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
       # geom_boxplot(alpha = 1, position = position_dodge2(width = 0.9, preserve = "single"), outlier.shape = 1) +
       # #geom_jitter(color="black", size=0.5, alpha=0.9) +
+      geom_point(size=4, alpha=0.7, aes(shape=researcher), color="black", stroke = 2) +
       geom_point(size=4, alpha=0.7, aes(shape=researcher)) +
-      scale_shape_manual(values=c(15, 17, 18, 19),  name = legend_name) +
-      scale_color_discrete(name = legend_name) +
+      scale_shape_manual(values=c(19, 15, 17, 18),  name = legend_name) +
+      scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+      # scale_color_manual(values=c("black", "black", "black", "black"), name = legend_name) +
+      # scale_color_discrete(values=c("#999999", "#E69F00", "#56B4E9", "#56B4E7"), name = legend_name) +
       ylim(0,25) +
       theme_bw(base_size = 18) +
       theme(#axis.title.y=element_text(size=12),
@@ -221,9 +242,13 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
       # stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
       # geom_boxplot(alpha = 1, position = position_dodge2(width = 0.9, preserve = "single"), outlier.shape = 1) +
       #geom_jitter(color="black", size=0.5, alpha=0.9) +
+      geom_point(size=4, alpha=0.7, aes(shape=researcher), color="black", stroke = 2) +
       geom_point(size=4, alpha=0.7, aes(shape=researcher)) +
-      scale_shape_manual(values=c(15, 17, 18, 19),  name = legend_name) +
-      scale_color_discrete(name = legend_name) +
+      scale_shape_manual(values=c(19, 15, 17, 18),  name = legend_name) +
+      scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+      # geom_point(size=4, alpha=0.7, aes(shape=researcher)) +
+      # scale_shape_manual(values=c(15, 17, 18, 19),  name = legend_name) +
+      # scale_color_discrete(name = legend_name) +
       ylim(0,20) +
       theme_bw(base_size = 18) +
       theme(#axis.title.y=element_text(size=12),
@@ -250,19 +275,27 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   # Total lengths of cilia
   df_combined$image_name_short <- as.factor(df_combined$image_name_short)
   
-  plot_total_length <- ggplot(df_combined, aes(x=image_name_short, y=total_length_in_um, color=researcher)) +
+  # New facet label names for image_name_short variable
+  image_name_short.lab <- c("Image 1", "Image 2", "Image 3", "Image 4", "Image 5", "Image 6", "Image 7")
+  names(image_name_short.lab) <- c(1, 2, 3, 4, 5, 6, 7)
+  
+  plot_total_length <- ggplot(df_combined, aes(x=researcher, y=total_length_in_um, color=researcher, fill = type)) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
-    geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1) +
-    #geom_jitter(color="black", size=0.5, alpha=0.9) +
-    geom_point(position = position_jitterdodge(jitter.width = 0.15)) +
+    geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
+    geom_beeswarm() +
+    scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+    scale_fill_manual(values=c("grey90", "white")) +
     ylim(1,7) +
     theme_bw(base_size = 18) +
-    theme(#axis.title.y=element_text(size=12),
-      #axis.text.x = element_blank(), 
-      axis.ticks.x = element_blank()) +
+    theme(legend.position = "none") +
+    # theme(#axis.title.y=element_text(size=12),
+    #   #axis.text.x = element_blank(), 
+    #   axis.ticks.x = element_blank()) +
     ylab("Total cilium length in \u03BCm") +
-    xlab("Image number") +
-    scale_color_discrete(name="Rater")
+    xlab("Rater") +
+  # scale_color_discrete(name="Rater")
+    facet_grid(.~image_name_short,
+               labeller = labeller(image_name_short = image_name_short.lab))
   
   # print(plot_total_length)
   
@@ -272,19 +305,25 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   
   # Vertical lengths of cilia in z-stack layers
-  plot_height <- ggplot(df_combined, aes(x=image_name_short, y=vertical_length_in_layers, color=researcher)) +
+  plot_height <- ggplot(df_combined, aes(x=researcher, y=vertical_length_in_layers, color=researcher, fill = type)) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
-    geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1) +
+    geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
     #geom_jitter(color="black", size=0.5, alpha=0.9) +
-    geom_point(position = position_jitterdodge(jitter.width = 0.15)) +
+    geom_beeswarm() +
+    scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+    scale_fill_manual(values=c("grey90", "white")) +
+    # geom_point(position = position_jitterdodge(jitter.width = 0.15)) +
     ylim(0,20) +
     theme_bw(base_size = 18) +
-    theme(#axis.title.y=element_text(size=12),
-      #axis.text.x = element_blank(), 
-      axis.ticks.x = element_blank()) +
+    theme(legend.position = "none") +
+    # theme(#axis.title.y=element_text(size=12),
+    #   #axis.text.x = element_blank(), 
+    #   axis.ticks.x = element_blank()) +
     ylab("Height (vertical cilium length) in z-stack layers") +
-    xlab("Image number") +
-    scale_color_discrete(name="Rater")
+    xlab("Rater") +
+    # scale_color_discrete(name="Rater")
+    facet_grid(.~image_name_short,
+               labeller = labeller(image_name_short = image_name_short.lab))
   
   # print(plot_height)
   
@@ -295,19 +334,25 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   
   # Horizontal lengths of cilia in pixels
-  plot_horizontal_length <- ggplot(df_combined, aes(x=image_name_short, y=horizontal_length_in_pixels, color=researcher)) +
+  plot_horizontal_length <- ggplot(df_combined, aes(x=researcher, y=horizontal_length_in_pixels, color=researcher, fill = type)) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
-    geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1) +
+    geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
     #geom_jitter(color="black", size=0.5, alpha=0.9) +
-    geom_point(position = position_jitterdodge(jitter.width = 0.15)) +
+    # geom_point(position = position_jitterdodge(jitter.width = 0.15)) +
+    geom_beeswarm() +
+    scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+    scale_fill_manual(values=c("grey90", "white")) +
     ylim(0,25) +
     theme_bw(base_size = 18) +
-    theme(#axis.title.y=element_text(size=12),
-      #axis.text.x = element_blank(), 
-      axis.ticks.x = element_blank()) +
+    theme(legend.position = "none") +
+    # theme(#axis.title.y=element_text(size=12),
+    #   #axis.text.x = element_blank(), 
+    #   axis.ticks.x = element_blank()) +
     ylab("Horizontal cilium length in pixels") +
-    xlab("Image number") +
-    scale_color_discrete(name="Rater")
+    xlab("Rater") +
+    facet_grid(.~image_name_short,
+               labeller = labeller(image_name_short = image_name_short.lab))
+    # scale_color_discrete(name="Rater")
   
   # print(plot_horizontal_length)
   
@@ -323,10 +368,13 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     dplyr::group_by(image_name_short, researcher) %>% 
     dplyr::summarise(mean_length = mean(total_length_in_um), sd_length = sd(total_length_in_um))
   
-  plot_total_length_mean_sd <- ggplot(df_dummy, aes(x=image_name_short, y=mean_length, color=researcher)) + 
-    geom_point(size=3, alpha=0.7, position=position_dodge(0.5))+
-    geom_errorbar(aes(ymin=mean_length-sd_length, ymax=mean_length+sd_length), width=.2, size=1, alpha=0.7,
-                  position=position_dodge(0.5)) +
+  plot_total_length_mean_sd <- ggplot(df_dummy, aes(x=image_name_short, y=mean_length, color=researcher)) +
+    geom_errorbar(aes(ymin=mean_length-sd_length, ymax=mean_length+sd_length), width=.5, size=2,
+                  position=position_dodge(0.5), show.legend=FALSE) +
+    geom_point(size=4, position=position_dodge(0.5), aes(shape=researcher), color="black", stroke = 2) +
+    geom_point(size=4, position=position_dodge(0.5), aes(shape=researcher)) +
+    scale_shape_manual(name = legend_name, values = c(19, 15, 17, 18)) +
+    scale_color_manual(name = legend_name, values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00")) +
     ylim(0,8) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -334,8 +382,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
       axis.ticks.x = element_blank(),
       plot.title = element_text(hjust = 0.5)) +
     ylab("Total cilium length in \u03BCm (mean and sd)") +
-    xlab("Image number") +
-    scale_color_discrete(name="Rater")
+    xlab("Image")
   
   # print(plot_total_length_mean_sd)
   
@@ -343,7 +390,6 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = paste(output_dir, "comparison_man_aut_length_mean_sd.png", sep="/"),
          width = 297, height = 210, units = "mm")
-  
   
 }
 
