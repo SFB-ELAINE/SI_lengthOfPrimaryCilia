@@ -2,7 +2,7 @@
 # the R package detectCilia as well as manual detection results     ++++++++
 # Author: Kai Budde
 # Created: 2021/11/11
-# Last changed: 2022/09/16
+# Last changed: 2023/01/16
 
 # Delete everything in the environment
 rm(list = ls())

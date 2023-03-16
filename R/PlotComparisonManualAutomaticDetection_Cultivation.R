@@ -295,7 +295,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     xlab("Rater") +
   # scale_color_discrete(name="Rater")
     facet_grid(.~image_name_short,
-               labeller = labeller(image_name_short = image_name_short.lab))
+               labeller = labeller(image_name_short = image_name_short.lab)) +
+    theme(strip.background = element_rect(fill = "white"))
   
   # print(plot_total_length)
   
@@ -323,7 +324,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     xlab("Rater") +
     # scale_color_discrete(name="Rater")
     facet_grid(.~image_name_short,
-               labeller = labeller(image_name_short = image_name_short.lab))
+               labeller = labeller(image_name_short = image_name_short.lab)) +
+    theme(strip.background = element_rect(fill = "white"))
   
   # print(plot_height)
   
@@ -351,7 +353,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     ylab("Horizontal cilium length in pixels") +
     xlab("Rater") +
     facet_grid(.~image_name_short,
-               labeller = labeller(image_name_short = image_name_short.lab))
+               labeller = labeller(image_name_short = image_name_short.lab)) +
+    theme(strip.background = element_rect(fill = "white"))
     # scale_color_discrete(name="Rater")
   
   # print(plot_horizontal_length)
@@ -375,7 +378,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     geom_point(size=4, position=position_dodge(0.5), aes(shape=researcher)) +
     scale_shape_manual(name = legend_name, values = c(19, 15, 17, 18)) +
     scale_color_manual(name = legend_name, values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00")) +
-    ylim(0,8) +
+    ylim(1,7) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(), 
