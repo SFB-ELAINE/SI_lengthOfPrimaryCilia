@@ -163,40 +163,22 @@ rm(list = c("input_dir", "output_dir", "metadata_file",
 
 # 3 Plot results                                                  ##########
 
-# 3.1 Plot results of automatic measurement of cultivation images ##########
-#     and print a tibble with total lengths
+# 3.1 Plot comparison of manual and automatic measurement of      ##########
+#     resolution images
 
 # Data input
 
 # File containing the results of detectCilia (including which cilia
 # are to be removed)
-input_file <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
-output_dir <- "plots/automaticDetectionCultivation"
+input_file_automatic             <- "data/automaticDetection/resolution/summary_cilia.csv"
+#input_file_automatic_parameters  <- "data/automaticDetection/cultivation/summary_parameters.csv"
+# input_file_metadata              <- "data/automaticDetection/cultivation/summary_metadata.csv"
 
-# Calling the function
-source("R/plotAutomaticDetection_Cultivation.R")
-plotAutomaticDetection_Cultivation(input_file, output_dir)
-
-# Removing objects
-rm(list = c("input_file", "output_dir"))
-
-
-# 3.2 Plot comparison of manual and automatic measurement of      ##########
-#     seven test images
-
-# Data input
-
-# File containing the results of detectCilia (including which cilia
-# are to be removed)
-input_file_automatic             <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
-input_file_automatic_parameters  <- "data/automaticDetection/cultivation/summary_parameters.csv"
-input_file_metadata              <- "data/automaticDetection/cultivation/summary_metadata.csv"
-
-input_file_manual <- "data/manualDetection/cultivation/df_manual_results.csv"
-input_file_cilium_numbers <- "data/manualDetection/cultivation/originalFiles_csv/cilia_numbers_clemens_automatic.csv"
+input_file_manual <- "data/manualDetection/resolution/df_manual_results.csv"
+# input_file_cilium_numbers <- "data/manualDetection/cultivation/originalFiles_csv/cilia_numbers_clemens_automatic.csv"
 
 # Output directory
-output_dir <- "plots/manualAutomaticComparison"
+output_dir <- "plots/manualAutomaticComparison_resolution"
 
 # Calling the function
 source("R/plotComparisonManualAutomaticDetection_Cultivation.R")
@@ -215,7 +197,55 @@ rm(list = c("input_file_automatic", "input_file_automatic_parameters",
 
 
 
+# 3.2 Plot results of automatic measurement of cultivation images ##########
+#     and print a tibble with total lengths
 
+# Data input
+
+# File containing the results of detectCilia (including which cilia
+# are to be removed)
+input_file <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
+output_dir <- "plots/automaticDetectionCultivation"
+
+# Calling the function
+source("R/plotAutomaticDetection_Cultivation.R")
+plotAutomaticDetection_Cultivation(input_file, output_dir)
+
+# Removing objects
+rm(list = c("input_file", "output_dir"))
+
+
+# 3.3 Plot comparison of manual and automatic measurement of      ##########
+#     seven test images
+
+# Data input
+
+# File containing the results of detectCilia (including which cilia
+# are to be removed)
+input_file_automatic             <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
+input_file_automatic_parameters  <- "data/automaticDetection/cultivation/summary_parameters.csv"
+input_file_metadata              <- "data/automaticDetection/cultivation/summary_metadata.csv"
+
+input_file_manual <- "data/manualDetection/cultivation/df_manual_results.csv"
+input_file_cilium_numbers <- "data/manualDetection/cultivation/originalFiles_csv/cilia_numbers_clemens_automatic.csv"
+
+# Output directory
+output_dir <- "plots/manualAutomaticComparison_cultivation"
+
+# Calling the function
+source("R/plotComparisonManualAutomaticDetection_Cultivation.R")
+plotComparisonManualAutomaticDetection_Cultivation(
+  input_file_automatic,
+  input_file_automatic_parameters,
+  input_file_metadata,
+  input_file_manual,
+  input_file_cilium_numbers,
+  output_dir)
+
+# Removing objects
+rm(list = c("input_file_automatic", "input_file_automatic_parameters",
+            "input_file_metadata", "input_file_manual",
+            "input_file_cilium_numbers", "output_dir"))
 
 
 
