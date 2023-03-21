@@ -24,7 +24,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rstatix", "ggpubr", "ggbeeswarm", "coin")
+  pkgs <- c("tidyverse", "rstatix", "ggpubr", "ggbeeswarm", "coin", "scales")
   groundhog.library(pkgs, groundhog.day)
   
   # Import and clean data ####################################################
@@ -322,10 +322,11 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     }
     
     
-    plot_total_length_violin_t_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "total_length_in_um",
+    plot_total_length_violin_statistical_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "total_length_in_um",
                                                 add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = FALSE, label = "{p.adj.signif}") +
+      scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
       # labs(
       # #   subtitle = get_test_label(test_result, detailed = TRUE),
@@ -438,10 +439,11 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     }
     
     
-    plot_horizontal_length_violin_t_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "horizontal_length_in_um",
+    plot_horizontal_length_violin_statistical_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "horizontal_length_in_um",
                                                 add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
+      scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
       # labs(
       # #   subtitle = get_test_label(test_result, detailed = TRUE),
@@ -552,10 +554,11 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     }
     
     
-    plot_vertical_length_violin_t_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "vertical_length_in_um",
+    plot_vertical_length_violin_statistical_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "vertical_length_in_um",
                                                      add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
+      scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
       # labs(
       # #   subtitle = get_test_label(test_result, detailed = TRUE),
