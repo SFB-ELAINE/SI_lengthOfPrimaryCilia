@@ -106,7 +106,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     geom_violin() +
     # stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(width=0.1) +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -149,7 +149,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     geom_violin() +
     # stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(width=0.1) +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -256,7 +256,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
       geom_boxplot(width=0.2) +
       # ggviolin(df_results_filtered, x = "cultivation", y = "horizontal_length_in_um",
       #                                                          add = "boxplot", add.params = list(fill = "white")) +
-      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
       ylim(0,7) +
       # scale_y_continuous(breaks= pretty_breaks()) +

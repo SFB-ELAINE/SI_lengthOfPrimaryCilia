@@ -1,14 +1,14 @@
 # Script for converting color layers for use with ACDC detection        ++++
 # Author: Kai Budde
 # Created: 2022/07/22
-# Last changed: 2022/12/15
+# Last changed: 2023/03/27
 
 convertColorLayersForACDC <- function(input_dir, output_dir){
   
   # Load packages #############################################################
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
-  groundhog.day <- "2022-03-01"
+  groundhog.day <- "2023-01-01"
   if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
     install.packages("groundhog")
   }

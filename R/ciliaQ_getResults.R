@@ -2,7 +2,7 @@
 # Adapted from https://github.com/hansenjn/CiliaQ/tree/master/R%20Scripts
 # Author: Kai Budde
 # Created: 2022/06/20
-# Last changed: 2022/12/20
+# Last changed: 2023/01/01
 
 
 ciliaQ_getResults <- function(input_dir, output_dir){
@@ -10,7 +10,7 @@ ciliaQ_getResults <- function(input_dir, output_dir){
   # Load packages ##########################################################
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
-  groundhog.day <- "2022-03-01"
+  groundhog.day <- "2023-01-01"
   
   if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
     install.packages("groundhog")

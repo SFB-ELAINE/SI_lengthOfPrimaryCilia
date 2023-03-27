@@ -1,7 +1,7 @@
 # Script for plotting horizontal length of all 3 tools              ++++++++
 # Author: Kai Budde
 # Created: 2023/03/22
-# Last changed: 2023/03/23
+# Last changed: 2023/03/27
 
 
 plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
@@ -76,7 +76,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     geom_violin() +
     # stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(width=0.1) +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     scale_fill_manual(values=c("grey90", "white", "white")) +
     ylim(0,5) +
     theme_bw(base_size = 18) +
@@ -217,7 +217,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       stat_boxplot(geom ='errorbar', width = 0.3, color="black") +
       geom_boxplot(aes(fill = tool), width=0.2, alpha = 1, color="black") +
       # geom_beeswarm() +
-      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
       scale_y_continuous(breaks= pretty_breaks()) +
       # ylim(0,5) +
       scale_color_manual(values=c("#009E73", "black", "black")) +
