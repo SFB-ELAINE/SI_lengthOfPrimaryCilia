@@ -2,8 +2,9 @@
 # the manual detection results                                      ++++++++
 # Author: Kai Budde
 # Created: 2021/12/12
-# Last changed: 2022/06/09
+# Last changed: 2023/01/01
 
+# WE DO NOT NEED THIS ANYMORE?!
 
 # Delete everything in the environment
 rm(list = ls())
@@ -11,7 +12,7 @@ rm(list = ls())
 graphics.off()
 
 # Set groundhog day for reproducibility (see https://groundhogr.com)
-groundhog.day <- "2022-03-01"
+groundhog.day <- "2023-01-01"
 
 # install.packages("groundhog")
 

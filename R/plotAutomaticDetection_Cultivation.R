@@ -59,6 +59,10 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   df_results_automatic_filtered <- df_results_automatic_filtered[!is.na(df_results_automatic_filtered$total_length_in_um),]
   
   
+  df_horizontal_lengths <- df_results_automatic_filtered %>% 
+    dplyr::select(cultivation, horizontal_length_in_um)
+  readr::write_csv(x = df_horizontal_lengths, file = file.path(output_dir, "horizontalLength_detectCilia.csv"))
+  rm(df_horizontal_lengths)
   
   # Plot results ###########################################################
   dir.create(output_dir, showWarnings = FALSE)
@@ -68,8 +72,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   # Total lengths of cilia
   plot_total_length <- ggplot(df_results_automatic, aes(x=cultivation, y=total_length_in_um)) +
     stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(alpha = 1) +
-    geom_beeswarm() +
+    geom_boxplot(alpha = 1, fill="grey90") +
+    geom_beeswarm(color="#009E73") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(1,7) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
@@ -88,9 +92,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   
   plot_total_length_violin <- ggplot(df_results_automatic, aes(x=cultivation, y=total_length_in_um)) +
-    geom_violin() +
-    # stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(width=0.1) +
+    geom_violin(color="#009E73") +
+    stat_boxplot(geom ='errorbar', width = 0.1) +
+    geom_boxplot(width=0.1, fill="grey90") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(1,7) +
     theme_bw(base_size = 18) +
@@ -108,9 +112,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   # Horizontal lengths of cilia
   plot_horizontal_length_violin <- ggplot(df_results_automatic, aes(x=cultivation, y=horizontal_length_in_um)) +
-    geom_violin() +
-    # stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(width=0.1) +
+    geom_violin(color="#009E73") +
+    stat_boxplot(geom ='errorbar', width = 0.1) +
+    geom_boxplot(width=0.1, fill="grey90") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
@@ -128,9 +132,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   # Vertical lengths of cilia
   plot_vertical_length_violin <- ggplot(df_results_automatic, aes(x=cultivation, y=vertical_length_in_um)) +
-    geom_violin() +
-    # stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(width=0.1) +
+    geom_violin(color="#009E73") +
+    stat_boxplot(geom ='errorbar', width = 0.1) +
+    geom_boxplot(width=0.1, fill="grey90") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
@@ -151,8 +155,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   # Total lengths of cilia (filtered data)
   plot_total_length <- ggplot(df_results_automatic_filtered, aes(x=cultivation, y=total_length_in_um)) +
     stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(alpha = 1) +
-    geom_beeswarm() +
+    geom_boxplot(alpha = 1, fill="grey90") +
+    geom_beeswarm(color="#009E73") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(1,7) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
@@ -171,9 +175,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   
   plot_total_length_violin <- ggplot(df_results_automatic_filtered, aes(x=cultivation, y=total_length_in_um)) +
-    geom_violin() +
-    # stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(width=0.1) +
+    geom_violin(color="#009E73") +
+    stat_boxplot(geom ='errorbar', width = 0.1) +
+    geom_boxplot(width=0.1, fill="grey90") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(1,7) +
     theme_bw(base_size = 18) +
@@ -191,9 +195,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   # Horizontal lengths of cilia (filtered data)
   plot_horizontal_length_violin <- ggplot(df_results_automatic_filtered, aes(x=cultivation, y=horizontal_length_in_um)) +
-    geom_violin() +
-    # stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(width=0.1) +
+    geom_violin(color="#009E73") +
+    stat_boxplot(geom ='errorbar', width = 0.1) +
+    geom_boxplot(width=0.1, fill="grey90") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
@@ -211,9 +215,9 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   # Vertical lengths of cilia (filtered data)
   plot_vertical_length_violin <- ggplot(df_results_automatic_filtered, aes(x=cultivation, y=vertical_length_in_um)) +
-    geom_violin() +
-    # stat_boxplot(geom ='errorbar', width = 0.3) +
-    geom_boxplot(width=0.1) +
+    geom_violin(color="#009E73") +
+    stat_boxplot(geom ='errorbar', width = 0.1) +
+    geom_boxplot(width=0.1, fill="grey90") +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
@@ -322,8 +326,13 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     }
     
     
-    plot_total_length_violin_statistical_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "total_length_in_um",
-                                                add = "boxplot", add.params = list(fill = "white")) +
+    plot_total_length_violin_statistical_test <-
+      ggplot(df_results_automatic_filtered, aes(x=cultivation, y=total_length_in_um)) +
+      geom_violin(color="#009E73") +
+      stat_boxplot(geom ='errorbar', width = 0.1) +
+      geom_boxplot(width=0.2, fill="grey90") +
+      # ggviolin(df_results_automatic_filtered, x = "cultivation", y = "total_length_in_um",
+      #                                           add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = FALSE, label = "{p.adj.signif}") +
       scale_y_continuous(breaks= pretty_breaks()) +
@@ -439,11 +448,17 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     }
     
     
-    plot_horizontal_length_violin_statistical_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "horizontal_length_in_um",
-                                                add = "boxplot", add.params = list(fill = "white")) +
+    plot_horizontal_length_violin_statistical_test <-
+      ggplot(df_results_automatic_filtered, aes(x=cultivation, y=horizontal_length_in_um)) +
+      geom_violin(color="#009E73") +
+      stat_boxplot(geom ='errorbar', width = 0.1) +
+      geom_boxplot(width=0.1, fill="grey90") +
+      # ggviolin(df_results_automatic_filtered, x = "cultivation", y = "horizontal_length_in_um",
+      #                                           add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
-      scale_y_continuous(breaks= pretty_breaks()) +
+      # scale_y_continuous(breaks= pretty_breaks()) +
+      ylim(0,7) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
       # labs(
       # #   subtitle = get_test_label(test_result, detailed = TRUE),
@@ -453,7 +468,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
       theme(#axis.title.y=element_text(size=12),
         #axis.text.x = element_blank(),
         axis.ticks.x = element_blank()) +
-      ylab("Horizontal cilium length in \u03BCm") +
+      ylab("Horizontal cilium length in \u03BCm determined by detectCilia") +
       xlab("Cultivation")
     
     ggsave(filename = paste(output_dir, paste0("all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".pdf"), sep="/"),
@@ -554,8 +569,13 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     }
     
     
-    plot_vertical_length_violin_statistical_test <- ggviolin(df_results_automatic_filtered, x = "cultivation", y = "vertical_length_in_um",
-                                                     add = "boxplot", add.params = list(fill = "white")) +
+    plot_vertical_length_violin_statistical_test <-
+      ggplot(df_results_automatic_filtered, aes(x=cultivation, y=vertical_length_in_um)) +
+      geom_violin(color="#009E73") +
+      stat_boxplot(geom ='errorbar', width = 0.1) +
+      geom_boxplot(width=0.1, fill="grey90") +
+      # ggviolin(df_results_automatic_filtered, x = "cultivation", y = "vertical_length_in_um",
+      #                                                add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
       scale_y_continuous(breaks= pretty_breaks()) +

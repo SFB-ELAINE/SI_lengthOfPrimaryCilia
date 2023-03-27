@@ -8,7 +8,7 @@ ACDC_readXLSX <- function(input_file, output_dir){
   # Load packages ##########################################################
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
-  groundhog.day <- "2022-03-01"
+  groundhog.day <- "2023-01-01"
   
   if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
     install.packages("groundhog")

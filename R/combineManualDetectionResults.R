@@ -1,7 +1,7 @@
 # Script for combining all results from manual detection +++++++++++++++++++
 # Author: Kai Budde
 # Created: 2022/09/13
-# Last changed: 2022/09/13
+# Last changed: 2023/03/25
 
 
 combineManualDetectionResults <- function(input_dir, output_dir,
@@ -12,7 +12,7 @@ combineManualDetectionResults <- function(input_dir, output_dir,
   # Load packages ##########################################################
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
-  groundhog.day <- "2022-03-01"
+  groundhog.day <- "2023-01-01"
   
   if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
     install.packages("groundhog")
