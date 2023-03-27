@@ -2,7 +2,7 @@
 # of cultivation images                                             ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2023/03/20
+# Last changed: 2023/03/27
 
 
 plotAutomaticDetection_Cultivation <- function(input_file,
@@ -28,6 +28,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   groundhog.library(pkgs, groundhog.day)
   
   # Import and clean data ####################################################
+  dir.create(dirname(output_dir), showWarnings = FALSE)
+  dir.create(output_dir, showWarnings = FALSE)
   df_results_automatic <- readr::read_csv(file = input_file, name_repair = "universal")
   
   
@@ -65,7 +67,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   rm(df_horizontal_lengths)
   
   # Plot results ###########################################################
-  dir.create(output_dir, showWarnings = FALSE)
+  
   
   # Plot all data ----------------------------------------------------------
   
@@ -74,7 +76,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(alpha = 1, fill="grey90") +
     geom_beeswarm(color="#009E73") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(1,7) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
@@ -95,7 +97,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     geom_violin(color="#009E73") +
     stat_boxplot(geom ='errorbar', width = 0.1) +
     geom_boxplot(width=0.1, fill="grey90") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(1,7) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -115,7 +117,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     geom_violin(color="#009E73") +
     stat_boxplot(geom ='errorbar', width = 0.1) +
     geom_boxplot(width=0.1, fill="grey90") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -135,7 +137,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     geom_violin(color="#009E73") +
     stat_boxplot(geom ='errorbar', width = 0.1) +
     geom_boxplot(width=0.1, fill="grey90") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -157,7 +159,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(alpha = 1, fill="grey90") +
     geom_beeswarm(color="#009E73") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(1,7) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
@@ -178,7 +180,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     geom_violin(color="#009E73") +
     stat_boxplot(geom ='errorbar', width = 0.1) +
     geom_boxplot(width=0.1, fill="grey90") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(1,7) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -198,7 +200,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     geom_violin(color="#009E73") +
     stat_boxplot(geom ='errorbar', width = 0.1) +
     geom_boxplot(width=0.1, fill="grey90") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -218,7 +220,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
     geom_violin(color="#009E73") +
     stat_boxplot(geom ='errorbar', width = 0.1) +
     geom_boxplot(width=0.1, fill="grey90") +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     ylim(0,5) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -333,7 +335,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
       geom_boxplot(width=0.2, fill="grey90") +
       # ggviolin(df_results_automatic_filtered, x = "cultivation", y = "total_length_in_um",
       #                                           add = "boxplot", add.params = list(fill = "white")) +
-      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = FALSE, label = "{p.adj.signif}") +
       scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
@@ -455,7 +457,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
       geom_boxplot(width=0.1, fill="grey90") +
       # ggviolin(df_results_automatic_filtered, x = "cultivation", y = "horizontal_length_in_um",
       #                                           add = "boxplot", add.params = list(fill = "white")) +
-      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
       # scale_y_continuous(breaks= pretty_breaks()) +
       ylim(0,7) +
@@ -576,7 +578,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
       geom_boxplot(width=0.1, fill="grey90") +
       # ggviolin(df_results_automatic_filtered, x = "cultivation", y = "vertical_length_in_um",
       #                                                add = "boxplot", add.params = list(fill = "white")) +
-      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
       scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +

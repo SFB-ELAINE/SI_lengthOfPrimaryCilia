@@ -1,7 +1,7 @@
 # Script for calculating the number of nuclei per group             ++++++++
 # Author: Kai Budde
 # Created: 2023/01/15
-# Last changed: 2023/01/15
+# Last changed: 2023/03/27
 
 
 numberOfNuclei <- function(input_file){
@@ -14,7 +14,7 @@ numberOfNuclei <- function(input_file){
   # Load packages ##########################################################
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
-  groundhog.day <- "2022-03-01"
+  groundhog.day <- "2023-01-01"
   
   if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
     install.packages("groundhog")
