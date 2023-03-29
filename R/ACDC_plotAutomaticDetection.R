@@ -2,7 +2,7 @@
 # of cultivation images using ACDC                                  ++++++++
 # Author: Kai Budde
 # Created: 2022/06/19
-# Last changed: 2023/03/22
+# Last changed: 2023/03/29
 
 
 ACDC_plotAutomaticDetection <- function(input_file_acdc,
@@ -46,8 +46,8 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
   
   df_results$cultivation <- NA
   
-  names_of_experiments <- c("ITS", "ITS w/ Dexa",
-                            "ITS w/ Dexa + IGF + TGF",
+  names_of_experiments <- c("ITS", "ITS with Dexa",
+                            "ITS with Dexa + IGF + TGF",
                             "FBS")
   
   df_results$cultivation[grepl(pattern = "ITSwithAsc_", x = df_results$fileName, fixed = TRUE)] <- names_of_experiments[1]

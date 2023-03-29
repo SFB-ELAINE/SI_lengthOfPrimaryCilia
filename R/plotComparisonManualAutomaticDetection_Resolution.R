@@ -26,7 +26,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rstatix", "ggbeeswarm", "ggpubr", "EnvStats")
+  pkgs <- c("tidyverse", "rstatix", "ggbeeswarm", "ggpubr")
   groundhog.library(pkgs, groundhog.day)
   
   
@@ -156,8 +156,8 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     statistical_test_result_horizontal <- df_results %>%
       dplyr::group_by(location, image) %>%
       rstatix::t_test(horizontal_length_in_um ~ detectionMethod) %>% 
-      add_significance("p") %>% 
-      add_xy_position(x = "image", dodge = 0.75)
+      rstatix::add_significance("p") %>% 
+      rstatix::add_xy_position(x = "image", dodge = 0.75)
     
   }else{
     
@@ -165,7 +165,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     statistical_test_result_horizontal <- df_results %>%
       dplyr::group_by(location, image) %>%
       rstatix::wilcox_test(horizontal_length_in_um ~ detectionMethod) %>%
-      add_significance("p") %>% 
+      rstatix::add_significance("p") %>% 
       rstatix::add_xy_position(x = "image", dodge = 0.75)
     
   }
@@ -203,8 +203,8 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     statistical_test_result_vertical <- df_results %>%
       dplyr::group_by(location, image) %>%
       rstatix::t_test(vertical_length_in_um ~ detectionMethod) %>% 
-      add_significance("p") %>% 
-      add_xy_position(x = "image", dodge = 0.75)
+      rstatix::add_significance("p") %>% 
+      rstatix::add_xy_position(x = "image", dodge = 0.75)
     
   }else{
     
@@ -212,7 +212,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     statistical_test_result_vertical <- df_results %>%
       dplyr::group_by(location, image) %>%
       rstatix::wilcox_test(vertical_length_in_um ~ detectionMethod) %>%
-      add_significance("p") %>%
+      rstatix::add_significance("p") %>%
       rstatix::add_xy_position(x = "image", dodge = 0.75)
   }
   
@@ -250,8 +250,8 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     statistical_test_result_total <- df_results %>%
       dplyr::group_by(location, image) %>%
       rstatix::t_test(total_length_in_um ~ detectionMethod) %>% 
-      add_significance("p") %>% 
-      add_xy_position(x = "image", dodge = 0.75)
+      rstatix::add_significance("p") %>% 
+      rstatix::add_xy_position(x = "image", dodge = 0.75)
     
   }else{
     
@@ -259,7 +259,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     statistical_test_result_total <- df_results %>%
       dplyr::group_by(location, image) %>%
       rstatix::wilcox_test(total_length_in_um ~ detectionMethod) %>%
-      add_significance("p") %>% 
+      rstatix::add_significance("p") %>% 
       rstatix::add_xy_position(x = "image", dodge = 0.75)
     
   }

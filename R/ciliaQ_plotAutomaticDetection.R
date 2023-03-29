@@ -2,7 +2,7 @@
 # of cultivation images (z stack projection) using ciliaQ           ++++++++
 # Author: Kai Budde
 # Created: 2022/12/20
-# Last changed: 2023/03/27
+# Last changed: 2023/03/29
 
 
 ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
@@ -49,8 +49,8 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   
   df_results$cultivation <- NA
   
-  names_of_experiments <- c("ITS", "ITS w/ Dexa",
-                            "ITS w/ Dexa + IGF + TGF",
+  names_of_experiments <- c("ITS", "ITS with Dexa",
+                            "ITS with Dexa + IGF + TGF",
                             "FBS")
   
   df_results$cultivation[grepl(pattern = "ITSwithAsc_", x = df_results$Name, fixed = TRUE)] <- names_of_experiments[1]

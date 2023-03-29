@@ -17,7 +17,7 @@ convertXLSXtoCSV <- function(input_dir, output_dir, language = "en"){
   
   # Load packages
   library(groundhog)
-  pkgs <- c("readxl", "tidyverse")
+  pkgs <- c("tidyverse")
   groundhog.library(pkgs, groundhog.day)
   
   # Convert xlsx to csv files ##############################################

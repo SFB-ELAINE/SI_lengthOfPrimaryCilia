@@ -4,7 +4,7 @@ README of the supporting information of the publication "detectCilia: An R packa
 
 # Reproducing all figures from the publication
 
-run the script `main.R` to reproduce all figures from the publication. Please go through the script step by step as there are some steps that need manual work in other tools. However, all manually derived data are provided such that all plots can be reproduced.
+Run the script `main.R` to reproduce all figures from the publication. Please go through the script step by step as there are some steps that need manual work in other tools. However, all manually derived data are provided such that all plots can be reproduced.
 
 The resulting data are found in "data/automaticDetection/" and "data/manualDetection/". Both directories contain the subfolders "cultivation/" and "resolution/"
 

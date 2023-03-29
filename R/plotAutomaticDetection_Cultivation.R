@@ -2,7 +2,7 @@
 # of cultivation images                                             ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2023/03/27
+# Last changed: 2023/03/29
 
 
 plotAutomaticDetection_Cultivation <- function(input_file,
@@ -41,8 +41,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   
   df_results_automatic$cultivation <- NA
   
-  names_of_experiments <- c("ITS", "ITS w/ Dexa",
-                            "ITS w/ Dexa + IGF + TGF",
+  names_of_experiments <- c("ITS", "ITS with Dexa",
+                            "ITS with Dexa + IGF + TGF",
                             "FBS")
   
   df_results_automatic$cultivation[grepl(pattern = "ITSwithAsc_", x = df_results_automatic$fileName, fixed = TRUE)] <- names_of_experiments[1]

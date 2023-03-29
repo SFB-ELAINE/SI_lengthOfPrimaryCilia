@@ -34,7 +34,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rqdatatable", "rquery", "ggbeeswarm")
+  pkgs <- c("tidyverse", "rquery", "ggbeeswarm")
   groundhog.library(pkgs, groundhog.day)
   
   # Import data ############################################################

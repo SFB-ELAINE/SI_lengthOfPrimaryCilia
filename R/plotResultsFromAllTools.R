@@ -18,7 +18,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rstatix", "ggpubr", "EnvStats", "ggbeeswarm", "coin", "scales")
+  pkgs <- c("EnvStats", "tidyverse", "rstatix", "ggpubr", "ggbeeswarm", "coin", "scales")
   groundhog.library(pkgs, groundhog.day)
   
   # Import and clean data ####################################################
@@ -149,7 +149,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       pairwise_comparison_result <- df_results %>%
         dplyr::group_by(cultivation) %>% 
         rstatix::pairwise_t_test(horizontal_length_in_um ~ tool, p.adjust.method = "bonferroni") %>% 
-        add_xy_position(x = "cultivation")
+        rstatix::add_xy_position(x = "cultivation")
       
       test_name <- "ttest"
       
@@ -162,7 +162,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       pairwise_comparison_result <- df_results %>%
         dplyr::group_by(cultivation) %>% 
         rstatix::pairwise_wilcox_test(horizontal_length_in_um ~ tool, p.adjust.method = "bonferroni") %>% 
-        add_xy_position(x = "tool")
+        rstatix::add_xy_position(x = "tool")
       
       test_name <- "wilcoxon"
       
@@ -198,7 +198,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       theme(strip.background = element_rect(fill = "white")) +
       # ggprism::add_pvalue(pairwise_comparison_result, tip.length = 0.01, hide.ns = FALSE)
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, hide.ns = FALSE) +
-      stat_n_text(
+      EnvStats::stat_n_text(
         y.pos = 6.2,
         color = "black",
         text.box = FALSE
@@ -235,7 +235,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       theme(strip.background = element_rect(fill = "white")) +
       # ggprism::add_pvalue(pairwise_comparison_result, tip.length = 0.01, hide.ns = FALSE)
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, hide.ns = FALSE) +
-      stat_n_text(
+      EnvStats::stat_n_text(
         y.pos = 6.2,
         color = "black",
         text.box = FALSE
