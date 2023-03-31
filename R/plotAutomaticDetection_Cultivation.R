@@ -2,10 +2,11 @@
 # of cultivation images                                             ++++++++
 # Author: Kai Budde
 # Created: 2021/11/08
-# Last changed: 2023/03/29
+# Last changed: 2023/03/31
 
 
 plotAutomaticDetection_Cultivation <- function(input_file,
+                                               input_file_compare,
                                                output_dir){
   
   # # Delete everything in the environment
@@ -31,7 +32,12 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   dir.create(dirname(output_dir), showWarnings = FALSE)
   dir.create(output_dir, showWarnings = FALSE)
   df_results_automatic <- readr::read_csv(file = input_file, name_repair = "universal")
+  df_results_compare <- readr::read_csv(file = input_file_compare, name_repair = "universal")
   
+  if(dim(df_results_automatic)[1] != dim(df_results_compare)[1]){
+    print("ERROR. Please update summary_cilia_edited.csv. The number of cilia is different from the automatic results.")
+    return()
+  }
   
   # Add information of cultivation
   
