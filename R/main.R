@@ -15,25 +15,25 @@ graphics.off()
 
 # 0. Check which version of R packages are installed #######################
 
-# Set groundhog day for reproducibility (see https://groundhogr.com)
-groundhog.day <- "2023-01-01"
-
-if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
-  install.packages("groundhog")
-}
-
-# Load packages
-library(groundhog)
-pkgs <- c("coin", "EnvStats", "ggbeeswarm", "ggpubr", "rquery", "rstatix",
-          "scales", "tidyverse")
-groundhog.library(pkgs, groundhog.day)
-
-# Cite packages
-options(citation.bibtex.max=999)
-for(i in 1:length(pkgs)){
-  print(citation(pkgs[i]))
-}
-rm(i)
+# # Set groundhog day for reproducibility (see https://groundhogr.com)
+# groundhog.day <- "2023-01-01"
+# 
+# if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
+#   install.packages("groundhog")
+# }
+# 
+# # Load packages
+# library(groundhog)
+# pkgs <- c("coin", "EnvStats", "ggbeeswarm", "ggpubr", "rquery", "rstatix",
+#           "scales", "tidyverse")
+# groundhog.library(pkgs, groundhog.day)
+# 
+# # Cite packages
+# options(citation.bibtex.max=999)
+# for(i in 1:length(pkgs)){
+#   print(citation(pkgs[i]))
+# }
+# rm(i)
 
 
 # 1. Manual detection of cilia in resolution and cultivation images ########
