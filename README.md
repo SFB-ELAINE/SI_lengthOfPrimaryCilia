@@ -25,6 +25,7 @@ The resulting data are found in "data/automaticDetection/" and "data/manualDetec
 * `plotComparisonManualAutomaticDetection_Cultivation.R` -> Contains a function for plotting the detectCilia and manual results of the 7 test images.
 * `plotComparisonManualAutomaticDetection_Resolution.R`  -> Contains a function for plotting the detectCilia and manual results of the resolution images.
 * `plotResultsFromAllTools.R`  -> Contains a function for plotting the detectCilia, ACDC, and ciliaQ results of the cultivation images (horizontal length).
+* `plotTestImageResultsFromAllTools.R`  -> Contains a function for plotting the detectCilia, ACDC, ciliaQ, and manual results of the 7 cultivation test images (horizontal length).
 
 
 ## Data
@@ -128,8 +129,10 @@ The function `ciliaQ_plotAutomaticDetection()` plots the ciliaQ results.
 
 
 
-## 6 Comparison of detectCilia, ACDC, and ciliaQ
+## 6 Comparison of detectCilia, ACDC, and ciliaQ (and manual)
 
 ### 6.1 Plot results of horizontal cilia lenght of detectCilia, ACDC, and ciliaQ
 The function `plotResultsFromAllTools()`plots results of the cultivation images from detectCilia, ACDC, and ciliaQ.
 
+# 6.2 Plot results of horizontal cilia length of detectCilia, ACDC, and ciliaQ of 7 test images only ####
+The function `plotTestImageResultsFromAllTools()`plots results (horizontal length) of the 7 cultivation test images from the manual measurements as well as from detectCilia, ACDC, and ciliaQ.

@@ -4,7 +4,7 @@
 # cultivation methods on the lengths of primary cilia"         +++++++++++++
 # Author: Kai Budde
 # Created: 2022/10/11
-# Last changed: 2023/03/27
+# Last changed: 2023/04/21
 
 # Delete everything in the environment
 rm(list = ls())
@@ -202,11 +202,12 @@ rm(list = c("input_dir", "output_dir", "metadata_file",
 # File containing the results of detectCilia (including which cilia
 # are to be removed)
 input_file <- "data/automaticDetection/cultivation/summary_cilia_edited.csv"
+input_file_compare <- "data/automaticDetection/cultivation/summary_cilia.csv"
 output_dir <- "plots/automaticDetectionCultivation"
 
 # Calling the function
 source("R/plotAutomaticDetection_Cultivation.R")
-plotAutomaticDetection_Cultivation(input_file, output_dir)
+plotAutomaticDetection_Cultivation(input_file, input_file_compare, output_dir)
 
 # Removing objects
 rm(list = c("input_file", "output_dir"))
@@ -322,7 +323,7 @@ rm(list = c("input_file_acdc", "input_file_metadata", "output_dir"))
 # 5.2 Read ciliaQ results (txt files) and convert to csv ###################
 
 # Directory with analysis results (CiliaQ files)
-input_dir <- "E:/PhD/Daten/Cilia/allImages/ACDC/histogram_equalized_converted_multistack"
+input_dir <- file.path("E:", "PhD", "Daten", "Cilia", "allImages", "ACDC", "histogram_equalized_converted_multistack")
 # Output directory
 output_dir <- "CiliaQ_horizontal"
 
@@ -349,7 +350,8 @@ rm(list = c("input_file_ciliaq", "output_dir"))
 
 
 # 6 Comparison of detectCilia, ACDC, and ciliaQ ############################
-# 6.1 Plot results of horizontal cilia length of dc, ACDC, and ciliaQ ######
+
+# 6.1 Plot results of horizontal cilia length of detectCilia, ACDC, and ciliaQ ####
 input_file_detectCilia <- file.path("plots", "automaticDetectionCultivation", "horizontalLength_detectCilia.csv")
 input_file_ACDC <- file.path("plots", "ACDC", "horizontalLength_ACDC.csv")
 input_file_ciliaq <- file.path("plots", "ciliaQ", "horizontalLength_ciliaQ.csv")
@@ -361,6 +363,38 @@ plotResultsFromAllTools(input_file_detectCilia, input_file_ACDC,
                         input_file_ciliaq, output_dir)
 
 # Removing objects
-rm(list = c("input_file_ciliaq", "output_dir"))
+rm(list = c("input_file_detectCilia", "input_file_ACDC",
+            "input_file_ciliaq", "output_dir"))
 
+
+# 6.2 Plot results of horizontal cilia length of detectCilia, ACDC, and ciliaQ of 7 test images only ####
+input_file_manual <- file.path("data","manualDetection","cultivation",
+                               "df_manual_results.csv")
+input_file_cilium_numbers <- file.path("data","manualDetection",
+                                       "cultivation",
+                                       "originalFiles_csv",
+                                       "cilia_numbers_clemens_automatic.csv")
+input_file_detectCilia    <- file.path("data", "automaticDetection",
+                                       "cultivation", "summary_cilia_edited.csv")
+input_file_ACDC           <- file.path("ACDC","ciliaData.csv")
+input_file_ciliaq         <- file.path("CiliaQ_horizontal","ciliaq_data.csv")
+output_dir <- file.path("plots", "allToolsTestImages")
+
+# input_file_automatic_parameters  <- "data/automaticDetection/cultivation/summary_parameters.csv"
+# input_file_metadata              <- "data/automaticDetection/cultivation/summary_metadata.csv"
+
+
+# Calling the function
+source("R/plotTestImageResultsFromAllTools.R")
+plotTestImageResultsFromAllTools(input_file_manual,
+                                 input_file_cilium_numbers,
+                                 input_file_detectCilia,
+                                 input_file_ACDC,
+                                 input_file_ciliaq,
+                                 output_dir)
+
+# Removing objects
+rm(list = c("input_file_manual", "input_file_cilium_numbers",
+            "input_file_detectCilia", "input_file_ACDC",
+            "input_file_ciliaq", "output_dir"))
 
