@@ -1,7 +1,7 @@
 # Function for converting data from xslx to csv files ++++++++++++++++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2022/03/30
-# Last changed: 2023/03/25
+# Last changed: 2023/12/08
 
 
 convertXLSXtoCSV <- function(input_dir, output_dir, language = "en"){

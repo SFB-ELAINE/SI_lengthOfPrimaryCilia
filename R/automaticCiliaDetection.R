@@ -1,8 +1,8 @@
 # Function for automatic cilia detection using detectCilia +++++++++++++++++
 # using the cultivation images
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2022/05/04
-# Last changed: 2022/10/11
+# Last changed: 2023/12/08
 
 
 automaticCiliaDetection <- function(input_dir, output_dir){
@@ -35,22 +35,12 @@ automaticCiliaDetection <- function(input_dir, output_dir){
   }
   
   # Install the R package for reading czi images
-  # TODO: Check the latest version
-  if(!("readCzi" %in% installed.packages()[,"Package"])){
-    # TODO: Add the latest version used
-    # devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.1.13")
-    devtools::install_github("SFB-ELAINE/readCzi")
-  }
+  devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.4.0")
   require(readCzi)
   
   
   # Install the R package for detecting cilia in microscopy images
-  # TODO: Check the latest version
-  if(!("detectCilia" %in% installed.packages()[,"Package"])){
-    # TODO: Add the latest version used
-    devtools::install_github("SFB-ELAINE/detectCilia")
-    # devtools::install_github("SFB-ELAINE/detectCilia", ref = "v0.1.13")
-  }
+  devtools::install_github("SFB-ELAINE/detectCilia", ref = "v0.8.1")
   require(detectCilia)
   
   # Detect cilia and get meta data #########################################
@@ -58,17 +48,22 @@ automaticCiliaDetection <- function(input_dir, output_dir){
   # Data frame with certain parameter values
   file_names <- list.files(path = input_dir)
   file_names_czi <- file_names[grepl("czi", file_names)]
-  file_names_czi <- paste(input_dir, file_names_czi, sep="/")
+  file_names_czi <- file.path(input_dir, file_names_czi)
   
   number_of_czi_files <- length(file_names_czi)
   
   # Detect cilia
   for(i in 1:number_of_czi_files){
-    
+
     print(paste0("Detecting cilia in ", file_names_czi[i], ". The current ",
                  "time is ", Sys.time(),"."))
-    detectCilia::detectCilia(input_file_czi = file_names_czi[i])
-    
+    detectCilia::detectCilia(input_file_czi = file_names_czi[i],
+                             cilium_color = "red",
+                             nucleus_color = "blue",
+                             projection_method_for_threshold_calculation = "max",
+                             threshold_by_density_of_cilium_pixels = TRUE,
+                             use_histogram_equalization_for_threshold_calculation = FALSE)
+    gc()
   }
   rm(i)
   
@@ -86,12 +81,12 @@ automaticCiliaDetection <- function(input_dir, output_dir){
   }
   rm(i)
   
-  dir.create(path = output_dir, showWarnings = FALSE)
+  dir.create(path = output_dir, showWarnings = FALSE, recursive = TRUE)
   write.csv(x = df_metadata,
-            file = paste(output_dir,"/","summary_metadata.csv", sep=""),
+            file = file.path(output_dir, "summary_metadata.csv"),
             row.names = FALSE)
   write.csv2(x = df_metadata,
-             file = paste(output_dir,"/","summary_metadata_de.csv", sep=""),
+             file = file.path(output_dir, "summary_metadata_de.csv"),
              row.names = FALSE)
   
 }

@@ -1,8 +1,8 @@
 # Script for working with and plotting results (from csv data) from ++++++++
 # the R package detectCilia as well as manual detection results     ++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2021/11/11
-# Last changed: 2023/03/27
+# Last changed: 2023/12/08
 
 
 # Color schema
@@ -26,11 +26,11 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rstatix", "ggbeeswarm", "ggpubr")
+  pkgs <- c("tidyverse", "rstatix", "ggbeeswarm", "ggpubr", "devEMF")
   groundhog.library(pkgs, groundhog.day)
   
   
-  # Import and clean data ####################################################
+  # Import and clean data ##################################################
   
   legend_name <- "Rater"
   
@@ -133,7 +133,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     dplyr::group_by(location, resolution, magnification, detectionMethod) %>%
     rstatix::get_summary_stats(horizontal_length_in_um, type = "mean_sd")
   
-  print(paste("The results of the cilia horizontal lengths measurements are:"))
+  print("The results of the cilia horizontal lengths measurements are:")
   print(detection_results_horizontal)
   
   # Check for normality
@@ -335,10 +335,12 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   # print(plot_horizontal_length)
   
-  ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_horizontal_length.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_horizontal_length.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   # Vertical lengths of cilia
@@ -363,10 +365,12 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   # print(plot_vertical_length)
   
-  ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_vertical_length.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_vertical_length.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   # Total lengths of cilia
@@ -391,10 +395,12 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
 
   # print(plot_total_length)
   
-  ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_total_length.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_total_length.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   # # Relative deviation of total lengths of cilia
@@ -413,9 +419,9 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # 
   # # print(plot_relative_differences_length)
   # 
-  # ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_relativeDev.pdf", sep="/"),
+  # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_relativeDev.pdf"),
   #        width = 297, height = 210, units = "mm")
-  # ggsave(filename = paste(output_dir, "comparison_resolution_man_aut_relativeDev.png", sep="/"),
+  # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_relativeDev.png"),
   #        width = 297, height = 210, units = "mm")
   
 }

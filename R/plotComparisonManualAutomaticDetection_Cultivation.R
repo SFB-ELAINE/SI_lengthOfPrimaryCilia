@@ -1,8 +1,8 @@
 # Function for plotting results from manual and automatic detection ++++++++
 # of cilia in seven test images                                     ++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2021/11/08
-# Last changed: 2023/03/16
+# Last changed: 2023/12/08
 
 
 # Color schema
@@ -34,7 +34,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rquery", "ggbeeswarm")
+  pkgs <- c("tidyverse", "rquery", "ggbeeswarm", "devEMF")
   groundhog.library(pkgs, groundhog.day)
   
   # Import data ############################################################
@@ -64,9 +64,6 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   df_results_automatic <- df_results_automatic[df_results_automatic$to_be_removed == "no",]
   
   # Add meta information of automatic detection
-  
-  #TODO: add/remove .czi in filename in df_results_automatic
-  # df_results_automatic$fileName <- paste(df_results_automatic$fileName, ".czi", sep="")
   
   df_results_automatic <- dplyr::left_join(x = df_results_automatic, y = df_metadata, by = "fileName")
   
@@ -178,8 +175,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   dir.create(output_dir, showWarnings = FALSE)
   
-  readr::write_csv(x = df_combined, file = paste(output_dir, "/combined_manual_automatic_results.csv", sep=""))
-  readr::write_csv2(x = df_combined, file = paste(output_dir, "/combined_manual_automatic_results_de.csv", sep=""))
+  readr::write_csv(x = df_combined, file = file.path(output_dir, "combined_manual_automatic_results.csv"))
+  readr::write_csv2(x = df_combined, file = file.path(output_dir, "combined_manual_automatic_results_de.csv"))
   
   
   # Plot results #############################################################
@@ -194,10 +191,12 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     ggtitle(paste("Thresholds (find) for ", name_of_test_images, sep=""))+
     theme_bw()
   
-  ggsave(filename = paste(output_dir, "hist_threshold_automatic_detection.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "hist_threshold_automatic_detection.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   # Plot results of every image
@@ -232,10 +231,12 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     
     # print(plot_horizontal_length_image)
     
-    ggsave(filename = paste(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf",sep=""), sep="/"),
+    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf",sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = paste(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep=""), sep="/"),
+    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep="")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
+           width = 297, height = 210, units = "mm", device = emf)
     
     
     plot_height_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=vertical_length_in_layers, color=researcher)) +
@@ -261,10 +262,12 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     
     # print(plot_height_image)
     
-    ggsave(filename = paste(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf",sep=""), sep="/"),
+    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf",sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = paste(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep=""), sep="/"),
+    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep="")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
+           width = 297, height = 210, units = "mm", device = emf)
     
     
   }
@@ -282,6 +285,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   plot_total_length <- ggplot(df_combined, aes(x=researcher, y=total_length_in_um, color=researcher, fill = type)) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
     geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     geom_beeswarm() +
     scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
     scale_fill_manual(values=c("grey90", "white")) +
@@ -300,15 +304,18 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # print(plot_total_length)
   
-  ggsave(filename = paste(output_dir, "comparison_man_aut_length.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "comparison_man_aut_length.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   # Vertical lengths of cilia in z-stack layers
   plot_height <- ggplot(df_combined, aes(x=researcher, y=vertical_length_in_layers, color=researcher, fill = type)) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
     geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     #geom_jitter(color="black", size=0.5, alpha=0.9) +
     geom_beeswarm() +
     scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
@@ -329,16 +336,19 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # print(plot_height)
   
-  ggsave(filename = paste(output_dir, "comparison_man_aut_height.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_height.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "comparison_man_aut_height.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_height.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_height.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   # Horizontal lengths of cilia in pixels
   plot_horizontal_length <- ggplot(df_combined, aes(x=researcher, y=horizontal_length_in_pixels, color=researcher, fill = type)) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
     geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
     #geom_jitter(color="black", size=0.5, alpha=0.9) +
     # geom_point(position = position_jitterdodge(jitter.width = 0.15)) +
     geom_beeswarm() +
@@ -359,10 +369,12 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # print(plot_horizontal_length)
   
-  ggsave(filename = paste(output_dir, "comparison_man_aut_width.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_width.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "comparison_man_aut_width.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_width.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_width.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   # Mean+-sd of total lengths of cilia in um
@@ -389,10 +401,12 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # print(plot_total_length_mean_sd)
   
-  ggsave(filename = paste(output_dir, "comparison_man_aut_length_mean_sd.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "comparison_man_aut_length_mean_sd.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
 }
 

@@ -1,11 +1,12 @@
 # Function for combining the results (csv data) from  the R package ++++++++
 # detectCilia using the cultivation images                          ++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2021/06/24
-# Last changed: 2023/03/27
+# Last changed: 2023/12/08
 
 
-combineDetectCiliaResults <- function(input_dir, output_dir,
+combineDetectCiliaResults <- function(input_dir,
+                                      output_dir,
                                       use_directory_filter,
                                       remove_directory_filter){
   
@@ -103,22 +104,22 @@ combineDetectCiliaResults <- function(input_dir, output_dir,
   }
 
   # Save resulting csv files #################################################
-  dir.create(output_dir, showWarnings = FALSE)
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
   
   readr::write_csv(x = df_cilia,
-                   file = paste(output_dir,"/","summary_cilia.csv", sep=""))
+                   file = file.path(output_dir, "summary_cilia.csv"))
   readr::write_csv2(x = df_cilia,
-                    file = paste(output_dir,"/","summary_cilia_de.csv", sep=""))
+                    file = file.path(output_dir, "summary_cilia_de.csv"))
   
   readr::write_csv(x = df_nuclei,
-                   file = paste(output_dir,"/","summary_nuclei.csv", sep=""))
+                   file = file.path(output_dir, "summary_nuclei.csv"))
   readr::write_csv2(x = df_nuclei,
-                    file = paste(output_dir,"/","summary_nuclei_de.csv", sep=""))
+                    file = file.path(output_dir, "summary_nuclei_de.csv"))
   
   readr::write_csv(x = df_parameters,
-                   file = paste(output_dir,"/","summary_parameters.csv", sep=""))
+                   file = file.path(output_dir, "summary_parameters.csv"))
   readr::write_csv2(x = df_parameters,
-                    file = paste(output_dir,"/","summary_parameters_de.csv", sep=""))
+                    file = file.path(output_dir, "summary_parameters_de.csv"))
   
   
 }

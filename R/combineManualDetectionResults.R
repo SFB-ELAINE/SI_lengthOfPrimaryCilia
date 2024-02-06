@@ -1,7 +1,7 @@
 # Script for combining all results from manual detection +++++++++++++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2022/09/13
-# Last changed: 2023/03/25
+# Last changed: 2023/12/08
 
 
 combineManualDetectionResults <- function(input_dir, output_dir,

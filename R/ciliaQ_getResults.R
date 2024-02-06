@@ -1,8 +1,8 @@
 # Function for reading CiliaQ results                             +++++++++
 # Adapted from https://github.com/hansenjn/CiliaQ/tree/master/R%20Scripts
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2022/06/20
-# Last changed: 2023/01/01
+# Last changed: 2024/01/24
 
 
 ciliaQ_getResults <- function(input_dir, output_dir){
@@ -158,6 +158,8 @@ ciliaQ_getResults <- function(input_dir, output_dir){
   rm(list = c("i", "df_dummy"))
   
   df_data <- df_data %>% dplyr::relocate("file_name", "image_name_short", .before = "Name")
+  
+  df_data$to_be_removed <- "yes_or_no"
   
   # Save data as csv files
   dir.create(output_dir, showWarnings = FALSE)

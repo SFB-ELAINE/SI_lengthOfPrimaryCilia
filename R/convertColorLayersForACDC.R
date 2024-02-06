@@ -1,9 +1,9 @@
 # Script for converting color layers for use with ACDC detection        ++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2022/07/22
-# Last changed: 2023/03/27
+# Last changed: 2023/12/27
 
-convertColorLayersForACDC <- function(input_dir, output_dir){
+convertColorLayersForACDC <- function(input_dir, output_dir, projection_method = "max"){
   
   # Load packages #############################################################
   
@@ -20,12 +20,7 @@ convertColorLayersForACDC <- function(input_dir, output_dir){
   
   
   # Install the R package for reading czi images
-  # TODO: Check the latest version
-  if(!("readCzi" %in% installed.packages()[,"Package"])){
-    # TODO: Add the latest version used
-    # devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.1.13")
-    devtools::install_github("SFB-ELAINE/readCzi")
-  }
+  devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.4.0")
   require(readCzi)
   
 
@@ -35,8 +30,15 @@ convertColorLayersForACDC <- function(input_dir, output_dir){
   
   for(i in 1:length(czi_files)){
     input_file <- czi_files[i]
-    readCzi::convertCziToTif(input_file = input_file, output_dir = output_dir,
-                             change_layers = "red<->green", add_scale_bar = FALSE)
+    readCzi::convertCziToTif(input_file = input_file,
+                             output_dir = output_dir,
+                             convert_all_slices = FALSE,
+                             zstack_projection = TRUE,
+                             projection_method = projection_method,
+                             higher_contrast_projection = FALSE,
+                             normalize_projection = FALSE,
+                             change_color_layers = "red<->green",
+                             add_scale_bar = FALSE)
   }
   
   

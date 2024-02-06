@@ -1,7 +1,7 @@
 # Script for plotting horizontal length of all 3 tools              ++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2023/03/22
-# Last changed: 2023/03/27
+# Last changed: 2023/12/08
 
 
 plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
@@ -18,7 +18,8 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
   
   # Load packages
   library(groundhog)
-  pkgs <- c("EnvStats", "tidyverse", "rstatix", "ggpubr", "ggbeeswarm", "coin", "scales")
+  pkgs <- c("EnvStats", "tidyverse", "rstatix", "ggpubr", "ggbeeswarm",
+            "coin", "scales", "devEMF")
   groundhog.library(pkgs, groundhog.day)
   
   # Import and clean data ####################################################
@@ -37,6 +38,10 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
   # Change order of tools
   df_results$tool <- factor(df_results$tool, levels = c("detectCilia", "ACDC", "CiliaQ"))
   
+  # Change the order of facets
+  df_results$cultivation <- factor(df_results$cultivation,
+                                   levels = c("ITS", "ITS with Dexa",
+                                   "ITS with Dexa + IGF + TGF", "FBS" ))
   
   # Plot results ###########################################################
   dir.create(output_dir, showWarnings = FALSE)
@@ -65,10 +70,12 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     theme(strip.background = element_rect(fill = "white"))
 
   
-  ggsave(filename = paste(output_dir, "all_tools_cilia_horizontal_lengths.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "all_tools_cilia_horizontal_lengths.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   # Horizontal lengths of cilia violin plot
@@ -89,10 +96,12 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     facet_grid(.~cultivation) +
     theme(strip.background = element_rect(fill = "white"))
   
-  ggsave(filename = paste(output_dir, "all_tools_horizontal_lengths_violin_plot.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.pdf"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "all_tools_horizontal_lengths_violin_plot.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
   
@@ -119,7 +128,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     dplyr::group_by(cultivation, tool) %>%
     rstatix::get_summary_stats(horizontal_length_in_um, type = "mean_sd")
   
-  print(paste("The results of the filiterd cilia lengths measurements are:"))
+  print("The results of the filiterd cilia lengths measurements are:")
   print(detection_results)
   
   if(all(df_normality$data_normally_distributed)){
@@ -133,7 +142,6 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     # (nonparametric equivalent of the one-way ANOVA)
     
     # test_result <- kruskal.test(horizontal_length_in_um ~ cultivation, df_results)
-    # TODO: Why are the result of these two tests different?
     
     test_result <- df_results %>%
       dplyr::group_by(cultivation) %>%
@@ -153,8 +161,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       
       test_name <- "ttest"
       
-      # Calculate the effect size to measure the magnitude of the differences
-      # TODO
+      # Calculate the effect size to measure the magnitude of the differences (TODO)
       
     }else{
       
@@ -166,8 +173,8 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       
       test_name <- "wilcoxon"
       
-      # Calculate the effect size to measure the magnitude of the differences
-      # TODO
+      # Calculate the effect size to measure the magnitude of the differences (TODO)
+      
       pairwise_comparison_effect_size <- df_results %>%
         dplyr::group_by(cultivation) %>% 
         rstatix::wilcox_effsize(horizontal_length_in_um ~ tool,  ref.group = "all")
@@ -205,10 +212,12 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
       )
     
     
-    ggsave(filename = paste(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".pdf"), sep="/"),
+    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".pdf")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = paste(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".png"), sep="/"),
+    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".emf")),
+           width = 297, height = 210, units = "mm", device = emf)
     
     
     plot_horizontal_length_violin_statistical_test <-
@@ -241,10 +250,12 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
         text.box = FALSE
       )
 
-    ggsave(filename = paste(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".pdf"), sep="/"),
+    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".pdf")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = paste(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".png"), sep="/"),
+    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
+           width = 297, height = 210, units = "mm", device = emf)
     
   }
   

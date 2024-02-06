@@ -1,8 +1,8 @@
 # Script for plotting horizontal length of test images              ++++++++
 # of all 3 tools and manual readers                                 ++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2023/04/20
-# Last changed: 2023/04/20
+# Last changed: 2023/12/08
 
 
 plotTestImageResultsFromAllTools <- function(
@@ -24,7 +24,7 @@ plotTestImageResultsFromAllTools <- function(
   
   # Load packages
   library(groundhog)
-  pkgs <- c("tidyverse", "rquery", "ggbeeswarm")
+  pkgs <- c("tidyverse", "rquery", "ggbeeswarm", "devEMF")
   groundhog.library(pkgs, groundhog.day)
   
   # Import and clean data ####################################################
@@ -231,10 +231,12 @@ plotTestImageResultsFromAllTools <- function(
   # scale_color_discrete(name="Rater")
   
   
-  ggsave(filename = paste(output_dir, "all_tools_cilia_horizontal_lengths.pdf", sep="/"),
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.pdf"),
          width = 442, height = 210, units = "mm")
-  ggsave(filename = paste(output_dir, "all_tools_cilia_horizontal_lengths.png", sep="/"),
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.png"),
          width = 442, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.emf"),
+         width = 297, height = 210, units = "mm", device = emf)
   
   
 }

@@ -1,7 +1,7 @@
 # Script for calculating the number of nuclei per group             ++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2023/01/15
-# Last changed: 2023/03/27
+# Last changed: 2023/12/08
 
 
 numberOfNuclei <- function(input_file){
@@ -51,7 +51,7 @@ numberOfNuclei <- function(input_file){
     dplyr::group_by(cultivation) %>%
     dplyr::summarise(number_of_images = n(), numer_of_nuclei = sum(numberOfNuclei))
   
-  print(paste("The number of found nuclei are in all images are:"))
+  print("The number of found nuclei are in all images are:")
   print(nuclei_detection_results)
   
 }

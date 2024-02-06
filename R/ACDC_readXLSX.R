@@ -1,7 +1,7 @@
 # Function for reading ACDC results from xlsx file                  ++++++++
-# Author: Kai Budde
+# Author: Kai Budde-Sagert
 # Created: 2022/12/19
-# Last changed: 2023/03/27
+# Last changed: 2023/12/08
 
 ACDC_readXLSX <- function(input_file, output_dir){
   
