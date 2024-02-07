@@ -11,7 +11,8 @@ createTestCiliumImage <- function(output_dir,
                                   cilium_height_in_pixels = 3,
                                   relative_start_position = c(0.5,0.5,0.5),
                                   rotatation_angles_degree = c(0,0,0),
-                                  gblur_sigma = 0){
+                                  gblur_sigma = 0,
+                                  cilium_color = "green"){
   
   # Load packages ##########################################################
   
@@ -21,7 +22,7 @@ createTestCiliumImage <- function(output_dir,
   if(!any(grepl(pattern = "groundhog", x = installed.packages(), ignore.case = TRUE))){
     install.packages("groundhog")
   }
-
+  
   # Load packages
   library(groundhog)
   pkgs <- c("BiocManager", "devtools", "dplyr", "reticulate")
@@ -70,7 +71,7 @@ createTestCiliumImage <- function(output_dir,
   new_cilium_cordinates <- round(new_cilium_cordinates)
   
   
-
+  
   
   
   # pixel_indices <- which(image_array == 1, arr.ind = TRUE)
@@ -132,7 +133,7 @@ createTestCiliumImage <- function(output_dir,
   
   # Combine all three images
   image_array_rotated <- 0+(image_array_rotated | image_array_rotated_xz |
-    image_array_rotated_yz)
+                              image_array_rotated_yz)
   
   # Add Gaussian blur
   # image_array_rotated_blur <- image_array_rotated/5
@@ -142,7 +143,19 @@ createTestCiliumImage <- function(output_dir,
     image_array_rotated <- EBImage::gblur(image_array_rotated, sigma = gblur_sigma)
   }
   
-  # display(image_array_rotated_blur)
+  # display(image_array_rotated)
+  
+  # Color the image
+  cilium_color <- tolower(cilium_color)
+  
+  if(cilium_color == "red" || cilium_color == "r"){
+    image_array_rotated <- EBImage::rgbImage(red = image_array_rotated)
+  }else if(cilium_color == "green" || cilium_color == "g"){
+    image_array_rotated <- EBImage::rgbImage(green = image_array_rotated)
+  }else if(cilium_color == "blue" || cilium_color == "b"){
+    image_array_rotated <- EBImage::rgbImage(blue = image_array_rotated)
+  }
+  
   
   # pixel_indices <- which(image_array == 1, arr.ind = TRUE)
   # 
@@ -174,7 +187,7 @@ createTestCiliumImage <- function(output_dir,
                          "_z",
                          i,
                          ".tif")
-    EBImage::writeImage(x = image_array_rotated[,,i],
+    EBImage::writeImage(x = image_array_rotated[,,,i],
                         bits.per.sample = 16,
                         files = file.path(output_dir, dir_name, image_name))
     

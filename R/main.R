@@ -457,6 +457,7 @@ createTestCiliumImage(output_dir = directory_artificial_images,
                       cilium_height_in_pixels = 3,
                       relative_start_position = c(0.5,0.5,0.5),
                       rotatation_angles_degree = c(0,0,0),
-                      gblur_sigma = 0)
+                      gblur_sigma = 0,
+                      cilium_color = "green")
 
 
