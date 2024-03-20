@@ -2,7 +2,7 @@
 # of cilia in seven test images                                     ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2021/11/08
-# Last changed: 2023/12/08
+# Last changed: 2024/03/20
 
 
 # Color schema
@@ -57,11 +57,14 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     pattern = name_of_test_images,
     x = df_results_automatic$fileName, fixed = TRUE), ]
   
-  print(paste("We are deleting ", sum(df_results_automatic$to_be_removed != "no"),
+  print(paste("We are deleting ",
+              sum(grepl(pattern = "^yes$",
+                        x = df_results_automatic$to_be_removed,
+                        ignore.case = TRUE), na.rm = TRUE),
               " cilium(a) from the automatic cilia detection because we have manually ",
               "marked it being a non-cilium structure.", sep=""))
   
-  df_results_automatic <- df_results_automatic[df_results_automatic$to_be_removed == "no",]
+  df_results_automatic <- df_results_automatic[!grepl(pattern = "^yes$", x = df_results_automatic$to_be_removed, ignore.case = TRUE),]
   
   # Add meta information of automatic detection
   
@@ -173,7 +176,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   
   # Save final tibble ######################################################
   
-  dir.create(output_dir, showWarnings = FALSE)
+  dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
   
   readr::write_csv(x = df_combined, file = file.path(output_dir, "combined_manual_automatic_results.csv"))
   readr::write_csv2(x = df_combined, file = file.path(output_dir, "combined_manual_automatic_results_de.csv"))

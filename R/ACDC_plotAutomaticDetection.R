@@ -38,7 +38,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
   # Filter manual corrections
   if("to_be_removed" %in% names(df_results)){
     print("Removing cilia labeled as to be removed")
-    df_results <- df_results[!grepl(pattern = "yes", x = df_results$to_be_removed, ignore.case = TRUE),]
+    df_results <- df_results[!grepl(pattern = "^yes$", x = df_results$to_be_removed, ignore.case = TRUE),]
   }
   
   # Add pixel size
@@ -264,7 +264,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     
     plot_horizontal_length_violin_statistical_test <-
       ggplot(df_results_filtered, aes(x=cultivation, y=horizontal_length_in_um)) +
-      geom_violin() +
+      geom_violin(color="#1e3a80") +
       geom_boxplot(width=0.2) +
       # ggviolin(df_results_filtered, x = "cultivation", y = "horizontal_length_in_um",
       #                                                          add = "boxplot", add.params = list(fill = "white")) +

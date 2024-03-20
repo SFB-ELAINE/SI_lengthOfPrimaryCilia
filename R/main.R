@@ -4,7 +4,7 @@
 # cultivation methods on the lengths of primary cilia"         +++++++++++++
 # Author: Kai Budde-Sagert
 # Created: 2022/10/11
-# Last changed: 2024/01/19
+# Last changed: 2024/03/18
 
 # Delete everything in the environment
 rm(list = ls())
@@ -18,7 +18,9 @@ download_directory_resolution  <- file.path("E:", "PhD", "Data",
                                             "Cilia", "resolutionImages")
 download_directory_cultivation <- file.path("E:", "PhD", "Data",
                                             "Cilia", "cultivationImages")
-directory_artificial_images <- file.path("artificialImages")
+directory_artificial_images <- file.path("E:", "PhD", "Data",
+                                         "Cilia", "artificialCilia",
+                                         "horizontal_blur")
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -84,17 +86,13 @@ rm(list = c("input_dir", "output_dir"))
 # Data input
 input_dir <- download_directory_resolution
 output_dir <- file.path("data", "automaticDetection", "resolution")
-use_directory_filter <- "none"
-remove_directory_filter <- "none"
 
 # Calling the function
 source(file.path("R", "combineDetectCiliaResults.R"))
-combineDetectCiliaResults(input_dir, output_dir,
-                          use_directory_filter, remove_directory_filter)
+combineDetectCiliaResults(input_dir, output_dir)
 
 # Removing objects
-rm(list = c("input_dir", "output_dir",
-            "use_directory_filter", "remove_directory_filter"))
+rm(list = c("input_dir", "output_dir"))
 
 
 # 2.4 Convert original results from manual detection of resolution #########
@@ -156,24 +154,18 @@ automaticCiliaDetection(input_dir, output_dir)
 # Removing objects
 rm(list = c("input_dir", "output_dir"))
 
-
 # 2.8 Combine results of automatic detection from cultivation images #######
 
 # Data input
 input_dir <- download_directory_cultivation
-output_dir <- file.path("data", "automaticDetection", "cultivation")
-use_directory_filter <- "none"
-remove_directory_filter <- "none"
+output_dir <- file.path("data", "automaticDetection", "cultivation2")
 
 # Calling the function
 source(file.path("R", "combineDetectCiliaResults.R"))
-combineDetectCiliaResults(input_dir, output_dir,
-                          use_directory_filter,
-                          remove_directory_filter)
+combineDetectCiliaResults(input_dir, output_dir)
 
 # Removing objects
-rm(list = c("input_dir", "output_dir",
-            "use_directory_filter", "remove_directory_filter"))
+rm(list = c("input_dir", "output_dir"))
 
 
 # 2.9 Calculate the number of found nuclei #################################
@@ -237,6 +229,12 @@ rm(list = c("input_dir", "output_dir", "metadata_file",
 
 # File containing the results of detectCilia (including which cilia
 # are to be removed)
+
+# !!! ATTENTION: You need to copy                                        !!!
+# !!! "data/automaticDetection/cultivation/summary_cilia.csv" to         !!!
+# !!! "data/automaticDetection/cultivation/summary_cilia_edited.csv" for !!!
+# !!! manually editing the results (if wanted)                           !!!    
+
 input_file <-  file.path("data", "automaticDetection", "cultivation",
                          "summary_cilia_edited.csv")
 input_file_compare <-  file.path("data", "automaticDetection",
@@ -310,7 +308,8 @@ rm(list = c("input_file_automatic", "input_file_manual", "output_dir"))
 
 
 # 4 Detection of cilia with ACDC ###########################################
-# 4.1 Project z-stacks and convert color layers for ACDC analysis ##########
+# 4.1 Calculate z-stack projections and convert color layers      ##########
+#     for ACDC analysis
 
 # Data input
 input_dir <- download_directory_cultivation
@@ -327,7 +326,7 @@ convertColorLayersForACDC(input_dir = input_dir,
 rm(list = c("input_dir", "output_dir", "projection_method"))
 
 
-# 4.2 Analyze stacked images with ACDC #####################################
+# 4.2 Analyze z-stack projection images with ACDC ##########################
 
 # This needs to be manually done because it cannot be invoked from R.
 # See ACDC/ReadMe.txt for further information.
@@ -360,14 +359,13 @@ ACDC_plotAutomaticDetection(input_file_acdc, input_file_metadata, output_dir)
 rm(list = c("input_file_acdc", "input_file_metadata", "output_dir"))
 
 
-
-# 5 Detection of cilia with ciliaQ #########################################
-# 5.1 Analyze stacked images with ciliaQ ###################################
+# 5 Detection of cilia with CiliaQ #########################################
+# 5.1 Analyze z-stack projection images with CiliaQ ########################
 
 # This needs to be manually done because it cannot be invoked from R.
+# See CiliaQ/HowTo for further information.
 
-
-# 5.2 Read ciliaQ results (txt files) and convert to csv ###################
+# 5.2 Read CiliaQ results (txt files) and convert to csv ###################
 
 # Directory with analysis results (CiliaQ files)
 # input_dir <- file.path("E:", "PhD", "Data", "Cilia", "cultivationImages", "ciliaQ", "zstack")
@@ -397,9 +395,9 @@ ciliaQ_plotAutomaticDetection(input_file_ciliaq, output_dir)
 rm(list = c("input_file_ciliaq", "output_dir"))
 
 
-# 6 Comparison of detectCilia, ACDC, and ciliaQ ############################
+# 6 Comparison of detectCilia, ACDC, and CiliaQ ############################
 
-# 6.1 Plot results of horizontal cilia length of detectCilia, ACDC, and ciliaQ ####
+# 6.1 Plot results of horizontal cilia length of detectCilia, ACDC, and CiliaQ ####
 input_file_detectCilia <- file.path("plots", "automaticDetectionCultivation", "horizontalLength_detectCilia.csv")
 input_file_ACDC <- file.path("plots", "ACDC", "horizontalLength_ACDC.csv")
 input_file_ciliaq <- file.path("plots", "ciliaQ", "horizontalLength_ciliaQ.csv")
@@ -415,7 +413,7 @@ rm(list = c("input_file_detectCilia", "input_file_ACDC",
             "input_file_ciliaq", "output_dir"))
 
 
-# 6.2 Plot results of horizontal cilia length of detectCilia, ACDC, and ciliaQ of 7 test images only ####
+# 6.2 Plot results of horizontal cilia length of detectCilia, ACDC, and CiliaQ of 7 test images only ####
 input_file_manual <- file.path("data","manualDetection","cultivation",
                                "df_manual_results.csv")
 input_file_cilium_numbers <- file.path("data","manualDetection",
@@ -425,7 +423,7 @@ input_file_cilium_numbers <- file.path("data","manualDetection",
 input_file_detectCilia    <- file.path("data", "automaticDetection",
                                        "cultivation", "summary_cilia_edited.csv")
 input_file_ACDC           <- file.path("ACDC","ciliaData.csv")
-input_file_ciliaq         <- file.path("CiliaQ_horizontal","ciliaq_data.csv")
+input_file_ciliaq         <- file.path("CiliaQ","ciliaq_data_edited.csv")
 output_dir <- file.path("plots", "allToolsTestImages")
 
 # input_file_automatic_parameters  <- "data/automaticDetection/cultivation/summary_parameters.csv"
@@ -446,18 +444,111 @@ rm(list = c("input_file_manual", "input_file_cilium_numbers",
             "input_file_detectCilia", "input_file_ACDC",
             "input_file_ciliaq", "output_dir"))
 
+
 # 7 Detection of artificial cilia with all three tools #####################
+
 # 7.1 Create images with horizontal cilia images ###########################
 source(file.path("R", "createTestCiliumImage.R"))
-createTestCiliumImage(output_dir = directory_artificial_images,
-                      number_of_pixels_x_y = 100,
-                      number_of_layers_z = 20,
-                      cilium_length_in_pixels = 10,
-                      cilium_width_in_pixels = 3,
-                      cilium_height_in_pixels = 3,
-                      relative_start_position = c(0.5,0.5,0.5),
-                      rotatation_angles_degree = c(0,0,0),
-                      gblur_sigma = 0,
-                      cilium_color = "green")
+for(current_blur in seq(from = 0, to = 4, by = 0.1)){
+  createTestCiliumImage(output_dir = directory_artificial_images,
+                        number_of_pixels_x_y = 100,
+                        number_of_layers_z = 20,
+                        cilium_length_in_pixels = 10,
+                        cilium_width_in_pixels = 3,
+                        cilium_height_in_pixels = 3,
+                        relative_start_position = c(0.5,0.5,0.5),
+                        rotatation_angles_degree = c(0,0,0),
+                        gblur_sigma = current_blur,
+                        cilium_color = "green")
+}
+
+# 7.2 Automatic detection of cilia from synthetic cilia images #############
+
+# Data input
+input_dir <- directory_artificial_images
+
+# Calling the function
+source(file.path("R", "automaticCiliaDetection.R"))
+automaticCiliaDetection(input_dir)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 7.3 Combine results of aut. detection from synthetic cilia images ########
+
+# Data input
+input_dir <- directory_artificial_images
+output_dir <- file.path("data", "automaticDetection", "artificialCilia")
+
+# Calling the function
+source(file.path("R", "combineDetectCiliaResults.R"))
+combineDetectCiliaResults(input_dir, output_dir)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir"))
+
+# 7.4 Copy all z-stack max projection into one folder ######################
+# Data input
+input_dir <- directory_artificial_images
+
+# Calling the function
+source(file.path("R", "copyAllProjectionImages.R"))
+copyAllProjectionImages(input_dir)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 7.5 Analyze z-stack projection images with ACDC ##########################
+
+# This needs to be manually done because it cannot be invoked from R.
+# See ACDC_artificialCilia/ReadMe.txt for further information.
+
+# 7.6 Read results as xlsx file and convert to csv #########################
+
+input_file <- file.path("ACDC_artificialCilia","Cilia Report 20-Feb-2024 15-27-20.xlsx")
+output_dir <- "ACDC_artificialCilia"
+
+# Calling the function
+source(file.path("R", "ACDC_readXLSX.R"))
+ACDC_readXLSX(input_file, output_dir)
+
+# Removing objects
+rm(list = c("input_file", "output_dir"))
+
+# 7.7 Analyze z-stack projection images with CiliaQ ########################
+
+# This needs to be manually done because it cannot be invoked from R.
+# See CiliaQ/HowTo for further information.
+
+# 7.8 Read CiliaQ results (txt files) and convert to csv ###################
+
+# Directory with analysis results (CiliaQ files)
+input_dir <- file.path("E:", "PhD", "Data", "Cilia", "artificialCilia", "horizontal_blur_zprojection_ciliaQ")
+# Output directory
+output_dir <- "CiliaQ_artificialCilia"
+
+# Calling the function
+source(file.path("R", "ciliaQ_getResults.R"))
+ciliaQ_getResults(input_dir, output_dir)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir"))
+
+# 7.9 Plot results of artificialCilia detections ###########################
+input_file_detectCilia <- file.path("data", "automaticDetection", "artificialCilia", "summary_cilia.csv")
+input_file_ACDC        <- file.path("ACDC_artificialCilia","ciliaData.csv")
+input_file_ciliaq      <- file.path("CiliaQ_artificialCilia", "ciliaq_data.csv")
+output_dir <- file.path("plots", "artificialCilia")
+
+# Calling the function
+source(file.path("R", "plotArtificialCiliaResultsFromAllTools"))
+plotArtificialCiliaResultsFromAllTools(input_file_detectCilia,
+                                       input_file_ACDC,
+                                       input_file_ciliaq,
+                                       output_dir)
+
+# Removing objects
+rm(list = c("input_file_detectCilia", "input_file_ACDC",
+            "input_file_ciliaq", "output_dir"))
 
 

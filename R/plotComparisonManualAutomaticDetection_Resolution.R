@@ -36,7 +36,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   # Automatic detection (using detectCilia)
   df_results_auto <- readr::read_csv(file = input_file_automatic, name_repair = "universal")
-  df_results_auto <- df_results_auto[df_results_auto$to_be_removed != "yes", ]
+  df_results_auto <- df_results_auto[!grepl(pattern = "^yes$", x = df_results_auto$to_be_removed, ignore.case = TRUE), ]
   
   # Manual detection (using Fiji)
   df_results_man <- readr::read_csv(file = input_file_manual, name_repair = "universal")

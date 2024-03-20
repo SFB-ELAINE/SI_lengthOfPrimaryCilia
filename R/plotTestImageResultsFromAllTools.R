@@ -2,7 +2,7 @@
 # of all 3 tools and manual readers                                 ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2023/04/20
-# Last changed: 2023/12/08
+# Last changed: 2024/03/20
 
 
 plotTestImageResultsFromAllTools <- function(
@@ -35,22 +35,25 @@ plotTestImageResultsFromAllTools <- function(
   df_results_ACDC <- readr::read_csv(file = input_file_ACDC, name_repair = "universal")
   df_results_ciliaQ <- readr::read_csv(file = input_file_ciliaq, name_repair = "universal")
   
-  # Delete false positive cilium (manually labelled)
-  print(paste("We are deleting ", sum(df_results_detectCilia$to_be_removed != "no"),
-              " cilium(a) from the automatic cilia detection because we have manually ",
-              "marked it being a non-cilium structure.", sep=""))
-  
-  df_results_detectCilia <- df_results_detectCilia[df_results_detectCilia$to_be_removed == "no",]
+  # # Delete false positive cilium (manually labelled)
+  # print(paste("We are deleting ",
+  #             sum(grepl(pattern = "^yes$",
+  #                       x = df_results_detectCilia$to_be_removed,
+  #                       ignore.case = TRUE), na.rm = TRUE),
+  #             " cilium(a) from the automatic cilia detection because we have manually ",
+  #             "marked it being a non-cilium structure.", sep=""))
+  # 
+  # df_results_detectCilia <- df_results_detectCilia[!grepl(pattern = "^yes$", x = df_results_detectCilia$to_be_removed, ignore.case = TRUE),]
   
   # Add original file name to CiliaQ data
   df_results_ciliaQ$file_name_czi <- gsub(
-    pattern = "(.+)_zstack_histogram_equalized_CQP_CQs",
+    pattern = "(.+)_projection_CQP_CQs",
     replacement = "\\1.czi",
     df_results_ciliaQ$file_name)
   
   # Add original file name to ACDC data
   df_results_ACDC$file_name_czi <- gsub(
-    pattern = "(.+)_zstack_histogram_equalized\\.tif",
+    pattern = "(.+)_projection\\.tif",
     replacement = "\\1.czi",
     df_results_ACDC$fileName)
   
@@ -196,11 +199,13 @@ plotTestImageResultsFromAllTools <- function(
   df_combined$tool[df_combined$tool == "ACDC"] <- "AC\nDC"
   df_combined$tool[df_combined$tool == "CiliaQ"] <- "cq"
   
+  df_combined$tool <- factor(df_combined$tool, levels = c("dc", "AC\nDC", "cq", "m1", "m2", "m3"))
   
   # Plot results ###########################################################
   dir.create(output_dir, showWarnings = FALSE)
   
   # Plot all data ----------------------------------------------------------
+  
   
   # Horizontal lengths of cilia
   legend_name <- "Rater"
@@ -210,7 +215,7 @@ plotTestImageResultsFromAllTools <- function(
     #geom_jitter(color="black", size=0.5, alpha=0.9) +
     # geom_point(position = position_jitterdodge(jitter.width = 0.15)) +
     geom_beeswarm() +
-    scale_color_manual(values=c("#762855", "#1e3a80", "#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+    scale_color_manual(values=c("#009E73", "#762855", "#1e3a80", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
     scale_fill_manual(values=c("grey90", "white")) +
     ylim(0,25) +
     theme_bw(base_size = 18) +

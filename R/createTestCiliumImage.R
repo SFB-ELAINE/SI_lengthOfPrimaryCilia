@@ -147,13 +147,19 @@ createTestCiliumImage <- function(output_dir,
   
   # Color the image
   cilium_color <- tolower(cilium_color)
+  gray_cilium <- FALSE
   
-  if(cilium_color == "red" || cilium_color == "r"){
+  if(cilium_color == "grey" || cilium_color == "gray"){
+    gray_cilium <- TRUE
+    print("The image stays as a grayscale image.")
+  }else if(cilium_color == "red" || cilium_color == "r"){
     image_array_rotated <- EBImage::rgbImage(red = image_array_rotated)
   }else if(cilium_color == "green" || cilium_color == "g"){
     image_array_rotated <- EBImage::rgbImage(green = image_array_rotated)
   }else if(cilium_color == "blue" || cilium_color == "b"){
     image_array_rotated <- EBImage::rgbImage(blue = image_array_rotated)
+  }else{
+    print("Please call the function with a correct color name.")
   }
   
   
@@ -173,7 +179,7 @@ createTestCiliumImage <- function(output_dir,
                      paste0(rotatation_angles_degree, collapse="_"),
                      "_gblur_",
                      gblur_sigma)
-  dir.create(file.path(output_dir, dir_name), showWarnings = FALSE)
+  dir.create(file.path(output_dir, dir_name), showWarnings = FALSE, recursive = TRUE)
   
   # image_name <- paste0("ArtificialCilium_",
   #                      "l_", cilium_length_in_pixels,
@@ -187,9 +193,16 @@ createTestCiliumImage <- function(output_dir,
                          "_z",
                          i,
                          ".tif")
-    EBImage::writeImage(x = image_array_rotated[,,,i],
-                        bits.per.sample = 16,
-                        files = file.path(output_dir, dir_name, image_name))
+    if(gray_cilium){
+      EBImage::writeImage(x = image_array_rotated[,,i],
+                          bits.per.sample = 16,
+                          files = file.path(output_dir, dir_name, image_name))
+    }else{
+      EBImage::writeImage(x = image_array_rotated[,,,i],
+                          bits.per.sample = 16,
+                          files = file.path(output_dir, dir_name, image_name))
+    }
+    
     
   }
   

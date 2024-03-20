@@ -63,7 +63,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   df_results_automatic$cultivation <- factor(df_results_automatic$cultivation, levels = names_of_experiments)
   
   # Save tibble with filtered data
-  df_results_automatic_filtered <- df_results_automatic[!grepl(pattern = "yes", x = df_results_automatic$to_be_removed, ignore.case = TRUE),]
+  df_results_automatic_filtered <- df_results_automatic[!grepl(pattern = "^yes$", x = df_results_automatic$to_be_removed, ignore.case = TRUE),]
   df_results_automatic_filtered <- df_results_automatic_filtered[!is.na(df_results_automatic_filtered$total_length_in_um),]
   
   
@@ -356,7 +356,7 @@ plotAutomaticDetection_Cultivation <- function(input_file,
       # ggviolin(df_results_automatic_filtered, x = "cultivation", y = "total_length_in_um",
       #                                           add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
-      stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = FALSE, label = "{p.adj.signif}") +
+      stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
       scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
       # labs(

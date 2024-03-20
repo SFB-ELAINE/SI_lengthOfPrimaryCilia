@@ -1,7 +1,7 @@
 # Script for calculating the number of nuclei per group             ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2023/01/15
-# Last changed: 2023/12/08
+# Last changed: 2024/03/20
 
 
 numberOfNuclei <- function(input_file){
@@ -49,7 +49,10 @@ numberOfNuclei <- function(input_file){
   
   nuclei_detection_results <- df_results_automatic %>%
     dplyr::group_by(cultivation) %>%
-    dplyr::summarise(number_of_images = n(), numer_of_nuclei = sum(numberOfNuclei))
+    dplyr::summarise(number_of_images = n(),
+                     numer_of_nuclei = sum(number_Of_nuclei),
+                     mean_nuclei_projection_area_in_pixels = round(mean(mean_nuclei_projection_area_in_pixels), digits = 0),
+                     mean_nuclei_projection_equivalent_diameter_in_um = round(mean(mean_nuclei_projection_equivalent_diameter_in_um), digits = 1))
   
   print("The number of found nuclei are in all images are:")
   print(nuclei_detection_results)

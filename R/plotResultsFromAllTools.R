@@ -6,7 +6,7 @@
 
 plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
                                     input_file_ciliaq, output_dir){
-
+  
   # Load packages ##########################################################
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
@@ -41,7 +41,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
   # Change the order of facets
   df_results$cultivation <- factor(df_results$cultivation,
                                    levels = c("ITS", "ITS with Dexa",
-                                   "ITS with Dexa + IGF + TGF", "FBS" ))
+                                              "ITS with Dexa + IGF + TGF", "FBS" ))
   
   # Plot results ###########################################################
   dir.create(output_dir, showWarnings = FALSE)
@@ -55,8 +55,8 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     geom_beeswarm() +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     ylim(0,5) +
-    scale_color_manual(values=c("#009E73", "black", "black")) +
-    scale_fill_manual(values=c("grey90", "white", "white")) +
+    scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
+    scale_fill_manual(values=c("grey90", "grey90", "grey90")) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
     theme_bw(base_size = 18) +
@@ -68,7 +68,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     xlab("Detection tool") +
     facet_grid(.~cultivation) +
     theme(strip.background = element_rect(fill = "white"))
-
+  
   
   ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.pdf"),
          width = 297, height = 210, units = "mm")
@@ -84,7 +84,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
     # stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(width=0.1) +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
-    scale_fill_manual(values=c("grey90", "white", "white")) +
+    scale_fill_manual(values=c("grey90", "grey90", "grey90")) +
     ylim(0,5) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
@@ -151,114 +151,111 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
   
   if(all(test_result$p < 0.05)){
     print("There are significant differences of the total lengths between the tools in all cultivation compositions.")
+  }
+  
+  if(all(df_normality$data_normally_distributed)){
+    # Pairwise t-tests with posthoc
+    pairwise_comparison_result <- df_results %>%
+      dplyr::group_by(cultivation) %>% 
+      rstatix::pairwise_t_test(horizontal_length_in_um ~ tool, p.adjust.method = "bonferroni") %>% 
+      rstatix::add_xy_position(x = "cultivation")
     
-    if(all(df_normality$data_normally_distributed)){
-      # Pairwise t-tests with posthoc
-      pairwise_comparison_result <- df_results %>%
-        dplyr::group_by(cultivation) %>% 
-        rstatix::pairwise_t_test(horizontal_length_in_um ~ tool, p.adjust.method = "bonferroni") %>% 
-        rstatix::add_xy_position(x = "cultivation")
-      
-      test_name <- "ttest"
-      
-      # Calculate the effect size to measure the magnitude of the differences (TODO)
-      
-    }else{
-      
-      # Pairwise Wilcoxon signed-rank test with posthoc
-      pairwise_comparison_result <- df_results %>%
-        dplyr::group_by(cultivation) %>% 
-        rstatix::pairwise_wilcox_test(horizontal_length_in_um ~ tool, p.adjust.method = "bonferroni") %>% 
-        rstatix::add_xy_position(x = "tool")
-      
-      test_name <- "wilcoxon"
-      
-      # Calculate the effect size to measure the magnitude of the differences (TODO)
-      
-      pairwise_comparison_effect_size <- df_results %>%
-        dplyr::group_by(cultivation) %>% 
-        rstatix::wilcox_effsize(horizontal_length_in_um ~ tool,  ref.group = "all")
-      
-      
-    }
+    test_name <- "ttest"
     
-    plot_horizontal_length_statistical_test <-
-      ggplot(df_results, aes(x=tool, y=horizontal_length_in_um, color=tool)) +
-      stat_boxplot(geom ='errorbar', width = 0.3, color="black") +
-      geom_boxplot(aes(fill = tool), alpha = 1, color="black") +
-      geom_beeswarm() +
-      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
-      scale_y_continuous(breaks= pretty_breaks()) +
-      # ylim(0,5) +
-      scale_color_manual(values=c("#009E73", "black", "black")) +
-      scale_fill_manual(values=c("grey90", "white", "white")) +
-      # geom_jitter(color="black", size=0.5, alpha=0.9) +
-      #ylim(0,20) +
-      theme_bw(base_size = 18) +
-      theme(#axis.title.y=element_text(size=12),
-        #axis.text.x = element_blank(),
-        legend.position = "none",
-        axis.ticks.x = element_blank()) +
-      ylab("Horizontal cilium length in \u03BCm") +
-      xlab("Detection tool") +
-      facet_grid(.~cultivation) +
-      theme(strip.background = element_rect(fill = "white")) +
-      # ggprism::add_pvalue(pairwise_comparison_result, tip.length = 0.01, hide.ns = FALSE)
-      stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, hide.ns = FALSE) +
-      EnvStats::stat_n_text(
-        y.pos = 6.2,
-        color = "black",
-        text.box = FALSE
-      )
+    # Calculate the effect size to measure the magnitude of the differences (TODO)
     
+  }else{
     
-    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".pdf")),
-           width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".png")),
-           width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".emf")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # Pairwise Wilcoxon signed-rank test with posthoc
+    pairwise_comparison_result <- df_results %>%
+      dplyr::group_by(cultivation) %>% 
+      rstatix::pairwise_wilcox_test(horizontal_length_in_um ~ tool, p.adjust.method = "bonferroni") %>% 
+      rstatix::add_xy_position(x = "tool")
     
+    test_name <- "wilcoxon"
     
-    plot_horizontal_length_violin_statistical_test <-
-      ggplot(df_results, aes(x=tool, y=horizontal_length_in_um, color=tool)) +
-      geom_violin() +
-      stat_boxplot(geom ='errorbar', width = 0.3, color="black") +
-      geom_boxplot(aes(fill = tool), width=0.2, alpha = 1, color="black") +
-      # geom_beeswarm() +
-      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
-      scale_y_continuous(breaks= pretty_breaks()) +
-      # ylim(0,5) +
-      scale_color_manual(values=c("#009E73", "black", "black")) +
-      scale_fill_manual(values=c("grey90", "white", "white")) +
-      # geom_jitter(color="black", size=0.5, alpha=0.9) +
-      #ylim(0,20) +
-      theme_bw(base_size = 18) +
-      theme(#axis.title.y=element_text(size=12),
-        #axis.text.x = element_blank(),
-        legend.position = "none",
-        axis.ticks.x = element_blank()) +
-      ylab("Horizontal cilium length in \u03BCm") +
-      xlab("Detection tool") +
-      facet_grid(.~cultivation) +
-      theme(strip.background = element_rect(fill = "white")) +
-      # ggprism::add_pvalue(pairwise_comparison_result, tip.length = 0.01, hide.ns = FALSE)
-      stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, hide.ns = FALSE) +
-      EnvStats::stat_n_text(
-        y.pos = 6.2,
-        color = "black",
-        text.box = FALSE
-      )
-
-    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".pdf")),
-           width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
-           width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # Calculate the effect size to measure the magnitude of the differences (TODO)
+    
+    pairwise_comparison_effect_size <- df_results %>%
+      dplyr::group_by(cultivation) %>% 
+      rstatix::wilcox_effsize(horizontal_length_in_um ~ tool,  ref.group = "all")
+    
     
   }
   
+  plot_horizontal_length_statistical_test <-
+    ggplot(df_results, aes(x=tool, y=horizontal_length_in_um, color=tool)) +
+    stat_boxplot(geom ='errorbar', width = 0.3, color="black") +
+    geom_boxplot(aes(fill = tool), alpha = 1, color="black") +
+    geom_beeswarm() +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    scale_y_continuous(breaks= pretty_breaks()) +
+    # ylim(0,5) +
+    scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
+    scale_fill_manual(values=c("grey90", "grey90", "grey90")) +
+    # geom_jitter(color="black", size=0.5, alpha=0.9) +
+    #ylim(0,20) +
+    theme_bw(base_size = 18) +
+    theme(#axis.title.y=element_text(size=12),
+      #axis.text.x = element_blank(),
+      legend.position = "none",
+      axis.ticks.x = element_blank()) +
+    ylab("Horizontal cilium length in \u03BCm") +
+    xlab("Detection tool") +
+    facet_grid(.~cultivation) +
+    theme(strip.background = element_rect(fill = "white")) +
+    # ggprism::add_pvalue(pairwise_comparison_result, tip.length = 0.01, hide.ns = FALSE)
+    stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, hide.ns = TRUE) +
+    EnvStats::stat_n_text(
+      y.pos = 6.2,
+      color = "black",
+      text.box = FALSE
+    )
+  
+  
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".pdf")),
+         width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".png")),
+         width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".emf")),
+         width = 297, height = 210, units = "mm", device = emf)
+  
+  
+  plot_horizontal_length_violin_statistical_test <-
+    ggplot(df_results, aes(x=tool, y=horizontal_length_in_um, color=tool)) +
+    geom_violin() +
+    stat_boxplot(geom ='errorbar', width = 0.3, color="black") +
+    geom_boxplot(aes(fill = tool), width=0.2, alpha = 1, color="black") +
+    # geom_beeswarm() +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
+    scale_y_continuous(breaks= pretty_breaks()) +
+    # ylim(0,5) +
+    scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
+    scale_fill_manual(values=c("grey90", "grey90", "grey90")) +
+    # geom_jitter(color="black", size=0.5, alpha=0.9) +
+    #ylim(0,20) +
+    theme_bw(base_size = 18) +
+    theme(#axis.title.y=element_text(size=12),
+      #axis.text.x = element_blank(),
+      legend.position = "none",
+      axis.ticks.x = element_blank()) +
+    ylab("Horizontal cilium length in \u03BCm") +
+    xlab("Detection tool") +
+    facet_grid(.~cultivation) +
+    theme(strip.background = element_rect(fill = "white")) +
+    # ggprism::add_pvalue(pairwise_comparison_result, tip.length = 0.01, hide.ns = FALSE)
+    stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, hide.ns = TRUE) +
+    EnvStats::stat_n_text(
+      y.pos = 6.2,
+      color = "black",
+      text.box = FALSE
+    )
+  
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".pdf")),
+         width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
+         width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
+         width = 297, height = 210, units = "mm", device = emf)
   
 }
-
