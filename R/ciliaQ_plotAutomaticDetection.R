@@ -2,7 +2,7 @@
 # of cultivation images (z stack projection) using ciliaQ           ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2022/12/20
-# Last changed: 2023/12/08
+# Last changed: 2024/03/29
 
 
 ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
@@ -31,6 +31,17 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   # Import and clean data ####################################################
   df_results  <- readr::read_csv(file = input_file_ciliaq, name_repair = "universal")
   
+  # Check whether data comes from 3D images
+  if(grepl(pattern = "3D", x = output_dir, ignore.case = TRUE)){
+    ThreeD_image <- TRUE
+    prefix <- "total"
+    Prefix <- "Total"
+  }else{
+    ThreeD_image <- FALSE
+    prefix <- "horizontal"
+    Prefix <- "Horizontal"
+  }
+  
   # Filter manual corrections
   if("to_be_removed" %in% names(df_results)){
     print("Removing cilia labeled as to be removed")
@@ -39,7 +50,7 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   
   
   # Rename columns
-  names(df_results)[names(df_results) == "cilia.length..micron."] <- "horizontal_length_in_um"
+  names(df_results)[names(df_results) == "cilia.length..micron."] <- "cilia_length_in_um"
   
   # df_metadata <- readr::read_csv(file = input_file_metadata, name_repair = "universal")
   
@@ -76,8 +87,8 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   experiment_groups <- unique(df_results$cultivation)
   df_results$outlier <- "no"
   for(i in experiment_groups){
-    outliers <- boxplot(x = df_results$horizontal_length_in_um[df_results$cultivation == i], plot = FALSE)$out
-    df_results$outlier[df_results$cultivation == i][which(df_results$horizontal_length_in_um[df_results$cultivation == i] %in% outliers)] <- "yes"
+    outliers <- boxplot(x = df_results$cilia_length_in_um[df_results$cultivation == i], plot = FALSE)$out
+    df_results$outlier[df_results$cultivation == i][which(df_results$cilia_length_in_um[df_results$cultivation == i] %in% outliers)] <- "yes"
   }
   rm(i)
   
@@ -85,106 +96,117 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   
   # Remove NAs or lengths close to 0
   df_results_filtered <- df_results_filtered[!(
-    is.na(df_results_filtered$horizontal_length_in_um) |
-      df_results_filtered$horizontal_length_in_um < 0.1),]
+    is.na(df_results_filtered$cilia_length_in_um) |
+      df_results_filtered$cilia_length_in_um < 0.1),]
   
-  # Save horizontal lengths in a csv file
-  df_horizontal_lengths <- df_results_filtered %>% 
-    dplyr::select(cultivation, horizontal_length_in_um)
-  readr::write_csv(x = df_horizontal_lengths, file = file.path(output_dir, "horizontalLength_ciliaQ.csv"))
-  rm(df_horizontal_lengths)
+  # Save cilia lengths in a csv file
+  df_lengths <- df_results_filtered %>% 
+    dplyr::select(cultivation, cilia_length_in_um)
+  readr::write_csv(x = df_lengths, file = file.path(output_dir, paste0(prefix, "Length_ciliaQ.csv")))
+  rm(df_lengths)
   
   # Plot results #############################################################
+  if(ThreeD_image){
+    ylim_max <- 10
+  }else{
+    ylim_max <- 5
+  }
   
-  # Horizontal lengths of cilia
-  plot_horizontal_length <- ggplot(df_results, aes(x=cultivation, y=horizontal_length_in_um)) +
+  
+  # Cilia lengths
+  plot_length <- ggplot(df_results, aes(x=cultivation, y=cilia_length_in_um)) +
     stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(alpha = 1) +
     geom_beeswarm() +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
-    ylim(0,5) +
+    # ylim(0, ylim_max) +
+    scale_y_continuous(limits = c(0, ylim_max), breaks = scales::breaks_pretty()) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab("Horizontal cilium length in \u03BCm determined by CiliaQ") +
-    xlab("Cultivation")
+    xlab("Cultivation") +
+    ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ"))
   
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_cilia_horizontal_lengths.pdf"),
-         width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_cilia_horizontal_lengths.png"),
-         width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
   
-  plot_total_length_violin <- ggplot(df_results, aes(x=cultivation, y=horizontal_length_in_um)) +
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_",prefix,"_lengths.pdf")),
+         width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths.png")),
+         width = 297, height = 210, units = "mm")
+  # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths.emf")),
+  #        width = 297, height = 210, units = "mm", device = emf)
+  
+  plot_length_violin <- ggplot(df_results, aes(x=cultivation, y=cilia_length_in_um)) +
     geom_violin() +
     # stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(width=0.1) +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
-    ylim(0,5) +
+    # ylim(0, ylim_max) +
+    scale_y_continuous(limits = c(0, ylim_max), breaks = scales::breaks_pretty()) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab("Horizontal cilium length in \u03BCm determined by CiliaQ") +
-    xlab("Cultivation")
+    xlab("Cultivation") +
+    ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ"))
   
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_cilia_horizontal_lengths_violin_plot.pdf"),
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot.pdf")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_cilia_horizontal_lengths_violin_plot.png"),
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot.png")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot.emf"))),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Plot filtered data #####################################################
   
-  # Horizontal lengths of cilia
-  plot_horizontal_length <- ggplot(df_results_filtered, aes(x=cultivation, y=horizontal_length_in_um)) +
+  # Cilia lengths
+  plot_length <- ggplot(df_results_filtered, aes(x=cultivation, y=cilia_length_in_um)) +
     stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(alpha = 1) +
     geom_beeswarm() +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
-    ylim(0,5) +
+    # ylim(0, ylim_max) +
+    scale_y_continuous(limits = c(0, ylim_max), breaks = scales::breaks_pretty()) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab("Horizontal cilium length in \u03BCm determined by CiliaQ") +
+    ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ")) +
     xlab("Cultivation")
   
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_filtered_cilia_horizontal_lengths.pdf"),
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths.pdf")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_filtered_cilia_horizontal_lengths.png"),
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths.png")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths.emf")),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
-  plot_horizontal_length_violin <- ggplot(df_results_filtered, aes(x=cultivation, y=horizontal_length_in_um)) +
+  plot_length_violin <- ggplot(df_results_filtered, aes(x=cultivation, y=cilia_length_in_um)) +
     geom_violin() +
     # stat_boxplot(geom ='errorbar', width = 0.3) +
     geom_boxplot(width=0.1) +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
-    ylim(0,5) +
+    # ylim(0, ylim_max) +
+    scale_y_continuous(limits = c(0, ylim_max), breaks = scales::breaks_pretty()) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
-    ylab("Horizontal cilium length in \u03BCm determined by CiliaQ") +
+    ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ")) +
     xlab("Cultivation")
   
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_filtered_cilia_horizontal_lengths_violin_plot.pdf"),
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths_violin_plot.pdf")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ciliaQ_all_filtered_cilia_horizontal_lengths_violin_plot.png"),
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths_violin_plot.png")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths_violin_plot.emf")),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   # Check for normality of data ############################################
   
@@ -194,7 +216,7 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
     
     # Get filtered length data
     lengths_for_statistical_tests <-
-      df_results_filtered$horizontal_length_in_um[
+      df_results_filtered$cilia_length_in_um[
         df_results_filtered$cultivation == names_of_experiments[i]]
     
     # Perform Shapiro-Wilk test (check normal distribution)
@@ -216,36 +238,36 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   print(df_normality)
   
   
-  # Compare horizontal length groups #######################################
+  # Compare length groups ##################################################
   
   detection_results <- df_results_filtered %>%
     dplyr::group_by(cultivation) %>%
-    rstatix::get_summary_stats(horizontal_length_in_um, type = "mean_sd")
+    rstatix::get_summary_stats(cilia_length_in_um, type = "mean_sd")
   
   print("The results of the filiterd cilia lengths measurements are:")
   print(detection_results)
   
   if(all(df_normality$data_normally_distributed)){
     # One-way ANOVA (requires normality, equal Variances, independence)
-    test_result <- df_results_filtered %>% rstatix::anova_test(horizontal_length_in_um ~ cultivation)
+    test_result <- df_results_filtered %>% rstatix::anova_test(cilia_length_in_um ~ cultivation)
     
   }else{
     # Kruskal-Wallis test (requires ordinal or continuous response variable, similarly shaped distributions, independence )
     # (nonparametric equivalent of the one-way ANOVA)
     
-    # test_result <- kruskal.test(horizontal_length_in_um ~ cultivation, df_results_filtered)
+    # test_result <- kruskal.test(cilia_length_in_um ~ cultivation, df_results_filtered)
     
-    test_result <- df_results_filtered %>% rstatix::kruskal_test(horizontal_length_in_um ~ cultivation)
+    test_result <- df_results_filtered %>% rstatix::kruskal_test(cilia_length_in_um ~ cultivation)
   }
   
   
   if(test_result$p < 0.05){
-    print("There are significant differences of the horizontal lengths between the groups.")
+    print("There are significant differences of the lengths between the groups.")
     
     if(all(df_normality$data_normally_distributed)){
       # Pairwise t-tests with posthoc
       pairwise_comparison_result <- df_results_filtered %>%
-        rstatix::pairwise_t_test(horizontal_length_in_um ~ cultivation, p.adjust.method = "bonferroni") %>% 
+        rstatix::pairwise_t_test(cilia_length_in_um ~ cultivation, p.adjust.method = "bonferroni") %>% 
         add_xy_position(x = "cultivation")
       
       test_name <- "ttest"
@@ -256,7 +278,7 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
       
       # Pairwise Wilcoxon signed-rank test with posthoc
       pairwise_comparison_result <- df_results_filtered %>%
-        rstatix::pairwise_wilcox_test(horizontal_length_in_um ~ cultivation, p.adjust.method = "bonferroni") %>% 
+        rstatix::pairwise_wilcox_test(cilia_length_in_um ~ cultivation, p.adjust.method = "bonferroni") %>% 
         add_xy_position(x = "cultivation")
       
       test_name <- "wilcoxon"
@@ -264,21 +286,22 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
       # Calculate the effect size to measure the magnitude of the differences (TODO)
       
       pairwise_comparison_effect_size <- df_results_filtered %>%
-        rstatix::wilcox_effsize(horizontal_length_in_um ~ cultivation,  ref.group = "all")
+        rstatix::wilcox_effsize(cilia_length_in_um ~ cultivation,  ref.group = "all")
       
       
     }
     
     
-    plot_horizontal_length_violin_statistical_test <-
-      ggplot(df_results_filtered, aes(x=cultivation, y=horizontal_length_in_um)) +
+    plot_cilia_length_violin_statistical_test <-
+      ggplot(df_results_filtered, aes(x=cultivation, y=cilia_length_in_um)) +
       geom_violin(color="#762855") +
       geom_boxplot(width=0.2) +
-      # ggviolin(df_results_filtered, x = "cultivation", y = "horizontal_length_in_um",
-                                                               # add = "boxplot", add.params = list(fill = "white")) +
+      # ggviolin(df_results_filtered, x = "cultivation", y = "cilia_length_in_um",
+      # add = "boxplot", add.params = list(fill = "white")) +
       stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
       stat_pvalue_manual(data = pairwise_comparison_result,  tip.length = 0.01, step.increase = 0.05, hide.ns = TRUE, label = "{p.adj.signif}") +
-      ylim(0,7) +
+      # ylim(0, ylim_max + 2) +
+      scale_y_continuous(limits = c(0, ylim_max + 2), breaks = scales::breaks_pretty()) +
       # scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(breaks= pretty_breaks()) +
       # scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
@@ -290,15 +313,15 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
       theme(#axis.title.y=element_text(size=12),
         #axis.text.x = element_blank(),
         axis.ticks.x = element_blank()) +
-      ylab("Horizontal cilium length in \u03BCm determined by CiliaQ") +
+      ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ")) +
       xlab("Cultivation")
     
-    ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".pdf")),
+    ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths_violin_plot_", test_name, ".pdf")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
+    ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
-           width = 297, height = 210, units = "mm", device = emf)
+    # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths_violin_plot_", test_name, ".emf")),
+    #        width = 297, height = 210, units = "mm", device = emf)
     
   }
   
