@@ -93,7 +93,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     geom_boxplot(alpha = 1) +
     geom_beeswarm() +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
-    ylim(0,5) +
+    ylim(0,7) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
     theme_bw(base_size = 18) +
@@ -101,14 +101,19 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
     ylab("Horizontal cilium length in \u03BCm determined by ACDC") +
-    xlab("Cultivation")
+    xlab("Cultivation") +
+    EnvStats::stat_n_text(
+      y.pos = 6,
+      color = "black",
+      text.box = FALSE
+    )
   
   ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.pdf"),
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   plot_total_length_violin <- ggplot(df_results, aes(x=cultivation, y=horizontal_length_in_um)) +
@@ -128,8 +133,8 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Plot filtered data #####################################################
@@ -140,7 +145,7 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
     geom_boxplot(alpha = 1) +
     geom_beeswarm() +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
-    ylim(0,5) +
+    ylim(0,7) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
     theme_bw(base_size = 18) +
@@ -148,14 +153,19 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
     ylab("Horizontal cilium length in \u03BCm determined by ACDC") +
-    xlab("Cultivation")
+    xlab("Cultivation") +
+    EnvStats::stat_n_text(
+      y.pos = 6,
+      color = "black",
+      text.box = FALSE
+    )
   
   ggsave(filename = file.path(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths.pdf"),
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   plot_horizontal_length_violin <- ggplot(df_results_filtered, aes(x=cultivation, y=horizontal_length_in_um)) +
@@ -175,8 +185,8 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "ACDC_all_filtered_cilia_horizontal_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Check for normality of data ############################################
@@ -288,8 +298,8 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("ACDC_all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("ACDC_all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # ggsave(filename = file.path(output_dir, paste0("ACDC_all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
+    #        width = 297, height = 210, units = "mm", device = emf)
     
   }
   

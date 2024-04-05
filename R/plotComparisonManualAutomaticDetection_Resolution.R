@@ -17,7 +17,8 @@
 plotComparisonManualAutomaticDetection_Resolution <- function(
   input_file_automatic,
   input_file_manual,
-  output_dir){
+  output_dir,
+  remove_false_positives = TRUE){
   
   # Set groundhog day for reproducibility (see https://groundhogr.com)
   groundhog.day <- "2023-01-01"
@@ -36,7 +37,10 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   # Automatic detection (using detectCilia)
   df_results_auto <- readr::read_csv(file = input_file_automatic, name_repair = "universal")
-  df_results_auto <- df_results_auto[!grepl(pattern = "^yes$", x = df_results_auto$to_be_removed, ignore.case = TRUE), ]
+  
+  if(remove_false_positives){
+    df_results_auto <- df_results_auto[!grepl(pattern = "^yes$", x = df_results_auto$to_be_removed, ignore.case = TRUE), ]
+  }
   
   # Manual detection (using Fiji)
   df_results_man <- readr::read_csv(file = input_file_manual, name_repair = "universal")
@@ -53,13 +57,13 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # df_results_auto$location[grepl(pattern = "_4_iO$", x = df_results_auto$fileName, ignore.case = TRUE)] <- "4"
   # df_results_auto$location[grepl(pattern = "_5$", x = df_results_auto$fileName, ignore.case = TRUE)] <- "5"
   
-  df_results_auto$resolution <- as.numeric(gsub(pattern = ".+_[0-9]{4}x([0-9]{4})\\.czi",
+  df_results_auto$frame_size <- as.numeric(gsub(pattern = ".+_[0-9]{4}x([0-9]{4})\\.czi",
                                                 replacement = "\\1",
                                                 x = df_results_auto$fileName))
-  # df_results_auto$resolution <- "TBA"
-  # df_results_auto$resolution[grepl(pattern = "1024", x = df_results_auto$fileName, ignore.case = TRUE)] <- "1024"
-  # df_results_auto$resolution[grepl(pattern = "2048", x = df_results_auto$fileName, ignore.case = TRUE)] <- "2048"
-  # df_results_auto$resolution[grepl(pattern = "4096", x = df_results_auto$fileName, ignore.case = TRUE)] <- "4096"
+  # df_results_auto$frame_size <- "TBA"
+  # df_results_auto$frame_size[grepl(pattern = "1024", x = df_results_auto$fileName, ignore.case = TRUE)] <- "1024"
+  # df_results_auto$frame_size[grepl(pattern = "2048", x = df_results_auto$fileName, ignore.case = TRUE)] <- "2048"
+  # df_results_auto$frame_size[grepl(pattern = "4096", x = df_results_auto$fileName, ignore.case = TRUE)] <- "4096"
   
   df_results_auto$magnification <- as.numeric(gsub(pattern = ".+_([0-9]+)x_z-stack.+",
                                                    replacement = "\\1",
@@ -76,7 +80,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   df_results_man$location <- as.numeric(gsub(pattern = ".+stack_([0-9]+)_.+",
                                              replacement = "\\1",
                                              x = df_results_man$fileName))
-  df_results_man$resolution <- as.numeric(gsub(pattern = ".+_[0-9]{4}x([0-9]{4})\\.czi",
+  df_results_man$frame_size <- as.numeric(gsub(pattern = ".+_[0-9]{4}x([0-9]{4})\\.czi",
                                                replacement = "\\1",
                                                x = df_results_man$fileName))
   df_results_man$magnification <- as.numeric(gsub(pattern = ".+_([0-9]+)x_z-stack.+",
@@ -85,15 +89,15 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   df_results_man$detectionMethod <- "manual"
   
   # Combination of automatic and manual detection
-  keep_the_columns <- c("fileName", "total_length_in_um", "horizontal_length_in_um", "vertical_length_in_um", "location", "resolution", "magnification", "detectionMethod")
+  keep_the_columns <- c("fileName", "total_length_in_um", "horizontal_length_in_um", "vertical_length_in_um", "location", "frame_size", "magnification", "detectionMethod")
   
   df_results <- dplyr::bind_rows(df_results_auto[,keep_the_columns],
                                  df_results_man[,keep_the_columns])
   rownames(df_results) <- NULL
   
   
-  # df_results$image <- paste("loc", df_results$location, "\n", "magn", df_results$magnification, "\n", "res", df_results$resolution, sep = "")
-  df_results$image <- paste("m", df_results$magnification, "\n", "r", df_results$resolution, sep = "")
+  # df_results$image <- paste("loc", df_results$location, "\n", "magn", df_results$magnification, "\n", "res", df_results$frame_size, sep = "")
+  df_results$image <- paste("m", df_results$magnification, "\n", "r", df_results$frame_size, sep = "")
   df_results$image <- factor(df_results$image, levels = c("m63\nr1024", "m100\nr1024", "m63\nr2048", "m63\nr4096"))
   
   
@@ -130,7 +134,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # Horizontal lengths #---------------------------------------------------#
 
   detection_results_horizontal <- df_results %>%
-    dplyr::group_by(location, resolution, magnification, detectionMethod) %>%
+    dplyr::group_by(location, frame_size, magnification, detectionMethod) %>%
     rstatix::get_summary_stats(horizontal_length_in_um, type = "mean_sd")
   
   print("The results of the cilia horizontal lengths measurements are:")
@@ -139,7 +143,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # Check for normality
   
   df_normality_horizontal <- df_results %>% 
-    dplyr::group_by(location, resolution, magnification, detectionMethod) %>% 
+    dplyr::group_by(location, frame_size, magnification, detectionMethod) %>% 
     rstatix::shapiro_test(horizontal_length_in_um)
   
   df_normality_horizontal$data_normally_distributed <- FALSE
@@ -177,7 +181,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # Vertical lengths #-----------------------------------------------------#
   
   detection_results_vertical <- df_results %>%
-    dplyr::group_by(location, resolution, magnification, detectionMethod) %>%
+    dplyr::group_by(location, frame_size, magnification, detectionMethod) %>%
     rstatix::get_summary_stats(vertical_length_in_um, type = "mean_sd")
   
   print(paste("The results of the cilia horizontal lengths measurements are:"))
@@ -186,7 +190,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # Check for normality
   
   df_normality_vertical <- df_results %>% 
-    dplyr::group_by(location, resolution, magnification, detectionMethod) %>% 
+    dplyr::group_by(location, frame_size, magnification, detectionMethod) %>% 
     rstatix::shapiro_test(vertical_length_in_um)
   
   df_normality_vertical$data_normally_distributed <- FALSE
@@ -224,7 +228,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # Total lengths #--------------------------------------------------------#
   
   detection_results_total <- df_results %>%
-    dplyr::group_by(location, resolution, magnification, detectionMethod) %>%
+    dplyr::group_by(location, frame_size, magnification, detectionMethod) %>%
     rstatix::get_summary_stats(total_length_in_um, type = "mean_sd")
   
   print(paste("The results of the cilia horizontal lengths measurements are:"))
@@ -233,7 +237,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # Check for normality
   
   df_normality_total <- df_results %>% 
-    dplyr::group_by(location, resolution, magnification, detectionMethod) %>% 
+    dplyr::group_by(location, frame_size, magnification, detectionMethod) %>% 
     rstatix::shapiro_test(total_length_in_um)
   
   df_normality_total$data_normally_distributed <- FALSE
@@ -268,7 +272,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     df = statistical_test_result_total)
   
 
-  # # Mean length depending on resolution/magnification
+  # # Mean length depending on frame_size/magnification
   # df_mean_lengths <- df_results2 %>%
   #   dplyr::group_by(detectionMethod, image) %>%
   #   dplyr::summarise(mean_in_um = mean(total_length_in_um)) %>%
@@ -307,10 +311,16 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   # 
   
   # Plot results ###########################################################
+
+  if(remove_false_positives){
+    y_limit <- 4
+  }else{
+    y_limit <-6
+  }
   
   give_n <- function(x){
     # return(data.frame(y = 2*median(x), label=paste0("n = ",length(x))))
-    return(data.frame(y = 5, label=paste0("n=",length(x))))
+    return(data.frame(y = y_limit-0.2, label=paste0("n=",length(x))))
   }
   
   # Horizontal lengths of cilia
@@ -321,28 +331,28 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     stat_summary(fun=mean, geom="point", size = 3, shape=23, position = position_dodge(width = 0.75), fill="black") +
     geom_beeswarm(aes(color=detectionMethod), dodge.width=0.75, corral = "random", corral.width = 0.3) +
     scale_color_manual(labels = c("dc", "m2"), values=c("#009E73", "#CC79A7"), name = legend_name) +
-    ylim(0,5) +
+    ylim(0,y_limit) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       axis.text.x = element_text(size=10),
       axis.ticks.x = element_blank()) +
     ylab("Horizontal cilium length in \u03BCm") +
-    xlab("Magnification and Resolution") +
+    xlab("Magnification and digital resolution") +
     facet_grid(.~location, scales = "free") +
     theme(strip.background = element_rect(fill = "white")) +
     stat_pvalue_manual(data = statistical_test_result_horizontal,  tip.length = 0.01, hide.ns = TRUE) +
     stat_summary(fun.data = give_n, geom = "text", position = position_dodge(width = 0.75), angle = 60)
-  
+
   # print(plot_horizontal_length)
-  
+
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.pdf"),
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
-  
-  
+  # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
+
+
   # Vertical lengths of cilia
   plot_vertical_length <- ggplot(df_results, aes(x=image, y=vertical_length_in_um, group = interaction(detectionMethod, image))) +
     stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
@@ -351,56 +361,85 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
     stat_summary(fun=mean, geom="point", size = 3, shape=23, position = position_dodge(width = 0.75), fill="black") +
     geom_beeswarm(aes(color=detectionMethod), dodge.width=0.75, corral = "random", corral.width = 0.3) +
     scale_color_manual(labels = c("dc", "m2"), values=c("#009E73", "#CC79A7"), name = legend_name) +
-    ylim(0,5) +
+    ylim(0, y_limit) +
     theme_bw(base_size = 18) +
     theme(#axis.title.y=element_text(size=12),
       axis.text.x = element_text(size=10),
       axis.ticks.x = element_blank()) +
     ylab("Vertical cilium length in \u03BCm") +
-    xlab("Magnification and Resolution") +
+    xlab("Magnification and digital resolution") +
     facet_grid(.~location, scales = "free") +
     theme(strip.background = element_rect(fill = "white")) +
     stat_pvalue_manual(data = statistical_test_result_vertical,  tip.length = 0.01, hide.ns = TRUE) +
     stat_summary(fun.data = give_n, geom = "text", position = position_dodge(width = 0.75), angle = 60)
-  
+
   # print(plot_vertical_length)
-  
+
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.pdf"),
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
+  give_n <- function(x){
+    # return(data.frame(y = 2*median(x), label=paste0("n = ",length(x))))
+    return(data.frame(y = y_limit+1.5, label=paste0("n=",length(x))))
+  }
   
   # Total lengths of cilia
-  plot_total_length <- ggplot(df_results, aes(x=image, y=total_length_in_um, group = interaction(detectionMethod, image))) +
-    stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
-    geom_boxplot(aes(fill=detectionMethod), alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
-    scale_fill_manual(labels = c("dc", "m2"), values=c("grey90", "white"), name = legend_name) +
-    stat_summary(fun=mean, geom="point", size = 3, shape=23, position = position_dodge(width = 0.75), fill="black") +
-    geom_beeswarm(aes(color=detectionMethod), dodge.width=0.75, corral = "random", corral.width = 0.3) +
-    scale_color_manual(labels = c("dc", "m2"), values=c("#009E73", "#CC79A7"), name = legend_name) +
-    ylim(0,5) +
-    theme_bw(base_size = 18) +
-    theme(#axis.title.y=element_text(size=12),
-      axis.text.x = element_text(size=10),
-      axis.ticks.x = element_blank()) +
-    ylab("Total cilium length in \u03BCm") +
-    xlab("Magnification and Resolution") +
-    facet_grid(.~location, scales = "free") +
-    theme(strip.background = element_rect(fill = "white")) +
-    stat_pvalue_manual(data = statistical_test_result_total,  tip.length = 0.01, hide.ns = TRUE) +
-    stat_summary(fun.data = give_n, geom = "text", position = position_dodge(width = 0.75), angle = 60)
-
+  
+  if(all(statistical_test_result_total$p.signif == "ns")){
+    plot_total_length <- ggplot(df_results, aes(x=image, y=total_length_in_um, group = interaction(detectionMethod, image))) +
+      stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
+      geom_boxplot(aes(fill=detectionMethod), alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
+      scale_fill_manual(labels = c("dc", "m2"), values=c("grey90", "white"), name = legend_name) +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, position = position_dodge(width = 0.75), fill="black") +
+      geom_beeswarm(aes(color=detectionMethod), dodge.width=0.75, corral = "random", corral.width = 0.3) +
+      scale_color_manual(labels = c("dc", "m2"), values=c("#009E73", "#CC79A7"), name = legend_name) +
+      ylim(0,y_limit+2.5) +
+      theme_bw(base_size = 18) +
+      theme(#axis.title.y=element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.ticks.x = element_blank()) +
+      ylab("Total cilium length in \u03BCm") +
+      xlab("Magnification and digital resolution") +
+      facet_grid(.~location, scales = "free") +
+      theme(strip.background = element_rect(fill = "white")) +
+      # stat_pvalue_manual(data = statistical_test_result_total,  tip.length = 0.01, hide.ns = TRUE) +
+      stat_summary(fun.data = give_n, geom = "text", position = position_dodge(width = 0.75), angle = 60)
+  }else{
+    plot_total_length <- ggplot(df_results, aes(x=image, y=total_length_in_um, group = interaction(detectionMethod, image))) +
+      stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
+      geom_boxplot(aes(fill=detectionMethod), alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
+      scale_fill_manual(labels = c("dc", "m2"), values=c("grey90", "white"), name = legend_name) +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, position = position_dodge(width = 0.75), fill="black") +
+      geom_beeswarm(aes(color=detectionMethod), dodge.width=0.75, corral = "random", corral.width = 0.3) +
+      scale_color_manual(labels = c("dc", "m2"), values=c("#009E73", "#CC79A7"), name = legend_name) +
+      ylim(0,y_limit+2.5) +
+      theme_bw(base_size = 18) +
+      theme(#axis.title.y=element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.ticks.x = element_blank()) +
+      ylab("Total cilium length in \u03BCm") +
+      xlab("Magnification and digital resolution") +
+      facet_grid(.~location, scales = "free") +
+      theme(strip.background = element_rect(fill = "white")) +
+      stat_pvalue_manual(data = statistical_test_result_total,  tip.length = 0.01, hide.ns = TRUE) +
+      stat_summary(fun.data = give_n, geom = "text", position = position_dodge(width = 0.75), angle = 60)
+  }
+  
+  
   # print(plot_total_length)
   
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.pdf"),
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
+  
+  
   
   
   # # Relative deviation of total lengths of cilia
@@ -413,7 +452,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   #     axis.ticks.x = element_blank()) +
   #   ylim(-0.3,0.3) +
   #   ylab("Relative deviation of mean total lengths (manual/automatic)") +
-  #   xlab("Magnification and Resolution") +
+  #   xlab("Magnification and digital resolution") +
   #   facet_grid(.~location) +
   #   theme(strip.background = element_rect(fill = "white"))
   # 

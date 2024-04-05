@@ -2,13 +2,13 @@
 # of cilia in seven test images                                     ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2021/11/08
-# Last changed: 2024/03/20
+# Last changed: 2024/04/04
 
 
 # Color schema
 #009E73 -> detectCilia (dc)
-#D55E00 -> ciliaQ
-#56B4E9 -> ACDC
+#762855 -> ACDC
+#1e3a80 -> ciliaQ
 #F0E442 -> m1
 #CC79A7 -> m2
 #E69F00 -> m3
@@ -20,6 +20,7 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   input_file_metadata,
   input_file_manual,
   input_file_cilium_numbers,
+  input_file_ciliaq3D = NULL,
   output_dir){
   
   
@@ -73,7 +74,6 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   df_parameters$fileName <- basename(df_parameters$input_file_czi)
   df_results_automatic <- dplyr::left_join(x = df_results_automatic, y = df_parameters, by = "fileName")
   
-  
   # Convert to lengths/heights to pixel/z-stack layer values
   
   df_results_automatic$horizontal_length_in_pixels <- 
@@ -82,6 +82,13 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
   df_results_automatic$zstack_layers <- 
     df_results_automatic$vertical_length_in_um / df_results_automatic$scaling_z_in_um
   
+  if(!is.null(input_file_ciliaq3D)){
+    df_results_ciliaQ3D <- readr::read_csv(file = input_file_ciliaq3D, name_repair = "universal")
+    df_results_ciliaQ3D <- df_results_ciliaQ3D[grepl(
+      pattern = name_of_test_images,
+      x = df_results_ciliaQ3D$file_name, fixed = TRUE), ]
+    df_results_ciliaQ3D <- df_results_ciliaQ3D[!grepl(pattern = "^yes$", x = df_results_ciliaQ3D$to_be_removed, ignore.case = TRUE),]
+  }
   
   # Prepare automatic detection tibble for binding with manual ###############
   
@@ -100,6 +107,16 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          x = df_results_automatic$fileName, ignore.case = TRUE))
   
   df_results_automatic$researcher <- "automatic"
+  
+  if(!is.null(input_file_ciliaq3D)){
+    df_results_ciliaQ3D$researcher <- "cq"
+    # Rename columns
+    df_results_ciliaQ3D <- dplyr::rename(df_results_ciliaQ3D,
+                                         fileName = file_name,
+                                         total_length_in_um = cilia.length..micron.)
+    df_results_ciliaQ3D$type <- "Highlighted"
+  }
+  
   
   # Add cilia mapping for automatic cilia detection ##########################
   
@@ -138,7 +155,6 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
                                                by = c("fileName", "cilium_number_automatic"))
   
   # Filter the manual detection images #####################################
-  
   df_results_manual$image_name_short <- as.numeric(
     gsub(pattern = ".+_([0-9]{1,2}).czi$", replacement = "\\1",
          x = df_results_manual$fileName, ignore.case = TRUE))
@@ -175,15 +191,12 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     dplyr::mutate(type=ifelse(researcher=="dc","Highlighted","Normal"))
   
   # Save final tibble ######################################################
-  
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
-  
   readr::write_csv(x = df_combined, file = file.path(output_dir, "combined_manual_automatic_results.csv"))
   readr::write_csv2(x = df_combined, file = file.path(output_dir, "combined_manual_automatic_results_de.csv"))
   
   
   # Plot results #############################################################
-  
   
   # Plot threshold_find values of automatic detection
   plot_thresholds <- ggplot2::ggplot(data = df_parameters,
@@ -198,8 +211,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Plot results of every image
@@ -238,8 +251,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
+    #        width = 297, height = 210, units = "mm", device = emf)
     
     
     plot_height_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=vertical_length_in_layers, color=researcher)) +
@@ -269,8 +282,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
+    #        width = 297, height = 210, units = "mm", device = emf)
     
     
   }
@@ -311,8 +324,49 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_length.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "comparison_man_aut_length.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "comparison_man_aut_length.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
+  
+  
+  if(!is.null(input_file_ciliaq3D)){
+    df_results_ciliaQ3D$image_name_short <- as.factor(df_results_ciliaQ3D$image_name_short)
+    df_combined2 <- dplyr::bind_rows(df_combined, df_results_ciliaQ3D)
+    
+    # Change order of tools
+    df_combined2$researcher <- factor(df_combined2$researcher, levels = c("dc", "cq", "m1", "m2", "m3"))
+    
+    plot_total_length <- ggplot(df_combined2, aes(x=researcher, y=total_length_in_um, color=researcher, fill = type)) +
+      stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
+      geom_boxplot(alpha = 1, position = position_dodge2(preserve = "single"), outlier.shape = 1, color = "black") +
+      stat_summary(fun=mean, geom="point", size = 3, shape=23, color="black", fill="black") +
+      geom_beeswarm() +
+      scale_color_manual(values=c("#009E73", "#1e3a80", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+      scale_fill_manual(values=c("grey90", "white")) +
+      ylim(1,7) +
+      theme_bw(base_size = 18) +
+      theme(legend.position = "none") +
+      # theme(#axis.title.y=element_text(size=12),
+      #   #axis.text.x = element_blank(), 
+      #   axis.ticks.x = element_blank()) +
+      ylab("Total cilium length in \u03BCm") +
+      xlab("Rater") +
+      # scale_color_discrete(name="Rater")
+      facet_grid(.~image_name_short,
+                 labeller = labeller(image_name_short = image_name_short.lab)) +
+      theme(strip.background = element_rect(fill = "white"))
+    
+    # print(plot_total_length)
+    
+    ggsave(filename = file.path(output_dir, "comparison_man_aut_length_3D.pdf"),
+           width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, "comparison_man_aut_length_3D.png"),
+           width = 297, height = 210, units = "mm")
+    # ggsave(filename = file.path(output_dir, "comparison_man_aut_length_3D.emf"),
+    #        width = 297, height = 210, units = "mm", device = emf)
+    
+    
+    
+  }
   
   # Vertical lengths of cilia in z-stack layers
   plot_height <- ggplot(df_combined, aes(x=researcher, y=vertical_length_in_layers, color=researcher, fill = type)) +
@@ -343,8 +397,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_height.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "comparison_man_aut_height.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "comparison_man_aut_height.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Horizontal lengths of cilia in pixels
@@ -376,8 +430,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_width.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "comparison_man_aut_width.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "comparison_man_aut_width.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Mean+-sd of total lengths of cilia in um
@@ -408,8 +462,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
 }
 

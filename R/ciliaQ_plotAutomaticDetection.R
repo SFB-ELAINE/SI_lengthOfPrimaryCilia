@@ -42,13 +42,6 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
     Prefix <- "Horizontal"
   }
   
-  # Filter manual corrections
-  if("to_be_removed" %in% names(df_results)){
-    print("Removing cilia labeled as to be removed")
-    df_results <- df_results[!grepl(pattern = "^yes$", x = df_results$to_be_removed, ignore.case = TRUE),]
-  }
-  
-  
   # Rename columns
   names(df_results)[names(df_results) == "cilia.length..micron."] <- "cilia_length_in_um"
   
@@ -83,6 +76,7 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
   
   df_results$cultivation <- factor(df_results$cultivation, levels = names_of_experiments)
   
+  
   # Filter data (Remove outliers from data) ################################
   experiment_groups <- unique(df_results$cultivation)
   df_results$outlier <- "no"
@@ -99,6 +93,14 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
     is.na(df_results_filtered$cilia_length_in_um) |
       df_results_filtered$cilia_length_in_um < 0.1),]
   
+  # Filter manual corrections ##############################################
+  if("to_be_removed" %in% names(df_results)){
+    print("Removing cilia labeled as to be removed")
+    df_results_filtered <- df_results_filtered[
+      !grepl(pattern = "^yes$", x = df_results_filtered$to_be_removed,
+             ignore.case = TRUE),]
+  }
+  
   # Save cilia lengths in a csv file
   df_lengths <- df_results_filtered %>% 
     dplyr::select(cultivation, cilia_length_in_um)
@@ -112,6 +114,36 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
     ylim_max <- 5
   }
   
+  # Bending index
+  plot_bending_index <- ggplot(df_results, aes(x=cultivation, y=cilia.bending.index)) +
+    stat_boxplot(geom ='errorbar', width = 0.3) +
+    geom_boxplot(alpha = 1) +
+    # geom_beeswarm() +
+    stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
+    # ylim(0, ylim_max) +
+    scale_y_continuous(limits = c(0, ylim_max+1), breaks = scales::breaks_pretty()) +
+    # geom_jitter(color="black", size=0.5, alpha=0.9) +
+    #ylim(0,20) +
+    theme_bw(base_size = 18) +
+    theme(#axis.title.y=element_text(size=12),
+      #axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()) +
+    xlab("Cultivation") +
+    ylab("Bending index") +
+    EnvStats::stat_n_text(
+      y.pos = ylim_max+0.5,
+      color = "black",
+      text.box = FALSE
+    )
+  
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_",prefix,"_bendingIndex.pdf")),
+         width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_bendingIndex.png")),
+         width = 297, height = 210, units = "mm")
+  # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_bendingIndex.emf")),
+  #        width = 297, height = 210, units = "mm", device = emf)
+  
+  
   
   # Cilia lengths
   plot_length <- ggplot(df_results, aes(x=cultivation, y=cilia_length_in_um)) +
@@ -120,7 +152,7 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
     geom_beeswarm() +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     # ylim(0, ylim_max) +
-    scale_y_continuous(limits = c(0, ylim_max), breaks = scales::breaks_pretty()) +
+    scale_y_continuous(limits = c(0, ylim_max+1), breaks = scales::breaks_pretty()) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
     theme_bw(base_size = 18) +
@@ -128,7 +160,12 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
     xlab("Cultivation") +
-    ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ"))
+    ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ")) +
+    EnvStats::stat_n_text(
+      y.pos = ylim_max+0.5,
+      color = "black",
+      text.box = FALSE
+    )
   
   
   ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_",prefix,"_lengths.pdf")),
@@ -169,7 +206,7 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
     geom_beeswarm() +
     stat_summary(fun=mean, geom="point", size = 3, shape=23, color="blue", fill="blue") +
     # ylim(0, ylim_max) +
-    scale_y_continuous(limits = c(0, ylim_max), breaks = scales::breaks_pretty()) +
+    scale_y_continuous(limits = c(0, ylim_max+1), breaks = scales::breaks_pretty()) +
     # geom_jitter(color="black", size=0.5, alpha=0.9) +
     #ylim(0,20) +
     theme_bw(base_size = 18) +
@@ -177,7 +214,12 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
       #axis.text.x = element_blank(),
       axis.ticks.x = element_blank()) +
     ylab(paste0(Prefix, " cilium length in \u03BCm determined by CiliaQ")) +
-    xlab("Cultivation")
+    xlab("Cultivation") +
+    EnvStats::stat_n_text(
+      y.pos = ylim_max+0.5,
+      color = "black",
+      text.box = FALSE
+    )
   
   ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_filtered_cilia_", prefix, "_lengths.pdf")),
          width = 297, height = 210, units = "mm")

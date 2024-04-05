@@ -20,7 +20,7 @@ convertColorLayersForACDC <- function(input_dir, output_dir, projection_method =
   
   
   # Install the R package for reading czi images
-  devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.4.0")
+  devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.4.1")
   require(readCzi)
   
 

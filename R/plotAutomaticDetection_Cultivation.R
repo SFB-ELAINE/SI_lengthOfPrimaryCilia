@@ -2,12 +2,13 @@
 # of cultivation images                                             ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2021/11/08
-# Last changed: 2023/12/08
+# Last changed: 2024/03/28
 
 
 plotAutomaticDetection_Cultivation <- function(input_file,
                                                input_file_compare,
-                                               output_dir){
+                                               output_dir,
+                                               exclude_cilia_touching_z_borders = FALSE){
   
   # # Delete everything in the environment
   # rm(list = ls())
@@ -72,6 +73,13 @@ plotAutomaticDetection_Cultivation <- function(input_file,
   readr::write_csv(x = df_horizontal_lengths, file = file.path(output_dir, "horizontalLength_detectCilia.csv"))
   rm(df_horizontal_lengths)
   
+  # Remove cilia touching a z border
+  if(exclude_cilia_touching_z_borders){
+    df_results_automatic_filtered <- df_results_automatic_filtered[
+      !(df_results_automatic_filtered$lowest_cilium_layer == 1 |
+          df_results_automatic_filtered$uppermost_cilium_layer == df_results_automatic_filtered$number_of_z_stack_layers),]
+  }
+  
   # Plot results ###########################################################
   
   
@@ -97,8 +105,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   plot_total_length_violin <- ggplot(df_results_automatic, aes(x=cultivation, y=total_length_in_um)) +
@@ -118,8 +126,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_total_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_cilia_total_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Horizontal lengths of cilia
@@ -140,8 +148,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_horizontal_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_cilia_horizontal_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Vertical lengths of cilia
@@ -162,8 +170,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_vertical_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_cilia_vertical_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_cilia_vertical_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Plot filtered data -----------------------------------------------------
@@ -188,8 +196,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_filtered_cilia_total_lengths.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_filtered_cilia_total_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_filtered_cilia_total_lengths.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   plot_total_length_violin <- ggplot(df_results_automatic_filtered, aes(x=cultivation, y=total_length_in_um)) +
@@ -209,8 +217,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_filtered_cilia_total_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_filtered_cilia_total_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_filtered_cilia_total_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Horizontal lengths of cilia (filtered data)
@@ -231,8 +239,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_filtered_cilia_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_filtered_cilia_horizontal_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_filtered_cilia_horizontal_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Vertical lengths of cilia (filtered data)
@@ -253,8 +261,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_filtered_cilia_vertical_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_filtered_cilia_vertical_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_filtered_cilia_vertical_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   
@@ -374,8 +382,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_total_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_total_lengths_violin_plot_", test_name, ".emf")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_total_lengths_violin_plot_", test_name, ".emf")),
+    #        width = 297, height = 210, units = "mm", device = emf)
     
   }
   
@@ -497,8 +505,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
+    #        width = 297, height = 210, units = "mm", device = emf)
     
   }
   
@@ -609,15 +617,15 @@ plotAutomaticDetection_Cultivation <- function(input_file,
       theme(#axis.title.y=element_text(size=12),
         #axis.text.x = element_blank(),
         axis.ticks.x = element_blank()) +
-      ylab("vertical cilium length in \u03BCm") +
+      ylab("Vertical cilium length in \u03BCm") +
       xlab("Cultivation")
     
     ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_vertical_lengths_violin_plot_", test_name, ".pdf")),
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_vertical_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_vertical_lengths_violin_plot_", test_name, ".emf")),
-           width = 297, height = 210, units = "mm", device = emf)
+    # ggsave(filename = file.path(output_dir, paste0("all_filtered_cilia_vertical_lengths_violin_plot_", test_name, ".emf")),
+    #        width = 297, height = 210, units = "mm", device = emf)
     
   }
   

@@ -27,6 +27,9 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
   df_results_ACDC <- readr::read_csv(file = input_file_ACDC, name_repair = "universal")
   df_results_ciliaQ <- readr::read_csv(file = input_file_ciliaq, name_repair = "universal")
   
+  # Rename column
+  names(df_results_ciliaQ)[names(df_results_ciliaQ) == "cilia_length_in_um"] <- "horizontal_length_in_um"
+  
   df_results_detectCilia$tool <- "detectCilia"
   df_results_ACDC$tool <- "ACDC"
   df_results_ciliaQ$tool <- "CiliaQ"
@@ -74,8 +77,8 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   # Horizontal lengths of cilia violin plot
@@ -100,8 +103,8 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   
@@ -217,8 +220,8 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".png")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".emf")),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".emf")),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
   plot_horizontal_length_violin_statistical_test <-
@@ -255,7 +258,7 @@ plotResultsFromAllTools <- function(input_file_detectCilia, input_file_ACDC,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
          width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
-         width = 297, height = 210, units = "mm", device = emf)
+  # ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
 }

@@ -36,12 +36,13 @@ automaticCiliaDetection <- function(input_dir,
   }
   
   # Install the R package for reading czi images
-  devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.4.0")
+  devtools::install_github("SFB-ELAINE/readCzi", ref = "v0.4.1")
   require(readCzi)
   
   
   # Install the R package for detecting cilia in microscopy images
-  devtools::install_github("SFB-ELAINE/detectCilia")#, ref = "v0.8.3")
+  devtools::install_github("SFB-ELAINE/detectCilia", ref = "v0.8.4")
+  # devtools::install_local("../detectCilia")
   require(detectCilia)
   
   

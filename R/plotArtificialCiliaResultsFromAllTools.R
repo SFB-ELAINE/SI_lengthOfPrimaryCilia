@@ -72,7 +72,7 @@ plotArtificialCiliaResultsFromAllTools <- function(
   rm(list = c("df_results_detectCilia2", "df_results_ACDC2", "df_results_ciliaQ2"))
   
   # Change order of tools
-  df_results$tool <- factor(df_results$tool, levels = c("detectCilia", "ACDC", "CiliaQ"))
+  df_results$Tool <- factor(df_results$Tool, levels = c("detectCilia", "ACDC", "CiliaQ"))
   
   # # Change the order of facets
   # df_results$cultivation <- factor(df_results$cultivation,
@@ -86,20 +86,22 @@ plotArtificialCiliaResultsFromAllTools <- function(
   
   # Horizontal lengths of cilia
   plot_horizontal_length <- ggplot(df_results, aes(x=blurring, y=horizontal_length_in_pixels, color=Tool)) +
-    geom_point(size = 2) +
-    geom_line() +
+    geom_point(size = 4) +
+    geom_line(linewidth = 1.5) +
+    geom_hline(yintercept=10, linetype="dashed", color = "red", linewidth = 1) +
     theme_bw(base_size = 18) +
+    scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
     scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
     ylab("Horizontal cilium length in pixels") +
     xlab("Gaussian blurring standard deviation")
   
   
   ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.pdf"),
-         width = 297, height = 210, units = "mm")
+         width = 297, height = 110, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.png"),
-         width = 297, height = 210, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.emf"),
-         width = 297, height = 210, units = "mm", device = emf)
+         width = 297, height = 110, units = "mm")
+  # ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.emf"),
+  #        width = 297, height = 210, units = "mm", device = emf)
   
   
 }
