@@ -36,16 +36,12 @@ plotTestImageResultsFromAllTools <- function(
   df_results_ACDC <- readr::read_csv(file = input_file_ACDC, name_repair = "universal")
   df_results_ciliaQ <- readr::read_csv(file = input_file_ciliaq, name_repair = "universal")
   
-  # # Delete false positive cilium (manually labelled)
-  # print(paste("We are deleting ",
-  #             sum(grepl(pattern = "^yes$",
-  #                       x = df_results_detectCilia$to_be_removed,
-  #                       ignore.case = TRUE), na.rm = TRUE),
-  #             " cilium(a) from the automatic cilia detection because we have manually ",
-  #             "marked it being a non-cilium structure.", sep=""))
-  # 
-  # df_results_detectCilia <- df_results_detectCilia[!grepl(pattern = "^yes$", x = df_results_detectCilia$to_be_removed, ignore.case = TRUE),]
+  # Delete false positive cilium (manually labelled)
+  # (We used the ACDC corrected file, therefore no cleaning is necessary.)
+  df_results_detectCilia <- df_results_detectCilia[!grepl(pattern = "^yes$", x = df_results_detectCilia$to_be_removed, ignore.case = TRUE),]
+  df_results_ciliaQ <- df_results_ciliaQ[!grepl(pattern = "^yes$", x = df_results_ciliaQ$to_be_removed, ignore.case = TRUE),]
   
+
   # Add original file name to CiliaQ data
   df_results_ciliaQ$file_name_czi <- gsub(
     pattern = "(.+)_projection_CQP_CQs",
@@ -222,7 +218,8 @@ plotTestImageResultsFromAllTools <- function(
     geom_beeswarm() +
     scale_color_manual(values=c("#009E73", "#762855", "#1e3a80", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
     scale_fill_manual(values=c("grey90", "white")) +
-    ylim(0,25) +
+    # ylim(0,20) +
+    coord_cartesian(ylim=c(0, 25)) +
     theme_bw(base_size = 18) +
     # theme(legend.position = "none") +
     # theme(#axis.title.y=element_text(size=12),
@@ -256,6 +253,12 @@ plotTestImageResultsFromAllTools <- function(
     
     df_results_ciliaQ_3d    <- readr::read_csv(file = input_file_ciliaq_3d,
                                                name_repair = "universal")
+    
+    # Delete false positive cilium (manually labelled)
+    # (We used the ACDC corrected file, therefore no cleaning is necessary.)
+    df_results_ciliaQ_3d <- df_results_ciliaQ_3d[!grepl(pattern = "^yes$", x = df_results_ciliaQ_3d$to_be_removed, ignore.case = TRUE),]
+    
+    
     df_results_ciliaQ_3d$file_name_czi <- gsub(
       pattern = "(.+)_CQP_CQs",
       replacement = "\\1.czi",
@@ -266,7 +269,6 @@ plotTestImageResultsFromAllTools <- function(
                     "total_length_in_um" = "cilia.length..micron.")
     
     df_results_ciliaQ_3d$tool <- "CiliaQ"
-    
     
     # Combine data
     df_results_automatic_3d <- dplyr::bind_rows(
@@ -365,7 +367,8 @@ plotTestImageResultsFromAllTools <- function(
       geom_beeswarm() +
       scale_color_manual(values=c("#009E73", "#1e3a80", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
       scale_fill_manual(values=c("grey90", "white")) +
-      scale_y_continuous(limits = c(0,9), breaks = scales::breaks_pretty()) +
+      scale_y_continuous(breaks = scales::breaks_pretty()) +
+      coord_cartesian(ylim=c(0, 9)) +
       # ylim(0, 10) +
       theme_bw(base_size = 18) +
       # theme(legend.position = "none") +
@@ -376,9 +379,10 @@ plotTestImageResultsFromAllTools <- function(
       xlab("Rater") +
       facet_grid(.~image_name_short,
                  labeller = labeller(image_name_short = image_name_short.lab)) +
-      theme(strip.background = element_rect(fill = "white")) +
+      theme(strip.background = element_rect(fill = "white"),
+            legend.position = "none") +
       EnvStats::stat_n_text(
-        y.pos = 8.5, angle = 60,
+        y.pos = 9, angle = 60,
         color = "black",
         text.box = FALSE
       )
@@ -386,9 +390,9 @@ plotTestImageResultsFromAllTools <- function(
     
     
     ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.pdf"),
-           width = 442, height = 210, units = "mm")
+           width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.png"),
-           width = 442, height = 210, units = "mm")
+           width = 297, height = 210, units = "mm")
     # ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.emf"),
     #        width = 297, height = 210, units = "mm", device = emf)
     

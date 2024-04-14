@@ -135,7 +135,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
 
   detection_results_horizontal <- df_results %>%
     dplyr::group_by(location, frame_size, magnification, detectionMethod) %>%
-    rstatix::get_summary_stats(horizontal_length_in_um, type = "mean_sd")
+    rstatix::get_summary_stats(horizontal_length_in_um, type = "full")
   
   print("The results of the cilia horizontal lengths measurements are:")
   print(detection_results_horizontal)
@@ -182,7 +182,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   detection_results_vertical <- df_results %>%
     dplyr::group_by(location, frame_size, magnification, detectionMethod) %>%
-    rstatix::get_summary_stats(vertical_length_in_um, type = "mean_sd")
+    rstatix::get_summary_stats(vertical_length_in_um, type = "full")
   
   print(paste("The results of the cilia horizontal lengths measurements are:"))
   print(detection_results_vertical)
@@ -229,7 +229,7 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
   
   detection_results_total <- df_results %>%
     dplyr::group_by(location, frame_size, magnification, detectionMethod) %>%
-    rstatix::get_summary_stats(total_length_in_um, type = "mean_sd")
+    rstatix::get_summary_stats(total_length_in_um, type = "full")
   
   print(paste("The results of the cilia horizontal lengths measurements are:"))
   print(detection_results_total)

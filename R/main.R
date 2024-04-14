@@ -4,7 +4,7 @@
 # cultivation methods on the lengths of primary cilia"         +++++++++++++
 # Author: Kai Budde-Sagert
 # Created: 2022/10/11
-# Last changed: 2024/04/05
+# Last changed: 2024/04/08
 
 # Delete everything in the environment
 rm(list = ls())
@@ -94,8 +94,20 @@ combineDetectCiliaResults(input_dir, output_dir)
 # Removing objects
 rm(list = c("input_dir", "output_dir"))
 
+# 2.4 Check difference of replications #####################################
 
-# 2.4 Convert original results from manual detection of resolution #########
+# Data input
+input_file <-  file.path("data", "automaticDetection", "cultivation",
+                         "summary_cilia.csv")
+
+# Calling the function
+source(file.path("R", "checkReplications.R"))
+checkReplications(input_dir)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 2.5 Convert original results from manual detection of resolution #########
 #    images to csv
 
 # Data input
@@ -111,7 +123,7 @@ convertXLSXtoCSV(input_dir, output_dir, language)
 rm(list = c("input_dir", "output_dir", "language"))
 
 
-# 2.5 Combine results of manual detection from resolution images ###########
+# 2.6 Combine results of manual detection from resolution images ###########
 
 # Data input
 input_dir <- file.path("data", "manualDetection", "resolution", "originalFiles_csv")
@@ -128,7 +140,7 @@ combineManualDetectionResults(input_dir, output_dir, metadata_file)
 rm(list = c("input_dir", "output_dir", "metadata_file"))
 
 
-# 2.6 Download raw cultivation data from Zenodo ############################
+# 2.7 Download raw cultivation data from Zenodo ############################
 
 # Data input
 download_dir <- download_directory_cultivation
@@ -141,7 +153,7 @@ downloadFromZenodo(download_dir, doi)
 # Removing objects
 rm(list = c("download_dir", "doi"))
 
-# 2.7 Automatic detection of cilia from cultivation images #################
+# 2.8 Automatic detection of cilia from cultivation images #################
 
 # Data input
 input_dir <- download_directory_cultivation
@@ -154,7 +166,7 @@ automaticCiliaDetection(input_dir, output_dir)
 # Removing objects
 rm(list = c("input_dir", "output_dir"))
 
-# 2.8 Combine results of automatic detection from cultivation images #######
+# 2.9 Combine results of automatic detection from cultivation images #######
 
 # Data input
 input_dir <- download_directory_cultivation
@@ -168,7 +180,7 @@ combineDetectCiliaResults(input_dir, output_dir)
 rm(list = c("input_dir", "output_dir"))
 
 
-# 2.9 Calculate the number of found nuclei #################################
+# 2.10 Calculate the number of found nuclei #################################
 # Data input
 input_file <- file.path("data", "automaticDetection", "cultivation", "summary_nuclei.csv")
 
@@ -180,7 +192,7 @@ numberOfNuclei(input_file)
 rm(list = c("input_file"))
 
 
-# 2.10 Convert original results from manual detection of cultivation #######
+# 2.11 Convert original results from manual detection of cultivation #######
 #      images to csv
 
 # Data input
@@ -196,7 +208,7 @@ convertXLSXtoCSV(input_dir, output_dir, language)
 rm(list = c("input_dir", "output_dir", "language"))
 
 
-# 2.11 Combine results of manual detection from cultivation images #########
+# 2.12 Combine results of manual detection from cultivation images #########
 
 # Data input
 input_dir <- file.path("data", "manualDetection", "cultivation", "originalFiles_csv")
@@ -241,13 +253,26 @@ input_file <-  file.path("data", "automaticDetection", "cultivation",
 # any other input
 input_file_compare <-  file.path("data", "automaticDetection",
                                  "cultivation", "summary_cilia.csv")
-output_dir <-  file.path("plots", "automaticDetectionCultivation")
+output_dir <-  file.path("plots", "automaticDetectionCultivation_corrected")
 
 # Calling the function
 source(file.path("R", "plotAutomaticDetection_Cultivation.R"))
 plotAutomaticDetection_Cultivation(input_file, input_file_compare,
                                    output_dir,
-                                   exclude_cilia_touching_z_borders = TRUE)
+                                   exclude_cilia_touching_z_borders = TRUE,
+                                   corrected_data = TRUE)
+
+output_dir <-  file.path("plots", "automaticDetectionCultivation_corrected_allz")
+plotAutomaticDetection_Cultivation(input_file, input_file_compare,
+                                   output_dir,
+                                   exclude_cilia_touching_z_borders = FALSE,
+                                   corrected_data = TRUE)
+
+output_dir <-  file.path("plots", "automaticDetectionCultivation_uncorrected")
+plotAutomaticDetection_Cultivation(input_file, input_file_compare,
+                                   output_dir,
+                                   exclude_cilia_touching_z_borders = FALSE,
+                                   corrected_data = FALSE)
 
 # Removing objects
 rm(list = c("input_file", "input_file_compare", "output_dir"))
@@ -379,8 +404,10 @@ rm(list = c("input_file", "output_dir"))
 
 # 4.4 Plot detection results of ACDC #######################################
 
+
+# Corrected data
 input_file_acdc <- file.path("ACDC_corrected","ciliaData.csv")
-input_file_metadata <- "data/automaticDetection/cultivation/summary_metadata.csv"
+input_file_metadata <- file.path("data", "automaticDetection", "cultivation", "summary_metadata.csv")
 output_dir <- file.path("plots","ACDC_corrected")
 
 # Calling the function
@@ -390,9 +417,9 @@ ACDC_plotAutomaticDetection(input_file_acdc, input_file_metadata, output_dir)
 # Removing objects
 rm(list = c("input_file_acdc", "input_file_metadata", "output_dir"))
 
-
+# Uncorrected data
 input_file_acdc <- file.path("ACDC_uncorrected","ciliaData.csv")
-input_file_metadata <- "data/automaticDetection/cultivation/summary_metadata.csv"
+input_file_metadata <- file.path("data", "automaticDetection", "cultivation", "summary_metadata.csv")
 output_dir <- file.path("plots","ACDC_uncorrected")
 
 # Calling the function
@@ -434,11 +461,17 @@ print(paste0("Please copy 'ciliaq_data.csv' and rename it to ",
 # 5.4 Plot detection results of CiliaQ #####################################
 
 input_file_ciliaq <- file.path("CiliaQ","ciliaq_data_edited.csv")
-output_dir <- file.path("plots","ciliaQ")
+output_dir <- file.path("plots","ciliaQ_corrected")
 
 # Calling the function
 source(file.path("R", "ciliaQ_plotAutomaticDetection.R"))
-ciliaQ_plotAutomaticDetection(input_file_ciliaq, output_dir)
+ciliaQ_plotAutomaticDetection(input_file_ciliaq, output_dir, corrected_data = TRUE)
+
+# Plot uncorrected data
+output_dir <- file.path("plots","ciliaQ_uncorrected")
+
+# Calling the function
+ciliaQ_plotAutomaticDetection(input_file_ciliaq, output_dir, corrected_data = FALSE)
 
 # Removing objects
 rm(list = c("input_file_ciliaq", "output_dir"))
@@ -485,22 +518,43 @@ rm(list = c("input_file_ciliaq", "output_dir"))
 # 6 Comparison of detectCilia, ACDC, and CiliaQ ############################
 
 # 6.1 Plot results of horizontal cilia length of detectCilia, ACDC, and CiliaQ ####
-input_file_detectCilia <- file.path("plots", "automaticDetectionCultivation", "horizontalLength_detectCilia.csv")
-input_file_ACDC <- file.path("plots", "ACDC_corrected", "horizontalLength_ACDC.csv")
-input_file_ciliaq <- file.path("plots", "ciliaQ", "horizontalLength_ciliaQ.csv")
-output_dir <- file.path("plots", "allTools")
+input_file_detectCilia <- file.path("data", "automaticDetection",
+                                    "cultivation", "summary_cilia_edited.csv")
+input_file_ACDC <- file.path("ACDC_corrected", "ciliaData.csv")
+input_file_ciliaq <-file.path("CiliaQ", "ciliaq_data_edited.csv")
+input_file_metadata <- file.path("data", "automaticDetection", "cultivation", "summary_metadata.csv")
+# input_file_detectCilia <- file.path("plots", "automaticDetectionCultivation", "horizontalLength_detectCilia.csv")
+# input_file_ACDC <- file.path("plots", "ACDC_corrected", "horizontalLength_ACDC.csv")
+# input_file_ciliaq <- file.path("plots", "ciliaQ", "horizontalLength_ciliaQ.csv")
+output_dir <- file.path("plots", "allTools2D")
 
 # Calling the function
-source(file.path("R", "plotResultsFromAllTools.R"))
-plotResultsFromAllTools(input_file_detectCilia, input_file_ACDC,
-                        input_file_ciliaq, output_dir)
+source(file.path("R", "plot2DResultsFromAllTools.R"))
+plot2DResultsFromAllTools(input_file_detectCilia, input_file_ACDC,
+                          input_file_ciliaq, output_dir)
 
 # Removing objects
 rm(list = c("input_file_detectCilia", "input_file_ACDC",
             "input_file_ciliaq", "output_dir"))
 
 
-# 6.2 Plot results of horizontal cilia length of detectCilia, ACDC, and CiliaQ of 7 test images only ####
+# 6.2 Plot results of total cilia length of detectCilia and CiliaQ ####
+input_file_detectCilia <- file.path("data", "automaticDetection",
+                                    "cultivation", "summary_cilia_edited.csv")
+input_file_ciliaq <-file.path("CiliaQ_3D","ciliaq_data_edited.csv")
+output_dir <- file.path("plots", "allTools3D")
+
+# Calling the function
+source(file.path("R", "plot3DResultsFromAllTools.R"))
+plot3DResultsFromAllTools(input_file_detectCilia, input_file_ciliaq,
+                          output_dir)
+
+# Removing objects
+rm(list = c("input_file_detectCilia",
+            "input_file_ciliaq", "output_dir"))
+
+
+# 6.3 Plot results of horizontal cilia length of detectCilia, ACDC, and CiliaQ of 7 test images only ####
 input_file_manual <- file.path("data","manualDetection","cultivation",
                                "df_manual_results.csv")
 input_file_cilium_numbers <- file.path("data","manualDetection",
@@ -513,9 +567,6 @@ input_file_ACDC           <- file.path("ACDC_corrected","ciliaData.csv")
 input_file_ciliaq         <- file.path("CiliaQ","ciliaq_data_edited.csv")
 input_file_ciliaq_3d      <- file.path("CiliaQ_3D","ciliaq_data_edited.csv")
 output_dir <- file.path("plots", "allToolsTestImages")
-
-# input_file_automatic_parameters  <- "data/automaticDetection/cultivation/summary_parameters.csv"
-# input_file_metadata              <- "data/automaticDetection/cultivation/summary_metadata.csv"
 
 
 # Calling the function
