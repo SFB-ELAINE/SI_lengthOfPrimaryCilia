@@ -147,6 +147,8 @@ ciliaQ_getResults <- function(input_dir, output_dir){
       df_dummy$image_name_short <- as.numeric(gsub(pattern = ".+zstack_([0-9]{1,2}).+", replacement = "\\1", x = ciliaq_files[i]))
     }else if(grepl(pattern = "gblur", x = ciliaq_files[i], ignore.case = TRUE)){
       df_dummy$image_name_short <- as.numeric(gsub(pattern = ".+gblur_([[:digit:]]{0,1}\\.{0,1}[[:digit:]]{0,1})_z.+", replacement = "\\1", x = ciliaq_files[i]))
+    }else{
+      df_dummy$image_name_short <- NA
     }
     
     if(i == 1){

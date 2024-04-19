@@ -36,33 +36,49 @@ plotArtificialCiliaResultsFromAllTools <- function(
   df_results_ciliaQ$Tool <- "CiliaQ"
   
   # Add blurring information
-  df_results_detectCilia$blurring <- as.numeric(
-    gsub(pattern = ".+gblur_([[:digit:]]{0,1}\\.{0,1}[[:digit:]]{0,1})$",
-         replacement = "\\1",
-         x = df_results_detectCilia$dirName))
-  
-  
-  df_results_ACDC$blurring <- as.numeric(
-    gsub(pattern = ".+gblur_([[:digit:]]{0,1}\\.{0,1}[[:digit:]]{0,1})_z.+",
-         replacement = "\\1",
-         x = df_results_ACDC$fileName))
-  
-  df_results_ciliaQ$blurring <- as.numeric(
-    gsub(pattern = ".+gblur_([[:digit:]]{0,1}\\.{0,1}[[:digit:]]{0,1})_z.+",
-         replacement = "\\1",
-         x = df_results_ciliaQ$file_name))
-  
-  # Keep only specific columns
-  df_results_detectCilia2 <- df_results_detectCilia %>% 
-    dplyr::select("dirName", "cilium", "blurring", "horizontal_length_in_pixels", "Tool")
-  
-  df_results_ACDC2 <- df_results_ACDC %>% 
-    dplyr::select(dirName = "fileName", cilium = "Cilium.ID", "blurring", horizontal_length_in_pixels = "Total.Length.pixel.", "Tool")
-  df_results_ACDC2$dirName <- gsub(pattern = "_z_projection\\.tif",replacement = "", x =  df_results_ACDC2$dirName)
-  
-  df_results_ciliaQ2 <- df_results_ciliaQ %>% 
-    dplyr::select(dirName = "file_name", cilium = "ID", "blurring", horizontal_length_in_pixels = "cilia.length..micron.", "Tool")
-  df_results_ciliaQ2$dirName <- gsub(pattern = "_z_projection_CQP_CQs",replacement = "", x =  df_results_ciliaQ2$dirName)
+  if(any(grepl(pattern = "gblur", x = df_results_detectCilia$dirName, ignore.case = TRUE))){
+    df_results_detectCilia$blurring <- as.numeric(
+      gsub(pattern = ".+gblur_([[:digit:]]{0,1}\\.{0,1}[[:digit:]]{0,1})$",
+           replacement = "\\1",
+           x = df_results_detectCilia$dirName))
+    
+    
+    df_results_ACDC$blurring <- as.numeric(
+      gsub(pattern = ".+gblur_([[:digit:]]{0,1}\\.{0,1}[[:digit:]]{0,1})_z.+",
+           replacement = "\\1",
+           x = df_results_ACDC$fileName))
+    
+    df_results_ciliaQ$blurring <- as.numeric(
+      gsub(pattern = ".+gblur_([[:digit:]]{0,1}\\.{0,1}[[:digit:]]{0,1})_z.+",
+           replacement = "\\1",
+           x = df_results_ciliaQ$file_name))
+    
+    # Keep only specific columns
+    df_results_detectCilia2 <- df_results_detectCilia %>% 
+      dplyr::select("dirName", "cilium", "blurring", "horizontal_length_in_pixels", "Tool")
+    
+    df_results_ACDC2 <- df_results_ACDC %>% 
+      dplyr::select(dirName = "fileName", cilium = "Cilium.ID", "blurring", horizontal_length_in_pixels = "Total.Length.pixel.", "Tool")
+    df_results_ACDC2$dirName <- gsub(pattern = "_z_projection\\.tif",replacement = "", x =  df_results_ACDC2$dirName)
+    
+    df_results_ciliaQ2 <- df_results_ciliaQ %>% 
+      dplyr::select(dirName = "file_name", cilium = "ID", "blurring", horizontal_length_in_pixels = "cilia.length..micron.", "Tool")
+    df_results_ciliaQ2$dirName <- gsub(pattern = "_z_projection_CQP_CQs",replacement = "", x =  df_results_ciliaQ2$dirName)
+    
+  }else{
+    # Keep only specific columns
+    df_results_detectCilia2 <- df_results_detectCilia %>% 
+      dplyr::select("dirName", "cilium", "horizontal_length_in_pixels", "Tool")
+    
+    df_results_ACDC2 <- df_results_ACDC %>% 
+      dplyr::select(dirName = "fileName", cilium = "Cilium.ID", horizontal_length_in_pixels = "Total.Length.pixel.", "Tool")
+    df_results_ACDC2$dirName <- gsub(pattern = "_z_projection\\.tif",replacement = "", x =  df_results_ACDC2$dirName)
+    
+    df_results_ciliaQ2 <- df_results_ciliaQ %>% 
+      dplyr::select(dirName = "file_name", cilium = "ID", horizontal_length_in_pixels = "cilia.length..micron.", "Tool")
+    df_results_ciliaQ2$dirName <- gsub(pattern = "_z_projection_CQP_CQs",replacement = "", x =  df_results_ciliaQ2$dirName)
+    
+  }
   
   # Bind tibbles
   df_results <- dplyr::bind_rows(df_results_detectCilia2,
@@ -85,23 +101,45 @@ plotArtificialCiliaResultsFromAllTools <- function(
   # Plot all data ----------------------------------------------------------
   
   # Horizontal lengths of cilia
-  plot_horizontal_length <- ggplot(df_results, aes(x=blurring, y=horizontal_length_in_pixels, color=Tool)) +
-    geom_point(size = 4) +
-    geom_line(linewidth = 1.5) +
-    geom_hline(yintercept=10, linetype="dashed", color = "red", linewidth = 1) +
-    theme_bw(base_size = 18) +
-    scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
-    scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
-    ylab("Horizontal cilium length in pixels") +
-    xlab("Gaussian blurring standard deviation")
+  if("blurring" %in% names(df_results)){
+    plot_horizontal_length <- ggplot(df_results, aes(x=blurring, y=horizontal_length_in_pixels, color=Tool)) +
+      geom_point(size = 4) +
+      geom_line(linewidth = 1.5) +
+      geom_hline(yintercept=10, linetype="dashed", color = "red", linewidth = 1) +
+      theme_bw(base_size = 18) +
+      scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
+      scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
+      ylab("Horizontal cilium length in pixels") +
+      xlab("Gaussian blurring standard deviation")
+    
+    
+    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.pdf"),
+           width = 297, height = 110, units = "mm")
+    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.png"),
+           width = 297, height = 110, units = "mm")
+    # ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.emf"),
+    #        width = 297, height = 210, units = "mm", device = emf)
+  }else{
+    df_results$cilium <- df_results$cilium-1
+    plot_horizontal_length <- ggplot(df_results, aes(x=cilium, y=horizontal_length_in_pixels, color=Tool)) +
+      geom_point(size = 4) +
+      geom_line(linewidth = 1.5) +
+      geom_hline(yintercept=10, linetype="dashed", color = "red", linewidth = 1) +
+      theme_bw(base_size = 18) +
+      scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
+      scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
+      ylab("Horizontal cilium length in pixels") +
+      xlab("Cilium")
+    
+    
+    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_combined_horizontal_lengths.pdf"),
+           width = 297, height = 110, units = "mm")
+    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_combined_horizontal_lengths.png"),
+           width = 297, height = 110, units = "mm")
+    # ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_combined_horizontal_lengths.emf"),
+    #        width = 297, height = 210, units = "mm", device = emf)
+  }
   
-  
-  ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.pdf"),
-         width = 297, height = 110, units = "mm")
-  ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.png"),
-         width = 297, height = 110, units = "mm")
-  # ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.emf"),
-  #        width = 297, height = 210, units = "mm", device = emf)
   
   
 }

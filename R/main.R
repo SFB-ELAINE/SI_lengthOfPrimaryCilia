@@ -21,6 +21,9 @@ download_directory_cultivation <- file.path("E:", "PhD", "Data",
 directory_artificial_images <- file.path("E:", "PhD", "Data",
                                          "Cilia", "artificialCilia",
                                          "horizontal_blur")
+directory_artificial_images_cshaped <- file.path("E:", "PhD", "Data",
+                                                 "Cilia", "artificialCilia",
+                                                 "c_shaped")
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -589,20 +592,88 @@ rm(list = c("input_file_manual", "input_file_cilium_numbers",
 # 7 Detection of artificial cilia with all three tools #####################
 
 # 7.1 Create images with horizontal cilia images ###########################
+# as well as one large image containing all the blurred cilia
+
+number_of_images <- 50
+blurring_start <- 0
+blurring_end <- 5
+number_of_images_per_row <- 10
+number_of_rows <- number_of_images / number_of_images_per_row
+number_of_pixels_x_y <- 100
+number_of_layers_z <- 20
+number_of_channels <- 3
+i <- 1 # current column
+j <- 1 # current row
+start <- 1
+
+# Create empty image
+# empty_image <- array(data = 0, dim = c(number_of_images_per_row*number_of_pixels_x_y,
+#                                        number_of_rows*number_of_pixels_x_y,
+#                                        number_of_layers_z,
+#                                        number_of_channels))
+big_image <- EBImage::Image(data = array(data = 0, dim = c(number_of_images_per_row*number_of_pixels_x_y,
+                                                           number_of_rows*number_of_pixels_x_y,
+                                                           number_of_channels,
+                                                           number_of_layers_z)), colormode = Color)
+
 source(file.path("R", "createTestCiliumImage.R"))
-for(current_blur in seq(from = 4, to = 5, by = 0.1)){
-  createTestCiliumImage(output_dir = directory_artificial_images,
-                        number_of_pixels_x_y = 100,
-                        number_of_layers_z = 20,
-                        cilium_length_in_pixels = 10,
-                        cilium_width_in_pixels = 3,
-                        cilium_height_in_pixels = 3,
-                        relative_start_position = c(0.5,0.5,0.5),
-                        rotatation_angles_degree = c(0,0,0),
-                        gblur_sigma = current_blur,
-                        cilium_color = "green")
+for(current_blur in seq(from = blurring_start, to = blurring_end, by = (blurring_end-blurring_start)/number_of_images)){
+  
+  current_image <- createTestCiliumImage(output_dir = directory_artificial_images,
+                                         cilium_shape = "horizontal",
+                                         number_of_pixels_x_y = number_of_pixels_x_y,
+                                         number_of_layers_z = number_of_layers_z,
+                                         cilium_length_in_pixels = 10,
+                                         cilium_width_in_pixels = 3,
+                                         cilium_height_in_pixels = 3,
+                                         relative_start_position = c(0.5,0.5,0.5),
+                                         rotatation_angles_degree = c(0,0,0),
+                                         gblur_sigma = current_blur,
+                                         cilium_color = "green")
+  
+  
+  # Add current image to empty image
+  if(start <= number_of_images){
+    big_image[((i-1)*number_of_pixels_x_y+1):(i*number_of_pixels_x_y),
+              ((j-1)*number_of_pixels_x_y+1):(j*number_of_pixels_x_y),,] <- current_image
+    
+    if(i == number_of_images_per_row){
+      i <- 1
+      j <- j+1
+    }else{
+      i <- i+1
+    }
+  }
+  
+  start <- start + 1
+  
 }
-rm(current_blur)
+# display(Image(big_image, colormode = Color))
+output_dir <- file.path(gsub(pattern = basename(directory_artificial_images), replacement = "", x = directory_artificial_images), "horizontal_blur_combined", "horizontal_blur_combined")
+dir.create(path = output_dir, showWarnings = FALSE, recursive = TRUE)
+
+big_image <- Image(big_image, colormode = Color)
+
+for(i in 1:number_of_layers_z){
+  image_name <- paste0("combined_blurred_cilia",
+                       "_z",
+                       i,
+                       ".tif")
+  EBImage::writeImage(x = big_image[,,,i],
+                      bits.per.sample = 16,
+                      files = file.path(output_dir, image_name))
+  
+}
+
+# EBImage::writeImage(x = Image(big_image, colormode = Color),
+#                     bits.per.sample = 16,
+#                     files = file.path(output_dir, "combined_blurred_cilia.tif"))
+# Save final image
+
+rm(list = c("big_image", "current_image", "current_blur", "number_of_images",
+            "blurring_start", "blurring_end", "number_of_images_per_row",
+            "number_of_rows", "number_of_pixels_x_y", "number_of_layers_z",
+            "number_of_channels", "i", "j", "start"))
 
 # 7.2 Automatic detection of cilia from synthetic cilia images #############
 
@@ -695,3 +766,201 @@ rm(list = c("input_file_detectCilia", "input_file_ACDC",
 
 
 
+# 7.10 Automatic detection of combined cilia in combined image  ############
+# Data input
+input_dir <- file.path(
+  gsub(pattern = basename(directory_artificial_images),
+       replacement = "", x = directory_artificial_images),
+  "horizontal_blur_combined")
+
+# Calling the function
+source(file.path("R", "automaticCiliaDetection.R"))
+automaticCiliaDetection(input_dir = input_dir, number_of_expected_nulcei = 50)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 7.11 Combine results of aut. detection from combined cilia image #########
+
+# Data input
+input_dir <-  file.path(
+  gsub(pattern = basename(directory_artificial_images),
+       replacement = "", x = directory_artificial_images),
+  "horizontal_blur_combined")
+output_dir <- file.path("data", "automaticDetection", "artificialCilia_combined")
+
+# Calling the function
+source(file.path("R", "combineDetectCiliaResults.R"))
+combineDetectCiliaResults(input_dir, output_dir)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir"))
+
+# 7.12 Copy all z-stack max projection of combined cilia into one folder ###
+# Data input
+input_dir <- file.path(
+  gsub(pattern = basename(directory_artificial_images),
+       replacement = "", x = directory_artificial_images),
+  "horizontal_blur_combined")
+
+# Calling the function
+source(file.path("R", "copyAllProjectionImages.R"))
+copyAllProjectionImages(input_dir)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 7.13 Analyze z-stack projection images of combined cilia with ACDC #######
+
+# This needs to be manually done because it cannot be invoked from R.
+# See ACDC_artificialCilia_combined/ReadMe.txt for further information.
+# Manually change cilia numbering such that the cilia can be compared.
+
+# 7.14 Read combined cilia results as xlsx file and convert to csv #########
+
+input_file <- file.path("ACDC_artificialCilia_combined",
+                        "Cilia Report 19-Apr-2024 11-01-29_editedCiliaNumbers.xlsx")
+output_dir <- "ACDC_artificialCilia_combined"
+
+# Calling the function
+source(file.path("R", "ACDC_readXLSX.R"))
+ACDC_readXLSX(input_file, output_dir)
+
+# Removing objects
+rm(list = c("input_file", "output_dir"))
+
+# 7.15 Analyze z-stack projection images of combined cilia with CiliaQ #####
+
+# This needs to be manually done because it cannot be invoked from R.
+# See CiliaQ/HowTo for further information.
+
+# 7.16 Read CiliaQ results of combined cilia and convert to csv ############
+
+# Directory with analysis results (CiliaQ files)
+input_dir <- file.path("E:", "PhD", "Data", "Cilia", "artificialCilia", "horizontal_blur_combined_zprojection_ciliaQ")
+# Output directory
+output_dir <- "CiliaQ_artificialCilia_combined"
+
+# Calling the function
+source(file.path("R", "ciliaQ_getResults.R"))
+ciliaQ_getResults(input_dir, output_dir)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir"))
+
+# Renumber the cilia IDs because CiliaQ enumerates them from bottom to top
+# and detectCilia from top to bottom
+
+# 7.17 Plot results of combined artificialCilia detections #################
+input_file_detectCilia <- file.path("data", "automaticDetection", "artificialCilia_combined", "summary_cilia.csv")
+input_file_ACDC        <- file.path("ACDC_artificialCilia_combined","ciliaData.csv")
+input_file_ciliaq      <- file.path("CiliaQ_artificialCilia_combined", "ciliaq_data_editedCiliaNumbers.csv")
+output_dir             <- file.path("plots", "artificialCilia_combined")
+
+# Calling the function
+source(file.path("R", "plotArtificialCiliaResultsFromAllTools.R"))
+plotArtificialCiliaResultsFromAllTools(input_file_detectCilia,
+                                       input_file_ACDC,
+                                       input_file_ciliaq,
+                                       output_dir)
+
+# Removing objects
+rm(list = c("input_file_detectCilia", "input_file_ACDC",
+            "input_file_ciliaq", "output_dir"))
+
+
+
+# 7.18 Create images with C-shaped cilia images ############################
+source(file.path("R", "createTestCiliumImage.R"))
+for(current_angle in seq(from = 0, to = 90, by = 5)){
+  createTestCiliumImage(output_dir = directory_artificial_images_cshaped,
+                        cilium_shape = "c",
+                        number_of_pixels_x_y = 100,
+                        number_of_layers_z = 20,
+                        relative_start_position = c(0.5,0.5,0.5),
+                        rotatation_angles_degree = c(0,current_angle,0),
+                        gblur_sigma = 1,
+                        cilium_color = "green")
+}
+
+
+# 7.19 Automatic detection of cilia from synthetic cilia images #############
+
+# Data input
+input_dir <- directory_artificial_images_cshaped
+
+# Calling the function
+source(file.path("R", "automaticCiliaDetection.R"))
+automaticCiliaDetection(input_dir)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 7.20 Combine results of aut. detection from synthetic cilia images ########
+
+# Data input
+input_dir <- directory_artificial_images_cshaped
+output_dir <- file.path("data", "automaticDetection", "artificialCilia_cshaped")
+
+# Calling the function
+source(file.path("R", "combineDetectCiliaResults.R"))
+combineDetectCiliaResults(input_dir, output_dir)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir"))
+
+# 7.21 Copy all z-stack max projection into one folder ######################
+# Data input
+input_dir <- directory_artificial_images_cshaped
+
+# Calling the function
+source(file.path("R", "copyAllProjectionImages.R"))
+copyAllProjectionImages(input_dir)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 7.22 Copy all tifs as one zstack image into one folder ###################
+# Data input
+input_dir <- directory_artificial_images_cshaped
+
+# Calling the function
+source(file.path("R", "copyAllTifsAsZstack.R"))
+copyAllTifsAsZstack(input_dir)
+
+# Removing objects
+rm(list = c("input_dir"))
+
+# 7.23 Analyze z-stack projection images with CiliaQ #######################
+
+# This needs to be manually done because it cannot be invoked from R.
+# See CiliaQ/HowTo for further information.
+
+# 7.24 Read CiliaQ results (txt files) and convert to csv ##################
+
+# Directory with analysis results (CiliaQ files)
+input_dir <- file.path("E:", "PhD", "Data", "Cilia", "artificialCilia", "c_shaped_zstacks")
+# Output directory
+output_dir <- "CiliaQ_artificialCilia_cshaped"
+
+# Calling the function
+source(file.path("R", "ciliaQ_getResults.R"))
+ciliaQ_getResults(input_dir, output_dir)
+
+# Removing objects
+rm(list = c("input_dir", "output_dir"))
+
+# 7.25 Plot results of artificialCilia_c_shape detections ##################
+input_file_detectCilia <- file.path("data", "automaticDetection", "artificialCilia_cshaped", "summary_cilia.csv")
+input_file_ciliaq      <- file.path("CiliaQ_artificialCilia_cshaped", "ciliaq_data.csv")
+output_dir             <- file.path("plots", "artificialCilia_cshaped")
+
+# Calling the function
+source(file.path("R", "plotArtificialCilia3DResults.R"))
+plotArtificialCilia3DResults(input_file_detectCilia,
+                             input_file_ciliaq,
+                             output_dir)
+
+# Removing objects
+rm(list = c("input_file_detectCilia", "input_file_ACDC",
+            "input_file_ciliaq", "output_dir"))

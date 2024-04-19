@@ -1,9 +1,10 @@
 # Function for creating a 3D TIF with a known cilia                 ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2024/02/02
-# Last changed: 2024/02/02
+# Last changed: 2024/04/15
 
 createTestCiliumImage <- function(output_dir,
+                                  cilium_shape = "horizontal",
                                   number_of_pixels_x_y = 100,
                                   number_of_layers_z = 20,
                                   cilium_length_in_pixels = 10,
@@ -36,15 +37,25 @@ createTestCiliumImage <- function(output_dir,
   require(EBImage)
   
   # Initialize straight cilium
-  cilium_coordinates <- expand.grid(x=0:(cilium_length_in_pixels-1),
-                                    y=0:(cilium_width_in_pixels-1),
-                                    z=0:(cilium_height_in_pixels-1))
+  if(cilium_shape == "horizontal"){
+    cilium_coordinates <- expand.grid(x=0:(cilium_length_in_pixels-1),
+                                      y=0:(cilium_width_in_pixels-1),
+                                      z=0:(cilium_height_in_pixels-1))
+  }else if(cilium_shape == "c"){
+    cilium_coordinates <- data.frame(x=rep(c(0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9), 3),
+                                     y=rep(c(3,4,5,2,3,4,1,2,3,1,2,3,0,1,2,0,1,2,1,2,3,1,2,3,2,3,4,3,4,5), 3),
+                                     z=c(rep(0, 30), rep(1, 30), rep(2, 30)))
+  }else{
+    print("Please call the function with a correct cilium shape.")
+    return()
+  }
+  
   
   # Rotate cilium
   rotatation_angles <- rotatation_angles_degree * 2 * pi / 360
-  a <- rotatation_angles[1]
-  b <- rotatation_angles[2]
-  c <- rotatation_angles[3]
+  a <- rotatation_angles[1] # rotation around z-axis
+  b <- rotatation_angles[2] # rotation around y-axis
+  c <- rotatation_angles[3] # rotation around x-axis
   rotation_matrix <- round(x = matrix(data = c(
     cos(a)*cos(b),
     cos(a)*sin(b)*sin(c)-sin(a)*cos(c),
@@ -218,4 +229,5 @@ createTestCiliumImage <- function(output_dir,
   #                      "_combined.tif")
   # EBImage::writeImage(x = image_array_rotated2, files = file.path(output_dir, image_name))
   
+  return(image_array_rotated)
 }

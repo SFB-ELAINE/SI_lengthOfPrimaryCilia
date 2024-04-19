@@ -6,7 +6,8 @@
 
 
 automaticCiliaDetection <- function(input_dir,
-                                    output_dir = NULL){
+                                    output_dir = NULL,
+                                    number_of_expected_nulcei = NA){
   
   # Load packages ##########################################################
   
@@ -106,14 +107,16 @@ automaticCiliaDetection <- function(input_dir,
       
       print(paste0("Detecting cilia in ", tif_dirs[i], ". The current ",
                    "time is ", Sys.time(),"."))
-      
+      if(is.na(number_of_expected_nulcei)){
+        number_of_expected_nulcei <- 1
+      }
       dummy <- detectCilia::detectCilia(input_dir_tif = tif_dirs[i],
                                         export_normalized_images = FALSE,
                                         pixel_size = 1,
                                         slice_distance = 1,
-                                        number_of_expected_nuclei = 1,
-                                        min_cilium_area = 5,
-                                        max_cilium_area = 50,
+                                        number_of_expected_nuclei = number_of_expected_nulcei,
+                                        min_cilium_area_in_pixels = 5,
+                                        max_cilium_area_in_pixels = 100,
                                         nucleus_color = NULL,
                                         cilium_color = "green",
                                         number_size_factor = 0.2)

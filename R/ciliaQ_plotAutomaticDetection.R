@@ -317,7 +317,7 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
     
     plot_cilia_length_violin_statistical_test <-
       ggplot(df_results, aes(x=cultivation, y=cilia_length_in_um)) +
-      geom_violin(color="#762855") +
+      geom_violin(color="#1e3a80") +
       geom_boxplot(width=0.2) +
       # ggviolin(df_results, x = "cultivation", y = "cilia_length_in_um",
       # add = "boxplot", add.params = list(fill = "white")) +
