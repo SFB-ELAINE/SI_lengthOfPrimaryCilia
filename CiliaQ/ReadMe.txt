@@ -1,0 +1,1 @@
+The file ciliaq_data_edited.csv information of false positive cilia which were manually determined by looking at the images and the found cilia.
