@@ -1,11 +1,11 @@
-# Script for plotting horizontal length of artificial cilia         ++++++++
+# Script for plotting horizontal length of simulated cilia          ++++++++
 # using all three tools                                             ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2024/02/20
-# Last changed: 2024/02/20
+# Last changed: 2024/06/11
 
 
-plotArtificialCiliaResultsFromAllTools <- function(
+plotSimulatedCiliaResultsFromAllTools <- function(
   input_file_detectCilia,
   input_file_ACDC,
   input_file_ciliaq,
@@ -113,11 +113,11 @@ plotArtificialCiliaResultsFromAllTools <- function(
       xlab("Gaussian blurring standard deviation")
     
     
-    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.pdf"),
+    ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.pdf"),
            width = 297, height = 110, units = "mm")
-    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.png"),
+    ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.png"),
            width = 297, height = 110, units = "mm")
-    # ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_horizontal_lengths.emf"),
+    # ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.emf"),
     #        width = 297, height = 210, units = "mm", device = emf)
   }else{
     df_results$cilium <- df_results$cilium-1
@@ -129,14 +129,14 @@ plotArtificialCiliaResultsFromAllTools <- function(
       scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
       scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
       ylab("Horizontal cilium length in pixels") +
-      xlab("Cilium")
+      xlab("Cilium number")
     
     
-    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_combined_horizontal_lengths.pdf"),
+    ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_combined_horizontal_lengths.pdf"),
            width = 297, height = 110, units = "mm")
-    ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_combined_horizontal_lengths.png"),
+    ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_combined_horizontal_lengths.png"),
            width = 297, height = 110, units = "mm")
-    # ggsave(filename = file.path(output_dir, "all_tools_artificial_cilia_combined_horizontal_lengths.emf"),
+    # ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_combined_horizontal_lengths.emf"),
     #        width = 297, height = 210, units = "mm", device = emf)
   }
   

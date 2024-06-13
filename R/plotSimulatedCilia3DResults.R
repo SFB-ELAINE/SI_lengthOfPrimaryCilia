@@ -1,11 +1,11 @@
-# Script for plotting total lengths of artificial cilia             ++++++++
+# Script for plotting total lengths of simulated cilia              ++++++++
 # using detectCilia and CiliaQ                                      ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2024/04/15
 # Last changed: 2024/04/15
 
 
-plotArtificialCilia3DResults <- function(
+plotSimulatedCilia3DResults <- function(
   input_file_detectCilia,
   input_file_ciliaq,
   output_dir){
@@ -86,11 +86,11 @@ plotArtificialCilia3DResults <- function(
     ylab("Horizontal cilium length in pixels") +
     xlab("Rotation angle in degrees (around y-axis)")
   
-  ggsave(filename = file.path(output_dir, "3D_tools_artificial_cilia_horizontal_lengths.pdf"),
+  ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_horizontal_lengths.pdf"),
          width = 297, height = 110, units = "mm")
-  ggsave(filename = file.path(output_dir, "3D_tools_artificial_cilia_horizontal_lengths.png"),
+  ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_horizontal_lengths.png"),
          width = 297, height = 110, units = "mm")
-  # ggsave(filename = file.path(output_dir, "3D_tools_artificial_cilia_horizontal_lengths.emf"),
+  # ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_horizontal_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
   
@@ -107,11 +107,11 @@ plotArtificialCilia3DResults <- function(
     xlab("Rotation angle in degrees (around y-axis)")
   
   
-  ggsave(filename = file.path(output_dir, "3D_tools_artificial_cilia_total_lengths.pdf"),
+  ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_total_lengths.pdf"),
          width = 297, height = 110, units = "mm")
-  ggsave(filename = file.path(output_dir, "3D_tools_artificial_cilia_total_lengths.png"),
+  ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_total_lengths.png"),
          width = 297, height = 110, units = "mm")
-  # ggsave(filename = file.path(output_dir, "3D_tools_artificial_cilia_total_lengths.emf"),
+  # ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_total_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
   

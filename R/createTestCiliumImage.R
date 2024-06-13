@@ -182,7 +182,7 @@ createTestCiliumImage <- function(output_dir,
   # rm(i)
   # 
   
-  dir_name <- paste0("ArtificialCilium_",
+  dir_name <- paste0("SimulatedCilium_",
                      "l_", cilium_length_in_pixels,
                      "w_", cilium_width_in_pixels,
                      "h_", cilium_height_in_pixels,
@@ -192,7 +192,7 @@ createTestCiliumImage <- function(output_dir,
                      gblur_sigma)
   dir.create(file.path(output_dir, dir_name), showWarnings = FALSE, recursive = TRUE)
   
-  # image_name <- paste0("ArtificialCilium_",
+  # image_name <- paste0("SimulatedCilium_",
   #                      "l_", cilium_length_in_pixels,
   #                      "w_", cilium_width_in_pixels,
   #                      "h_", cilium_height_in_pixels,
@@ -220,7 +220,7 @@ createTestCiliumImage <- function(output_dir,
   
   # EBImage::writeImage(x = image_array_rotated, files = file.path(output_dir, image_name))
   
-  # image_name <- paste0("ArtificialCilium_",
+  # image_name <- paste0("SimulatedCilium_",
   #                      "l_", cilium_length_in_pixels,
   #                      "w_", cilium_width_in_pixels,
   #                      "h_", cilium_height_in_pixels,
