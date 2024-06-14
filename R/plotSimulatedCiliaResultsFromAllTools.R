@@ -110,7 +110,7 @@ plotSimulatedCiliaResultsFromAllTools <- function(
       scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
       scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
       ylab("Horizontal cilium length in pixels") +
-      xlab("Gaussian blurring standard deviation")
+      xlab("Gaussian blur standard deviation")
     
     
     ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.pdf"),

@@ -589,7 +589,7 @@ rm(list = c("input_file_manual", "input_file_cilium_numbers",
             "output_dir"))
 
 
-# 7 Detection of simulated cilia with all three tools #####################
+# 7 Detection of simulated cilia with all three tools ######################
 
 # 7.1 Create images with horizontal cilia images ###########################
 # as well as one large image containing all the blurred cilia
@@ -747,7 +747,7 @@ ciliaQ_getResults(input_dir, output_dir)
 # Removing objects
 rm(list = c("input_dir", "output_dir"))
 
-# 7.9 Plot results of simulatedCilia detections ###########################
+# 7.9 Plot results of simulatedCilia detections ############################
 input_file_detectCilia <- file.path("data", "automaticDetection", "simulatedCilia", "summary_cilia.csv")
 input_file_ACDC        <- file.path("ACDC_simulatedCilia","ciliaData.csv")
 input_file_ciliaq      <- file.path("CiliaQ_simulatedCilia", "ciliaq_data.csv")
@@ -851,7 +851,7 @@ rm(list = c("input_dir", "output_dir"))
 # Renumber the cilia IDs because CiliaQ enumerates them from bottom to top
 # and detectCilia from top to bottom
 
-# 7.17 Plot results of combined simulatedCilia detections #################
+# 7.17 Plot results of combined simulatedCilia detections ##################
 input_file_detectCilia <- file.path("data", "automaticDetection", "simulatedCilia_combined", "summary_cilia.csv")
 input_file_ACDC        <- file.path("ACDC_simulatedCilia_combined","ciliaData.csv")
 input_file_ciliaq      <- file.path("CiliaQ_simulatedCilia_combined", "ciliaq_data_editedCiliaNumbers.csv")
@@ -950,7 +950,7 @@ ciliaQ_getResults(input_dir, output_dir)
 # Removing objects
 rm(list = c("input_dir", "output_dir"))
 
-# 7.25 Plot results of simulatedCilia_c_shape detections ##################
+# 7.25 Plot results of simulatedCilia_c_shape detections ###################
 input_file_detectCilia <- file.path("data", "automaticDetection", "simulatedCilia_cshaped", "summary_cilia.csv")
 input_file_ciliaq      <- file.path("CiliaQ_simulatedCilia_cshaped", "ciliaq_data.csv")
 output_dir             <- file.path("plots", "simulatedCilia_cshaped")
