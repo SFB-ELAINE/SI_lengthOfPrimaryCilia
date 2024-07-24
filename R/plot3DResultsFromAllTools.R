@@ -1,7 +1,7 @@
 # Script for plotting total length of 2 tools (dc and CiliaQ)       ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2024/04/07
-# Last changed: 2024/04/13
+# Last changed: 2024/07/24
 
 
 plot3DResultsFromAllTools <- function(input_file_detectCilia,
@@ -117,6 +117,8 @@ plot3DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -145,6 +147,8 @@ plot3DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_total_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_total_lengths_violin_plot.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_tools_total_lengths_violin_plot.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -268,6 +272,8 @@ plot3DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_total_lengths_", test_name, ".png")),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_total_lengths_", test_name, ".eps")),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_total_lengths_", test_name, ".emf")),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -307,6 +313,8 @@ plot3DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_total_lengths_violin_plot_", test_name, ".png")),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_total_lengths_violin_plot_", test_name, ".eps")),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_total_lengths_violin_plot_", test_name, ".emf")),
   #        width = 297, height = 210, units = "mm", device = emf)
   

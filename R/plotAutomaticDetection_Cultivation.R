@@ -2,7 +2,7 @@
 # of cultivation images                                             ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2021/11/08
-# Last changed: 2024/03/28
+# Last changed: 2024/07/24
 
 
 plotAutomaticDetection_Cultivation <- function(input_file,
@@ -112,6 +112,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_cilia_total_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -133,6 +135,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_total_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_cilia_total_lengths_violin_plot.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_cilia_total_lengths_violin_plot.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -155,6 +159,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_cilia_horizontal_lengths_violin_plot.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_cilia_horizontal_lengths_violin_plot.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -177,6 +183,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_cilia_vertical_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_cilia_vertical_lengths_violin_plot.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_cilia_vertical_lengths_violin_plot.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -390,6 +398,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("all_cilia_total_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste0("all_cilia_total_lengths_violin_plot_", test_name, ".eps")),
+           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, paste0("all_cilia_total_lengths_violin_plot_", test_name, ".emf")),
     #        width = 297, height = 210, units = "mm", device = emf)
     
@@ -519,6 +529,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("all_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste0("all_cilia_horizontal_lengths_violin_plot_", test_name, ".eps")),
+           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, paste0("all_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
     #        width = 297, height = 210, units = "mm", device = emf)
     
@@ -639,6 +651,8 @@ plotAutomaticDetection_Cultivation <- function(input_file,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("all_cilia_vertical_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste0("all_cilia_vertical_lengths_violin_plot_", test_name, ".eps")),
+           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, paste0("all_cilia_vertical_lengths_violin_plot_", test_name, ".emf")),
     #        width = 297, height = 210, units = "mm", device = emf)
     

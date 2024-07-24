@@ -407,7 +407,6 @@ rm(list = c("input_file", "output_dir"))
 
 # 4.4 Plot detection results of ACDC #######################################
 
-
 # Corrected data
 input_file_acdc <- file.path("ACDC_corrected","ciliaData.csv")
 input_file_metadata <- file.path("data", "automaticDetection", "cultivation", "summary_metadata.csv")
@@ -499,7 +498,7 @@ ciliaQ_getResults(input_dir, output_dir)
 rm(list = c("input_dir", "output_dir"))
 
 
-# 5.7 Find false positives in the resultsof  CiliaQ ########################
+# 5.7 Find false positives in the results of CiliaQ ########################
 
 # This needs to be manually done.
 print(paste0("Please copy 'ciliaq_data.csv' and rename it to ",
@@ -507,8 +506,8 @@ print(paste0("Please copy 'ciliaq_data.csv' and rename it to ",
 
 # 5.8 Plot 3d detection results of CiliaQ ##################################
 
-input_file_ciliaq <- file.path("CiliaQ_3D","ciliaq_data_edited.csv")
-output_dir <- file.path("plots","ciliaQ_3D")
+input_file_ciliaq <- file.path("CiliaQ_3D", "ciliaq_data_edited.csv")
+output_dir <- file.path("plots", "ciliaQ_3D")
 
 # Calling the function
 source(file.path("R", "ciliaQ_plotAutomaticDetection.R"))
@@ -569,7 +568,7 @@ input_file_detectCilia    <- file.path("data", "automaticDetection",
 input_file_ACDC           <- file.path("ACDC_corrected","ciliaData.csv")
 input_file_ciliaq         <- file.path("CiliaQ","ciliaq_data_edited.csv")
 input_file_ciliaq_3d      <- file.path("CiliaQ_3D","ciliaq_data_edited.csv")
-output_dir <- file.path("plots", "allToolsTestImages")
+output_dir                <- file.path("plots", "allToolsTestImages")
 
 
 # Calling the function
@@ -958,9 +957,8 @@ output_dir             <- file.path("plots", "simulatedCilia_cshaped")
 # Calling the function
 source(file.path("R", "plotSimulatedCilia3DResults.R"))
 plotSimulatedCilia3DResults(input_file_detectCilia,
-                             input_file_ciliaq,
-                             output_dir)
+                            input_file_ciliaq,
+                            output_dir)
 
 # Removing objects
-rm(list = c("input_file_detectCilia", "input_file_ACDC",
-            "input_file_ciliaq", "output_dir"))
+rm(list = c("input_file_detectCilia", "input_file_ciliaq", "output_dir"))

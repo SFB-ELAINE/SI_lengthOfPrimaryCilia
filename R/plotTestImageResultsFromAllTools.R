@@ -2,7 +2,7 @@
 # of all 3 tools and manual readers                                 ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2023/04/20
-# Last changed: 2024/03/20
+# Last changed: 2024/07/24
 
 
 plotTestImageResultsFromAllTools <- function(
@@ -242,6 +242,8 @@ plotTestImageResultsFromAllTools <- function(
          width = 442, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.png"),
          width = 442, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.eps"),
+         width = 442, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -393,16 +395,12 @@ plotTestImageResultsFromAllTools <- function(
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.png"),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.eps"),
+           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, "all_tools_cilia_total_lengths.emf"),
     #        width = 297, height = 210, units = "mm", device = emf)
     
-    
-    
-    
-    
-    
   }
-  
   
   
 }

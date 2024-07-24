@@ -2,7 +2,7 @@
 # using all three tools                                             ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2024/02/20
-# Last changed: 2024/06/11
+# Last changed: 2024/07/24
 
 
 plotSimulatedCiliaResultsFromAllTools <- function(
@@ -110,13 +110,15 @@ plotSimulatedCiliaResultsFromAllTools <- function(
       scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
       scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
       ylab("Horizontal cilium length in pixels") +
-      xlab("Gaussian blur standard deviation")
+      xlab(expression("Gaussian blur standard deviation"~sigma~"in pixels"))
     
     
     ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.pdf"),
            width = 297, height = 110, units = "mm")
     ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.png"),
            width = 297, height = 110, units = "mm")
+    ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.eps"),
+           width = 297, height = 110, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_horizontal_lengths.emf"),
     #        width = 297, height = 210, units = "mm", device = emf)
   }else{
@@ -129,13 +131,15 @@ plotSimulatedCiliaResultsFromAllTools <- function(
       scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
       scale_color_manual(values=c("#009E73", "#762855", "#1e3a80")) +
       ylab("Horizontal cilium length in pixels") +
-      xlab("Cilium number")
+      xlab(expression("Cilium number"~("=10"*sigma)))
     
     
     ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_combined_horizontal_lengths.pdf"),
            width = 297, height = 110, units = "mm")
     ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_combined_horizontal_lengths.png"),
            width = 297, height = 110, units = "mm")
+    ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_combined_horizontal_lengths.eps"),
+           width = 297, height = 110, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, "all_tools_simulated_cilia_combined_horizontal_lengths.emf"),
     #        width = 297, height = 210, units = "mm", device = emf)
   }

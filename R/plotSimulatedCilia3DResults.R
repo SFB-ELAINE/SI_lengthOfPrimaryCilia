@@ -2,7 +2,7 @@
 # using detectCilia and CiliaQ                                      ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2024/04/15
-# Last changed: 2024/04/15
+# Last changed: 2024/07/24
 
 
 plotSimulatedCilia3DResults <- function(
@@ -71,6 +71,24 @@ plotSimulatedCilia3DResults <- function(
   # Change order of tools
   df_results$Tool <- factor(df_results$Tool, levels = c("detectCilia", "CiliaQ"))
   
+  # Calculate theoretical horizontal length ################################
+  
+  df_horizontal_lengths <- tibble(rotation_angle = sort(unique(df_results_detectCilia$rotation_angle)),
+                                  horizontal_length_in_pixels = -99)
+  
+  for(i in 1:length(df_horizontal_lengths$rotation_angle)){
+    df_horizontal_lengths$horizontal_length_in_pixels[i] <-
+      max(10*cos(df_horizontal_lengths$rotation_angle[i]*pi/180),
+          6,
+          3*sin(df_horizontal_lengths$rotation_angle [i]*pi/180))
+  }
+
+  # The following data comes from a test run without gblur
+  df_horizontal_lengths$horizontal_length_in_pixels_R <- c(10, 10, 10, 10,
+                                                           10, 10, 10, 10,
+                                                           9, 9, 8, 8, 7, 7,
+                                                           6, 6, 6, 6, 6)
+  
   # Plot results ###########################################################
   dir.create(output_dir, showWarnings = FALSE)
   
@@ -79,17 +97,23 @@ plotSimulatedCilia3DResults <- function(
   plot_horizontal_length <- ggplot(df_results_detectCilia, aes(x=rotation_angle, y=horizontal_length_in_pixels)) +
     geom_point(size = 4, color = "#009E73") +
     geom_line(linewidth = 1.5, color = "#009E73") +
-    geom_hline(yintercept=10, linetype="dashed", color = "red", linewidth = 1) +
+    # geom_hline(yintercept=10, linetype="dashed", color = "red", linewidth = 1) +
     theme_bw(base_size = 18) +
     scale_x_continuous(limits = c(0,90), breaks = scales::breaks_pretty()) +
     scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
     ylab("Horizontal cilium length in pixels") +
     xlab("Rotation angle in degrees (around y-axis)")
   
+  plot_horizontal_length <- plot_horizontal_length +
+    geom_line(data = df_horizontal_lengths, aes(x = rotation_angle, y= horizontal_length_in_pixels), linetype="dashed", color = "red", linewidth = 1) +
+    geom_line(data = df_horizontal_lengths, aes(x = rotation_angle, y= horizontal_length_in_pixels_R), linetype="dashed", color = "purple", linewidth = 1)
+  
   ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_horizontal_lengths.pdf"),
          width = 297, height = 110, units = "mm")
   ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_horizontal_lengths.png"),
          width = 297, height = 110, units = "mm")
+  ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_horizontal_lengths.eps"),
+         width = 297, height = 110, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_horizontal_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -98,7 +122,6 @@ plotSimulatedCilia3DResults <- function(
   plot_total_length <- ggplot(df_results, aes(x=rotation_angle, y=total_length_in_pixels, color=Tool)) +
     geom_point(size = 4) +
     geom_line(linewidth = 1.5) +
-    geom_hline(yintercept=4+6*sqrt(2), linetype="dashed", color = "red", linewidth = 1) +
     theme_bw(base_size = 18) +
     scale_x_continuous(limits = c(0,90), breaks = scales::breaks_pretty()) +
     scale_y_continuous(limits = c(0,25), breaks = scales::breaks_pretty()) +
@@ -106,11 +129,16 @@ plotSimulatedCilia3DResults <- function(
     ylab("Total cilium length in pixels") +
     xlab("Rotation angle in degrees (around y-axis)")
   
+  df_results$y_values <- rep(4+6*sqrt(2), length(df_results$rotation_angle))
+  plot_total_length <- plot_total_length +
+    geom_line(data = df_results, aes(x=rotation_angle, y = y_values), linetype="dashed", color = "red", linewidth = 1)
   
   ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_total_lengths.pdf"),
          width = 297, height = 110, units = "mm")
   ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_total_lengths.png"),
          width = 297, height = 110, units = "mm")
+  ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_total_lengths.eps"),
+         width = 297, height = 110, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "3D_tools_simulated_cilia_total_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   

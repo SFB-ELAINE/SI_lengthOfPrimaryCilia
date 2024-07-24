@@ -2,7 +2,7 @@
 # of cilia in seven test images                                     ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2021/11/08
-# Last changed: 2024/04/04
+# Last changed: 2024/07/24
 
 
 # Color schema
@@ -211,6 +211,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "hist_threshold_automatic_detection.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -247,11 +249,13 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     
     # print(plot_horizontal_length_image)
     
-    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf",sep="")),
+    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf", sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep="")),
+    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".png", sep="")),
            width = 297, height = 210, units = "mm")
-    # ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
+    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".eps", sep="")),
+           width = 297, height = 210, units = "mm", device="eps")
+    # ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf", sep="")),
     #        width = 297, height = 210, units = "mm", device = emf)
     
     
@@ -278,11 +282,13 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
     
     # print(plot_height_image)
     
-    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf",sep="")),
+    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".pdf", sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".png",sep="")),
+    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".png", sep="")),
            width = 297, height = 210, units = "mm")
-    # ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf",sep="")),
+    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".eps", sep="")),
+           width = 297, height = 210, units = "mm", device="eps")
+    # ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf", sep="")),
     #        width = 297, height = 210, units = "mm", device = emf)
     
     
@@ -324,6 +330,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "comparison_man_aut_length.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -361,6 +369,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, "comparison_man_aut_length_3D.png"),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, "comparison_man_aut_length_3D.eps"),
+           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, "comparison_man_aut_length_3D.emf"),
     #        width = 297, height = 210, units = "mm", device = emf)
     
@@ -397,6 +407,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_height.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_height.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "comparison_man_aut_height.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -430,6 +442,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_width.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_width.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "comparison_man_aut_width.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -462,6 +476,8 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "comparison_man_aut_length_mean_sd.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   

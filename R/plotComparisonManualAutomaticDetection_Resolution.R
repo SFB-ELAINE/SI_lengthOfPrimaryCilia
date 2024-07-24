@@ -2,7 +2,7 @@
 # the R package detectCilia as well as manual detection results     ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2021/11/11
-# Last changed: 2023/12/08
+# Last changed: 2024/07/24
 
 
 # Color schema
@@ -349,6 +349,8 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_horizontal_length.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
 
@@ -379,6 +381,8 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_vertical_length.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -436,6 +440,8 @@ plotComparisonManualAutomaticDetection_Resolution <- function(
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "comparison_resolution_man_aut_total_length.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   

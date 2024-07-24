@@ -2,7 +2,7 @@
 # of cultivation images using ACDC                                  ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2022/06/19
-# Last changed: 2024/04/14
+# Last changed: 2024/07/24
 
 
 ACDC_plotAutomaticDetection <- function(input_file_acdc,
@@ -113,6 +113,8 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -134,6 +136,8 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths_violin_plot.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "ACDC_all_cilia_horizontal_lengths_violin_plot.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -303,6 +307,8 @@ ACDC_plotAutomaticDetection <- function(input_file_acdc,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("ACDC_all_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste0("ACDC_all_cilia_horizontal_lengths_violin_plot_", test_name, ".eps")),
+           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, paste0("ACDC_all_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
     #        width = 297, height = 210, units = "mm", device = emf)
     

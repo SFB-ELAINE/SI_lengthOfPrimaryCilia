@@ -2,7 +2,7 @@
 # of cultivation images (z stack projection) using ciliaQ           ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2022/12/20
-# Last changed: 2024/04/14
+# Last changed: 2024/07/24
 
 
 ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
@@ -146,6 +146,8 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths.png")),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths.eps")),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths.emf")),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -168,6 +170,8 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot.png")),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot.eps")),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot.emf"))),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -344,6 +348,8 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot_", test_name, ".png")),
            width = 297, height = 210, units = "mm")
+    ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot_", test_name, ".eps")),
+           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_lengths_violin_plot_", test_name, ".emf")),
     #        width = 297, height = 210, units = "mm", device = emf)
     
@@ -467,6 +473,8 @@ ciliaQ_plotAutomaticDetection <- function(input_file_ciliaq,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_bendingIndex.png")),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_bendingIndex.eps")),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, paste0("ciliaQ_all_cilia_", prefix, "_bendingIndex.emf")),
   #        width = 297, height = 210, units = "mm", device = emf)
   

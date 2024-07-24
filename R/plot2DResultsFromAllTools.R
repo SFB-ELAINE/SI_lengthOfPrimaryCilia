@@ -1,7 +1,7 @@
 # Script for plotting horizontal length of all 3 tools              ++++++++
 # Author: Kai Budde-Sagert
 # Created: 2023/03/22
-# Last changed: 2024/04/09
+# Last changed: 2024/07/24
 
 
 plot2DResultsFromAllTools <- function(input_file_detectCilia,
@@ -149,6 +149,8 @@ plot2DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_tools_cilia_horizontal_lengths.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -176,6 +178,8 @@ plot2DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.png"),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.eps"),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, "all_tools_horizontal_lengths_violin_plot.emf"),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -299,6 +303,8 @@ plot2DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".png")),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".eps")),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_", test_name, ".emf")),
   #        width = 297, height = 210, units = "mm", device = emf)
   
@@ -338,6 +344,8 @@ plot2DResultsFromAllTools <- function(input_file_detectCilia,
          width = 297, height = 210, units = "mm")
   ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".png")),
          width = 297, height = 210, units = "mm")
+  ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".eps")),
+         width = 297, height = 210, units = "mm", device="eps")
   # ggsave(filename = file.path(output_dir, paste0("all_tools_cilia_horizontal_lengths_violin_plot_", test_name, ".emf")),
   #        width = 297, height = 210, units = "mm", device = emf)
   
