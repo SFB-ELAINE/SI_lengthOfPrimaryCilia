@@ -253,11 +253,30 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".png", sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".eps", sep="")),
-           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf", sep="")),
     #        width = 297, height = 210, units = "mm", device = emf)
     
+    plot_horizontal_length_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=horizontal_length_in_pixels, color=researcher)) +
+      # stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
+      # geom_boxplot(alpha = 1, position = position_dodge2(width = 0.9, preserve = "single"), outlier.shape = 1) +
+      # #geom_jitter(color="black", size=0.5, alpha=0.9) +
+      geom_point(size=4, aes(shape=researcher), color="black", stroke = 2) +
+      geom_point(size=4, aes(shape=researcher)) +
+      scale_shape_manual(values=c(19, 15, 17, 18),  name = legend_name) +
+      scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+      # scale_color_manual(values=c("black", "black", "black", "black"), name = legend_name) +
+      # scale_color_discrete(values=c("#999999", "#E69F00", "#56B4E9", "#56B4E7"), name = legend_name) +
+      ylim(0,25) +
+      theme_bw(base_size = 18) +
+      theme(#axis.title.y=element_text(size=12),
+        #axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank(),
+        plot.title = element_text(hjust = 0.5)) +
+      ylab("Horizontal cilium length in pixels") +
+      xlab("Cilium number") +
+      ggtitle(paste(current_image, sep=""))
+    ggsave(filename = file.path(output_dir, paste("horizontal_length_per_rater_per_image_",df_dummy$image_name_short[1],".eps", sep="")),
+           width = 297, height = 210, units = "mm", device="eps")
     
     plot_height_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=vertical_length_in_layers, color=researcher)) +
       # stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
@@ -286,11 +305,31 @@ plotComparisonManualAutomaticDetection_Cultivation <- function(
            width = 297, height = 210, units = "mm")
     ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".png", sep="")),
            width = 297, height = 210, units = "mm")
-    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".eps", sep="")),
-           width = 297, height = 210, units = "mm", device="eps")
     # ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".emf", sep="")),
     #        width = 297, height = 210, units = "mm", device = emf)
     
+    plot_height_image <- ggplot(df_dummy, aes(x=cilium_number_clemens, y=vertical_length_in_layers, color=researcher)) +
+      # stat_boxplot(geom ='errorbar', width = 0.3, position = position_dodge(width = 0.75)) +
+      # geom_boxplot(alpha = 1, position = position_dodge2(width = 0.9, preserve = "single"), outlier.shape = 1) +
+      #geom_jitter(color="black", size=0.5, alpha=0.9) +
+      geom_point(size=4, aes(shape=researcher), color="black", stroke = 2) +
+      geom_point(size=4, aes(shape=researcher)) +
+      scale_shape_manual(values=c(19, 15, 17, 18),  name = legend_name) +
+      scale_color_manual(values=c("#009E73", "#F0E442", "#CC79A7", "#E69F00"), name = legend_name) + 
+      # geom_point(size=4, alpha=0.7, aes(shape=researcher)) +
+      # scale_shape_manual(values=c(15, 17, 18, 19),  name = legend_name) +
+      # scale_color_discrete(name = legend_name) +
+      ylim(0,20) +
+      theme_bw(base_size = 18) +
+      theme(#axis.title.y=element_text(size=12),
+        #axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank(),
+        plot.title = element_text(hjust = 0.5)) +
+      ylab("Height (vertical cilium length) in z-stack layers") +
+      xlab("Cilium number") +
+      ggtitle(paste(current_image, sep=""))
+    ggsave(filename = file.path(output_dir, paste("vertical_length_per_rater_per_image_",df_dummy$image_name_short[1],".eps", sep="")),
+           width = 297, height = 210, units = "mm", device="eps")
     
   }
   
